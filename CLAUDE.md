@@ -2,9 +2,19 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+---
 
-**Rukunin** is a Flutter app for digital RT/RW (Indonesian neighborhood association) management. It targets a single RW with up to 300 units. Stack: Flutter + Supabase (Postgres + Edge Functions) + Riverpod.
+## ⚠️ ATURAN WAJIB — BACA DULU SEBELUM APAPUN
+
+**Ini adalah project mature yang sedang dalam pengembangan aktif. Berlaku aturan ketat berikut:**
+
+1. **DILARANG refactoring tanpa persetujuan eksplisit.** Jangan ubah struktur, nama variabel, pola coding, atau arsitektur yang sudah ada — meskipun kamu merasa ada cara yang lebih baik.
+2. **Selalu ikuti pola coding yang sudah ada.** Riverpod provider pattern, Supabase query style, model `fromMap/toMap` — semua harus konsisten dengan yang sudah ada di codebase.
+3. **WAJIB baca `ARCHITECTURE.md` dan `PROGRESS.md`** sebelum mengerjakan task apapun. Ini memastikan kamu tidak mengulang kerja atau bertentangan dengan keputusan arsitektur yang sudah dibuat.
+4. **Jangan ubah logic yang sudah berjalan** tanpa konfirmasi. Kalau menemukan bug, laporkan dulu sebelum memperbaiki.
+5. **Jangan membuat file baru** jika sudah ada file yang relevan — extend yang ada.
+
+---
 
 ## Commands
 
@@ -17,6 +27,9 @@ flutter run -d <device-id>
 
 # Build APK (release)
 flutter build apk --release
+
+# Build App Bundle (Play Store)
+flutter build appbundle --release
 
 # Code generation (Freezed + Riverpod)
 dart run build_runner build --delete-conflicting-outputs
@@ -32,87 +45,190 @@ flutter test
 
 # Run a single test file
 flutter test test/path/to/test_file.dart
+
+# Deploy Edge Function
+supabase functions deploy <function-name>
 ```
 
 ## Environment Setup
 
-The app requires a `.env` file in the project root with:
+File `.env` wajib ada di root project:
 ```
 SUPABASE_URL=...
 SUPABASE_ANON_KEY=...
 ```
 
-The `.env` file is declared as a Flutter asset in `pubspec.yaml` and loaded via `flutter_dotenv` at startup.
+File `.env` sudah didaftarkan sebagai Flutter asset di `pubspec.yaml` dan dimuat via `flutter_dotenv` di `main.dart`.
 
-## Architecture
+---
+
+## Arsitektur Singkat
+
+Untuk detail lengkap → baca `ARCHITECTURE.md`.
 
 ### State Management — Riverpod
-
-All state lives in providers under `lib/features/<feature>/providers/`. The pattern is:
-- `FutureProvider` / `FutureProvider.family` for async reads (Supabase queries)
-- `AsyncNotifier` / `AsyncNotifierProvider` for write operations (create/update/delete)
-- `supabaseClientProvider` (in `lib/core/supabase/supabase_client.dart`) is the single Supabase entry point — every provider watches or reads it
+- Semua provider ada di `lib/features/<feature>/providers/`
+- **SATU entry point Supabase:** `supabaseClientProvider` di `lib/core/supabase/supabase_client.dart` — semua provider wajib watch/read ini
+- `FutureProvider.autoDispose` untuk fetch data, `AsyncNotifier` untuk mutations, `Notifier` untuk state kompleks
 
 ### Navigation — GoRouter
-
-Routes are defined in `lib/app/router.dart` via `routerProvider`. There are two `ShellRoute`s:
-- **Admin shell** (`/admin/*`) — wrapped by `AdminShell` with 6-tab bottom nav
-- **Resident shell** (`/resident/*`) — wrapped by `ResidentShell` with 5-tab bottom nav
-
-Auth redirect is handled in the router's `redirect` callback: checks `Supabase.instance.client.auth.currentSession` and reads the `role` field from the `profiles` table (`admin` → `/admin`, `resident` → `/resident`).
-
-Routes that should not inherit the shell's bottom nav (e.g., full-screen detail pages) are declared as top-level `GoRoute`s outside the `ShellRoute`.
+- Semua route di `lib/app/router.dart`
+- Dua ShellRoute: `AdminShell` (6 tab) dan `ResidentShell` (5 tab)
+- Route full-screen tanpa bottom nav → deklarasikan di luar ShellRoute
 
 ### Feature Structure
-
-Each feature follows:
 ```
 lib/features/<feature>/
-  models/      # Plain Dart classes with fromMap/fromJson constructors
-  providers/   # Riverpod providers (data fetching & mutations)
-  screens/     # Flutter widgets
+  models/      ← plain Dart class, fromMap/toMap, BUKAN Freezed
+  providers/   ← Riverpod providers
+  screens/     ← Flutter widgets
 ```
 
-Models are hand-written (no Freezed codegen used yet, despite the dependency being present).
-
-### Supabase Schema (key tables)
-
-| Table | Purpose |
-|---|---|
-| `communities` | One row per RW |
-| `profiles` | All users (admin + residents), `role` field: `admin`/`resident` |
-| `billing_types` | Jenis iuran (IPL, keamanan, etc.) scoped to a community |
-| `invoices` | Per-resident per-month billing; status: `pending`/`paid`/`overdue` |
-| `payments` | Payment records linked to invoices |
-| `expenses` | Community cash outflows with fixed categories |
-| `announcements` | Admin → resident broadcasts |
-| `marketplace_listings` | Peer-to-peer listings between residents |
-| `ai_logs` | Logs of AI assistant queries |
-
-RLS policies are in `supabase/migrations/20260311_rls_policies.sql`. Migrations are run manually via the Supabase SQL Editor.
-
-### Edge Functions (Deno / TypeScript)
-
-Located in `supabase/functions/`:
-- `ai-assistant` — Uses **Groq API** (`llama-3.3-70b-versatile`) to answer financial questions about the community; logs to `ai_logs`
-- `auto-generate-invoices` — Bulk-creates invoice rows for all active residents
-- `send-reminders` — WhatsApp reminder blasts for overdue invoices
-- `send-whatsapp` — WhatsApp message delivery helper
-- `generate-letter` — PDF letter generation
-
-Deploy edge functions with: `supabase functions deploy <function-name>`
-
 ### Design System
+- Token warna & tipografi: `lib/app/theme.dart` (`AppColors`, `AppTextStyles`)
+- Primary: `#FFC107` (kuning), Surface: `#0D0D0D` (hitam)
+- Font: Playfair Display (headline) + Plus Jakarta Sans (body)
 
-Design tokens are in `lib/app/theme.dart`:
-- `AppColors` — color constants (primary: `#FFC107` yellow, surface: `#0D0D0D` black)
-- `AppTextStyles` — two font families: **Playfair Display** (display/headline) and **Plus Jakarta Sans** (body/labels)
-- Theme is built with Material 3 (`useMaterial3: true`)
+### Database
+- Migrations: `supabase/migrations/` — dijalankan manual via Supabase SQL Editor
+- RLS policies: `supabase/migrations/20260311_rls_policies.sql`
+- AI menggunakan **Groq API** (`llama-3.3-70b-versatile`), bukan Anthropic
 
 ### Dual User Roles
+- **Admin** `/admin/*` — kelola warga, tagihan, kas, laporan, surat, AI
+- **Resident** `/resident/*` — lihat tagihan sendiri, marketplace, pengumuman
+- Beberapa screen di-share (AnnouncementsScreen, MarketplaceScreen)
 
-The app has two completely separate UIs sharing some screens:
-- **Admin** — full management (residents, billing, expenses, reports, letters, AI assistant, announcements, settings)
-- **Resident portal** — limited view (home summary, own invoices, announcements, marketplace)
+<!-- rtk-instructions v2 -->
+# RTK (Rust Token Killer) - Token-Optimized Commands
 
-`AnnouncementsScreen` and `MarketplaceScreen` are reused across both roles via separate routes.
+## Golden Rule
+
+**Always prefix commands with `rtk`**. If RTK has a dedicated filter, it uses it. If not, it passes through unchanged. This means RTK is always safe to use.
+
+**Important**: Even in command chains with `&&`, use `rtk`:
+```bash
+# ❌ Wrong
+git add . && git commit -m "msg" && git push
+
+# ✅ Correct
+rtk git add . && rtk git commit -m "msg" && rtk git push
+```
+
+## RTK Commands by Workflow
+
+### Build & Compile (80-90% savings)
+```bash
+rtk cargo build         # Cargo build output
+rtk cargo check         # Cargo check output
+rtk cargo clippy        # Clippy warnings grouped by file (80%)
+rtk tsc                 # TypeScript errors grouped by file/code (83%)
+rtk lint                # ESLint/Biome violations grouped (84%)
+rtk prettier --check    # Files needing format only (70%)
+rtk next build          # Next.js build with route metrics (87%)
+```
+
+### Test (90-99% savings)
+```bash
+rtk cargo test          # Cargo test failures only (90%)
+rtk vitest run          # Vitest failures only (99.5%)
+rtk playwright test     # Playwright failures only (94%)
+rtk test <cmd>          # Generic test wrapper - failures only
+```
+
+### Git (59-80% savings)
+```bash
+rtk git status          # Compact status
+rtk git log             # Compact log (works with all git flags)
+rtk git diff            # Compact diff (80%)
+rtk git show            # Compact show (80%)
+rtk git add             # Ultra-compact confirmations (59%)
+rtk git commit          # Ultra-compact confirmations (59%)
+rtk git push            # Ultra-compact confirmations
+rtk git pull            # Ultra-compact confirmations
+rtk git branch          # Compact branch list
+rtk git fetch           # Compact fetch
+rtk git stash           # Compact stash
+rtk git worktree        # Compact worktree
+```
+
+Note: Git passthrough works for ALL subcommands, even those not explicitly listed.
+
+### GitHub (26-87% savings)
+```bash
+rtk gh pr view <num>    # Compact PR view (87%)
+rtk gh pr checks        # Compact PR checks (79%)
+rtk gh run list         # Compact workflow runs (82%)
+rtk gh issue list       # Compact issue list (80%)
+rtk gh api              # Compact API responses (26%)
+```
+
+### JavaScript/TypeScript Tooling (70-90% savings)
+```bash
+rtk pnpm list           # Compact dependency tree (70%)
+rtk pnpm outdated       # Compact outdated packages (80%)
+rtk pnpm install        # Compact install output (90%)
+rtk npm run <script>    # Compact npm script output
+rtk npx <cmd>           # Compact npx command output
+rtk prisma              # Prisma without ASCII art (88%)
+```
+
+### Files & Search (60-75% savings)
+```bash
+rtk ls <path>           # Tree format, compact (65%)
+rtk read <file>         # Code reading with filtering (60%)
+rtk grep <pattern>      # Search grouped by file (75%)
+rtk find <pattern>      # Find grouped by directory (70%)
+```
+
+### Analysis & Debug (70-90% savings)
+```bash
+rtk err <cmd>           # Filter errors only from any command
+rtk log <file>          # Deduplicated logs with counts
+rtk json <file>         # JSON structure without values
+rtk deps                # Dependency overview
+rtk env                 # Environment variables compact
+rtk summary <cmd>       # Smart summary of command output
+rtk diff                # Ultra-compact diffs
+```
+
+### Infrastructure (85% savings)
+```bash
+rtk docker ps           # Compact container list
+rtk docker images       # Compact image list
+rtk docker logs <c>     # Deduplicated logs
+rtk kubectl get         # Compact resource list
+rtk kubectl logs        # Deduplicated pod logs
+```
+
+### Network (65-70% savings)
+```bash
+rtk curl <url>          # Compact HTTP responses (70%)
+rtk wget <url>          # Compact download output (65%)
+```
+
+### Meta Commands
+```bash
+rtk gain                # View token savings statistics
+rtk gain --history      # View command history with savings
+rtk discover            # Analyze Claude Code sessions for missed RTK usage
+rtk proxy <cmd>         # Run command without filtering (for debugging)
+rtk init                # Add RTK instructions to CLAUDE.md
+rtk init --global       # Add RTK to ~/.claude/CLAUDE.md
+```
+
+## Token Savings Overview
+
+| Category | Commands | Typical Savings |
+|----------|----------|-----------------|
+| Tests | vitest, playwright, cargo test | 90-99% |
+| Build | next, tsc, lint, prettier | 70-87% |
+| Git | status, log, diff, add, commit | 59-80% |
+| GitHub | gh pr, gh run, gh issue | 26-87% |
+| Package Managers | pnpm, npm, npx | 70-90% |
+| Files | ls, read, grep, find | 60-75% |
+| Infrastructure | docker, kubectl | 85% |
+| Network | curl, wget | 65-70% |
+
+Overall average: **60-90% token reduction** on common development operations.
+<!-- /rtk-instructions -->

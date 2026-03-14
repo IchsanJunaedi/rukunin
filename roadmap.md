@@ -497,81 +497,37 @@ Buat fitur untuk admin mencatat pengeluaran kas lingkungan beserta bukti fisik.
 
 ---
 
-## Phase 2 — Payment & Otomasi
+## Phase 2 — Pembayaran Manual & Otomasi WA
 > **Minggu 6–7**  
-> **Tujuan:** Warga bisa bayar via link digital, dan seluruh alur tagihan–pembayaran–konfirmasi berjalan otomatis tanpa campur tangan admin.
+> **Tujuan:** RW bisa mengatur rekening tujuan, warga bisa bayar via transfer/scan QRIS mandiri lalu upload bukti, dan admin bisa memverifikasi. Serta alur notifikasi WA berjalan otomatis.
 
 ---
 
-### 2.1 — Daftar & Konfigurasi Midtrans
+### 2.1 — Pengaturan Rekening & Kas RW
 
 **Apa yang dikerjakan:**  
-Setup akun payment gateway yang akan memproses pembayaran dari warga.
+Buat pengaturan agar Pak RT bisa menambahkan informasi rekening bank atau QRIS resmi milik RW.
 
 **Detail task:**
-- [ ] Daftar akun di sandbox.midtrans.com (gratis untuk testing)
-- [ ] Lengkapi profil merchant
-- [ ] Catat Server Key dan Client Key dari dashboard Midtrans
-- [ ] Simpan kedua key tersebut di Supabase Edge Function secrets (bukan di `.env` Flutter)
-- [ ] Aktifkan metode pembayaran: QRIS, GoPay, OVO, DANA, Transfer VA semua bank
-- [ ] Daftarkan URL webhook: `https://[project-id].supabase.co/functions/v1/handle-payment-webhook`
-- [ ] Test webhook menggunakan fitur test di dashboard Midtrans
+- [ ] Buat `payment_settings_screen.dart` di `features/settings/screens/`
+- [ ] Tambahkan kolom `bank_name`, `account_number`, `account_name`, dan `qris_url` di tabel `communities` 
+- [ ] Form input informasi nama bank, nomor rekening, dan nama pemilik
+- [ ] Fitur upload foto QRIS kas RW (simpan ke Supabase Storage)
+- [ ] Tombol simpan untuk update tabel `communities`
+- [ ] Amankan RLS agar hanya admin yang bisa update 
 
-**Selesai jika:** Akun Midtrans aktif, key tersimpan aman, URL webhook terdaftar.
-
----
-
-### 2.2 — Edge Function: Generate Payment Link
-
-**Apa yang dikerjakan:**  
-Buat serverless function yang menghasilkan link pembayaran unik untuk setiap invoice.
-
-**Detail task:**
-- [ ] Buat folder `supabase/functions/generate-payment-link/`
-- [ ] Function menerima `invoice_id` sebagai input
-- [ ] Ambil data invoice + data warga dari database
-- [ ] Kirim request ke Midtrans API untuk buat transaksi baru
-- [ ] Terima token & URL dari Midtrans sebagai response
-- [ ] Simpan `payment_token` dan `payment_link` ke tabel `invoices`
-- [ ] Return `payment_link` ke caller
-- [ ] Deploy function ke Supabase: `supabase functions deploy generate-payment-link`
-- [ ] Test function via Supabase dashboard atau Postman
-
-**Selesai jika:** Function dipanggil dengan invoice_id → mengembalikan payment link yang valid.
+**Selesai jika:** Admin bisa melihat dan mengubah informasi rekening dan QRIS untuk pembayaran warga.
 
 ---
 
-### 2.3 — Edge Function: Handle Payment Webhook
+### 2.2 — Daftar & Konfigurasi Fonnte (WhatsApp)
 
 **Apa yang dikerjakan:**  
-Buat function yang menerima notifikasi dari Midtrans setiap kali ada pembayaran berhasil.
-
-**Detail task:**
-- [ ] Buat folder `supabase/functions/handle-payment-webhook/`
-- [ ] Function menerima POST request dari Midtrans
-- [ ] Verifikasi signature webhook (wajib! untuk keamanan)
-- [ ] Cek `transaction_status` dari payload Midtrans
-- [ ] Jika status = `settlement` atau `capture`:
-  - [ ] Update `invoices.status` jadi `paid`
-  - [ ] Insert baris baru ke tabel `payments` (rekam pembayaran)
-  - [ ] Panggil function `send-whatsapp` untuk kirim konfirmasi ke warga
-- [ ] Jika status = `expire` atau `cancel`:
-  - [ ] Update `invoices.status` jadi `pending` kembali
-- [ ] Return response 200 ke Midtrans (wajib agar tidak di-retry terus)
-- [ ] Deploy function ke Supabase
-
-**Selesai jika:** Pembayaran di Midtrans sandbox → status invoice otomatis berubah ke `paid`.
-
----
-
-### 2.4 — Daftar & Konfigurasi Fonnte (WhatsApp)
-
-**Apa yang dikerjakan:**  
-Setup layanan WhatsApp yang akan dipakai untuk broadcast tagihan dan notifikasi.
+Setup layanan WhatsApp yang akan dipakai untuk broadcast tagihan dan notifikasi bukti bayar.
 
 **Detail task:**
 - [ ] Daftar akun di fonnte.com
-- [ ] Pilih paket Basic (~Rp 65.000/bulan, 1.000 pesan/hari)
+- [ ] Pilih paket Basic atau Free trial
 - [ ] Verifikasi nomor WhatsApp yang akan dipakai (nomor khusus WA RT/RW)
 - [ ] Catat API key dari dashboard Fonnte
 - [ ] Simpan API key di Supabase Edge Function secrets
@@ -581,10 +537,10 @@ Setup layanan WhatsApp yang akan dipakai untuk broadcast tagihan dan notifikasi.
 
 ---
 
-### 2.5 — Edge Function: Send WhatsApp
+### 2.3 — Edge Function: Send WhatsApp
 
 **Apa yang dikerjakan:**  
-Buat function yang mengirim pesan WhatsApp ke warga — dipakai untuk blast tagihan, reminder, dan konfirmasi pembayaran.
+Buat function yang mengirim pesan WhatsApp ke warga — dipakai untuk blast tagihan, reminder, dan konfirmasi.
 
 **Detail task:**
 - [ ] Buat folder `supabase/functions/send-whatsapp/`
@@ -599,89 +555,87 @@ Buat function yang mengirim pesan WhatsApp ke warga — dipakai untuk blast tagi
 
 ---
 
-### 2.6 — Fitur Broadcast Tagihan ke WA
+### 2.4 — Fitur Broadcast Tagihan ke WA
 
 **Apa yang dikerjakan:**  
-Tambahkan tombol di halaman tagihan untuk blast semua tagihan ke WA warga sekaligus.
+Tambahkan tombol di halaman tagihan untuk blast semua tagihan ke WA warga sekaligus, berisi nominal dan info rekening.
 
 **Detail task:**
-- [ ] Tambahkan tombol "Broadcast ke WA" di halaman list tagihan
+- [ ] Tambahkan tombol "Broadcast ke WA" di halaman list tagihan admin
 - [ ] Saat ditekan → tampilkan konfirmasi "Kirim WA ke X warga?"
-- [ ] Proses broadcast: loop semua invoice yang baru diterbitkan
-  - [ ] Untuk setiap invoice → panggil `generate-payment-link` → dapat payment link
-  - [ ] Panggil `send-whatsapp` dengan template pesan tagihan + payment link
-- [ ] Template pesan WA: nama warga, jenis iuran, nominal, jatuh tempo, link bayar
-- [ ] Tampilkan progress: "Mengirim 1 dari 300..."
-- [ ] Tampilkan hasil akhir: "300 WA berhasil terkirim, 2 gagal"
-- [ ] Tandai invoice yang sudah di-broadcast agar tidak dikirim dua kali
+- [ ] Proses broadcast: loop semua invoice pending bulan ini
+- [ ] Panggil `send-whatsapp` dengan template pesan detail tagihan (Nominal, Jenis Iuran, No. Rek Tujuan)
+- [ ] Tampilkan progress dan hasil akhir (berhasil/gagal)
+- [ ] (Opsional) Tambahkan tanda bahwa invoice sudah pernah dibroadcast
 
-**Selesai jika:** Klik broadcast → semua warga menerima WA tagihan dengan payment link.
+**Selesai jika:** Klik broadcast → semua warga yang belum bayar menerima WA tagihan.
 
 ---
 
-### 2.7 — WebView Payment di Flutter
+### 2.5 — Halaman Pembayaran Warga & Upload Bukti
 
 **Apa yang dikerjakan:**  
-Buat halaman di Flutter yang membuka payment page Midtrans di dalam app, tanpa perlu buka browser eksternal.
+Berhubung aplikasi Warga belum dilaunching, kita bisa asumsikan ini akan dikerjakan di bagian Warga App (Phase 4). Namun, untuk MVP, kita siapkan UI "Terima Pembayaran" (Review) di sisi Admin terlebih dahulu.
 
 **Detail task:**
-- [ ] Buat `payment_webview_screen.dart` di `features/payments/screens/`
-- [ ] Terima `payment_url` dan `invoice_id` sebagai parameter
-- [ ] Tampilkan WebView yang membuka payment URL
-- [ ] Tampilkan loading indicator saat halaman sedang dimuat
-- [ ] Deteksi URL callback dari Midtrans saat pembayaran selesai/gagal/dibatalkan
-- [ ] Jika selesai (success) → tutup WebView → tampilkan pesan "Pembayaran berhasil!"
-- [ ] Jika gagal/cancel → tutup WebView → tampilkan pesan "Pembayaran dibatalkan"
-- [ ] Tombol "X" di AppBar untuk cancel pembayaran kapan saja
+- [ ] Buat fitur warga mengirimkan gambar (akan dikerjakan saat masuk pengembangan shell Warga)
+- [ ] Simpan gambar bukti transfer ke folder Supabase Storage `payment_proofs`
+- [ ] Update status invoice menjadi `awaiting_verification` 
+- [ ] Catat URL bukti di tabel `invoices` pada kolom `payment_token` (sementara dipakai untuk link gambar) atau buat kolom baru `proof_url`
 
-**Selesai jika:** Warga bisa bayar dari dalam app Flutter tanpa keluar ke browser eksternal.
+**Selesai jika:** Gambar bukti transfer dapat diupload dan status berubah jadi menunggu konfirmasi.
 
 ---
 
-### 2.8 — Otomasi dengan pg_cron
+### 2.6 — Verifikasi Pembayaran (Admin)
 
 **Apa yang dikerjakan:**  
-Setup penjadwalan otomatis sehingga sistem bisa bekerja sendiri setiap bulan tanpa perlu dioperasikan manual oleh admin.
+Halaman atau Bottom Sheet untuk Admin memverifikasi bukti transfer yang diunggah warga.
+
+**Detail task:**
+- [ ] Update list Tagihan di admin untuk mendeteksi status `awaiting_verification` (warna kuning/orange)
+- [ ] Jika di-tap, munculkan Dialog form berisi gambar bukti transfer membesar (zoomable)
+- [ ] Tombol "Tolak (Tidak Valid)" -> status kembali `pending`
+- [ ] Tombol "Verifikasi Lunas" -> status berubah `paid`, catat riwayat ke tabel `payments`
+- [ ] Memicu pesan WA ke warga: "Pembayaran Anda sebesar Rp X telah dikonfirmasi dan lunas."
+
+**Selesai jika:** Admin bisa melihat bukti gambar dan menandai Lunas.
+
+---
+
+### 2.7 — Otomasi dengan pg_cron
+
+**Apa yang dikerjakan:**  
+Setup penjadwalan otomatis agar sistem bisa bekerja rutin tiap bulan.
 
 **Task 1 — Auto Generate Invoice (tanggal 1 tiap bulan):**
 - [ ] Buat Edge Function `auto-generate-invoices`
-- [ ] Function loop semua warga aktif per community
-- [ ] Untuk setiap warga → buat invoice baru untuk semua billing_type yang aktif
-- [ ] Set due_date sesuai billing_day di billing_type
-- [ ] Setelah semua invoice dibuat → otomatis broadcast WA ke semua warga
+- [ ] Function membuat invoice baru untuk semua warga aktif & jenis iuran aktif
 - [ ] Setup pg_cron di Supabase: jalankan setiap tanggal 1 jam 07.00 pagi
-- [ ] Test manual dengan trigger function secara manual
 
 **Task 2 — Reminder Harian (setiap pagi):**
 - [ ] Buat Edge Function `send-reminders`
-- [ ] Function cari semua invoice berstatus `pending` yang sudah lewat jatuh tempo
-- [ ] Kirim WA reminder ke masing-masing warga yang belum bayar
-- [ ] Konten reminder berbeda berdasarkan berapa hari terlambat (H+3, H+7, H+14)
-- [ ] Setup pg_cron: jalankan setiap hari jam 08.00 pagi
-- [ ] Jangan kirim reminder di hari yang sama lebih dari 1 kali
+- [ ] Cari invoice status `pending` yang lewat jatuh tempo
+- [ ] Kirim WA reminder (H+3, H+7)
+- [ ] Update status ke `overdue` jika lebih dari 7 hari
+- [ ] Setup pg_cron waktu 08.00 pagi
 
-**Task 3 — Auto Mark Overdue:**
-- [ ] Update status invoice dari `pending` ke `overdue` setelah lewat 7 hari jatuh tempo
-- [ ] Bisa digabung dalam function `send-reminders`
-
-**Selesai jika:** Tanggal 1 → invoice otomatis terbit & WA terkirim. Setiap pagi → reminder otomatis ke yang belum bayar.
+**Selesai jika:** Tanggal 1 → invoice otomatis terbit. Setiap pagi → pengingat otomatis berjalan.
 
 ---
 
 ### ✅ Checklist Akhir Phase 2
 
 ```
-[ ] Midtrans sandbox aktif & webhook terdaftar
-[ ] Edge Function generate-payment-link berjalan
-[ ] Edge Function handle-payment-webhook berjalan
-[ ] Fonnte aktif & bisa kirim WA
-[ ] Edge Function send-whatsapp berjalan
-[ ] Broadcast tagihan ke semua warga berfungsi
-[ ] Warga bisa bayar via WebView di Flutter
-[ ] Status invoice otomatis berubah setelah bayar
-[ ] WA konfirmasi terkirim otomatis setelah bayar
-[ ] pg_cron auto-generate invoice berjalan tanggal 1
-[ ] pg_cron reminder harian berjalan setiap pagi
+[ ] Pengaturan Rekening Kas dan QRIS berfungsi
+[ ] Fonnte aktif & terverifikasi
+[ ] Edge Function send-whatsapp berjalan lancar
+[ ] Broadcast tagihan ke semua warga via WA berfungsi
+[ ] Warga (nanti saat app Warga dibuat) bisa upload bukti bayar
+[ ] Admin bisa mengecek foto bukti bayar dan verifikasi jadi Lunas
+[ ] WA Konfirmasi Otomatis lunas terkirim ke Warga
+[ ] pg_cron auto-generate invoice (Tiap tgl 1) berjalan
+[ ] pg_cron reminder tunggakan WA berjalan
 ```
 
 ---
