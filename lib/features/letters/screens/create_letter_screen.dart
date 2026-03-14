@@ -1,0 +1,434 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:file_saver/file_saver.dart';
+import 'package:share_plus/share_plus.dart';
+
+import '../../../app/theme.dart';
+import '../providers/letter_provider.dart';
+import '../../../core/supabase/supabase_client.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../../../core/utils/letter_pdf_generator.dart';
+
+class CreateLetterScreen extends ConsumerStatefulWidget {
+  const CreateLetterScreen({super.key});
+
+  @override
+  ConsumerState<CreateLetterScreen> createState() => _CreateLetterScreenState();
+}
+
+class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
+  // ── Controllers ──────────────────────────────
+  final _nameCtrl = TextEditingController();
+  final _nikCtrl = TextEditingController();
+  final _ttlCtrl = TextEditingController(); // Format: Kota, DD-MM-YYYY
+  final _occupationCtrl = TextEditingController();
+  final _purposeCtrl = TextEditingController();
+  final _contentCtrl = TextEditingController();
+
+  // ── Dropdown values ───────────────────────────
+  String? _gender;
+  String? _religion;
+  String? _marital;
+
+  // ── State ─────────────────────────────────────
+  String _letterType = 'ktp_kk';
+  Map<String, dynamic>? _communityData;
+  bool _loadingCommunity = true;
+  bool _pdfReady = false;
+
+  static const _genderOptions = ['Laki-laki', 'Perempuan'];
+  static const _religionOptions = ['Islam', 'Kristen Protestan', 'Katolik', 'Hindu', 'Buddha', 'Konghucu'];
+  static const _maritalOptions = ['Belum Kawin', 'Kawin', 'Cerai Hidup', 'Cerai Mati'];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCommunity();
+  }
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    _nikCtrl.dispose();
+    _ttlCtrl.dispose();
+    _occupationCtrl.dispose();
+    _purposeCtrl.dispose();
+    _contentCtrl.dispose();
+    super.dispose();
+  }
+
+  // ── Fetch ─────────────────────────────────────
+  Future<void> _fetchCommunity() async {
+    try {
+      final client = ref.read(supabaseClientProvider);
+      final profile = await ref.read(currentProfileProvider.future);
+      final communityId = profile?['community_id'];
+      if (communityId == null) {
+        setState(() => _loadingCommunity = false);
+        return;
+      }
+
+      final res = await client
+          .from('communities')
+          .select('name, rw_number, kelurahan, kecamatan, kabupaten, province')
+          .eq('id', communityId)
+          .single();
+
+      setState(() {
+        _communityData = res;
+        _loadingCommunity = false;
+      });
+    } catch (_) {
+      setState(() => _loadingCommunity = false);
+    }
+  }
+
+  // ── Template ──────────────────────────────────
+  void _applyTemplate() {
+    final name = _nameCtrl.text.trim();
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Isi nama lengkap terlebih dahulu')));
+      return;
+    }
+
+    final c = _communityData ?? {};
+    final rw = c['rw_number'] ?? '01';
+    final kelurahan = c['kelurahan'] ?? '';
+    final kecamatan = c['kecamatan'] ?? '';
+    final kabupaten = c['kabupaten'] ?? '';
+
+    // Hitung umur dari TTL jika format benar
+    String age = '-';
+    final ttlParts = _ttlCtrl.text.split(',');
+    if (ttlParts.length >= 2) {
+      try {
+        final dateParts = ttlParts.last.trim().split('-');
+        if (dateParts.length == 3) {
+          final dob = DateTime(int.parse(dateParts[2]), int.parse(dateParts[1]), int.parse(dateParts[0]));
+          final a = DateTime.now().difference(dob).inDays ~/ 365;
+          age = '$a tahun';
+        }
+      } catch (_) {}
+    }
+
+    final content = LetterPdfGenerator.getTemplate(
+      letterType: _letterType,
+      residentName: name,
+      residentNik: _nikCtrl.text.trim().isEmpty ? '-' : _nikCtrl.text.trim(),
+      residentAge: age,
+      residentGender: _gender ?? '-',
+      residentAddress: 'RW $rw, Kel. $kelurahan, Kec. $kecamatan, $kabupaten',
+      rtNumber: '01',
+      rwNumber: rw,
+      village: kelurahan,
+      district: kecamatan,
+      city: kabupaten,
+      purpose: _purposeCtrl.text.trim().isEmpty ? null : _purposeCtrl.text.trim(),
+    );
+
+    setState(() {
+      _contentCtrl.text = content;
+      _pdfReady = true;
+    });
+  }
+
+  // ── Export PDF ────────────────────────────────
+  Future<void> _exportPdf({required bool isShare}) async {
+    if (!_pdfReady) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Tekan "Terapkan ke Surat" terlebih dahulu')));
+      return;
+    }
+
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Row(children: [
+          const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)),
+          const SizedBox(width: 12),
+          Text('Membuat PDF...', style: GoogleFonts.plusJakartaSans()),
+        ]),
+        duration: const Duration(seconds: 2),
+      ));
+
+      final now = DateTime.now();
+      final roman = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+      final c = _communityData ?? {};
+      final rw = c['rw_number'] ?? '01';
+      final letterNumber = '${now.millisecondsSinceEpoch % 1000}/RW-$rw/${roman[now.month - 1]}/${now.year}';
+
+      // Hitung umur
+      String age = '-';
+      final ttlParts = _ttlCtrl.text.split(',');
+      if (ttlParts.length >= 2) {
+        try {
+          final dp = ttlParts.last.trim().split('-');
+          if (dp.length == 3) {
+            final dob = DateTime(int.parse(dp[2]), int.parse(dp[1]), int.parse(dp[0]));
+            age = '${DateTime.now().difference(dob).inDays ~/ 365} tahun';
+          }
+        } catch (_) {}
+      }
+
+      final bytes = await LetterPdfGenerator.generate(
+        letterNumber: letterNumber,
+        letterType: _letterType,
+        generatedContent: _contentCtrl.text,
+        resident: {
+          'full_name': _nameCtrl.text.trim(),
+          'nik': _nikCtrl.text.trim().isEmpty ? '-' : _nikCtrl.text.trim(),
+          'gender': _gender ?? '-',
+          'date_of_birth': '',
+          'place_of_birth': ttlParts.isNotEmpty ? ttlParts.first.trim() : '-',
+          'religion': _religion ?? '-',
+          'marital_status': _marital ?? '-',
+          'occupation': _occupationCtrl.text.trim().isEmpty ? '-' : _occupationCtrl.text.trim(),
+          'age': age,
+        },
+        community: {
+          'name': c['name'] ?? 'RW',
+          'rt_number': '01',
+          'rw_number': rw,
+          'village': c['kelurahan'] ?? '',
+          'district': c['kecamatan'] ?? '',
+          'city': c['kabupaten'] ?? '',
+          'province': c['province'] ?? '',
+          'leader_name': 'Ketua RW',
+        },
+      );
+
+      final safeName = _nameCtrl.text.trim().replaceAll(' ', '_').replaceAll(RegExp(r'[^a-zA-Z0-9_]'), '');
+      final typeLabel = (letterTypeLabels[_letterType] ?? 'Surat').replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
+      final fileName = 'Surat_${typeLabel}_$safeName';
+
+      if (isShare) {
+        final tmp = File('${Directory.systemTemp.path}/$fileName.pdf');
+        await tmp.writeAsBytes(bytes);
+        if (mounted) {
+          await SharePlus.instance.share(ShareParams(files: [XFile(tmp.path, mimeType: 'application/pdf', name: '$fileName.pdf')]));
+        }
+      } else {
+        await FileSaver.instance.saveFile(name: '$fileName.pdf', bytes: bytes, mimeType: MimeType.pdf);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(backgroundColor: Colors.green, content: Text('PDF berhasil disimpan!')));
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(backgroundColor: Colors.red, content: Text('Error: $e')));
+      }
+    }
+  }
+
+  // ── Build ─────────────────────────────────────
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.grey100,
+      appBar: AppBar(
+        title: Text('Buat Surat Keterangan', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
+      ),
+      body: _loadingCommunity
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ── Jenis Surat ────────────────────────
+                  _card(
+                    icon: Icons.article,
+                    title: 'Jenis Surat',
+                    child: DropdownButtonFormField<String>(
+                      initialValue: _letterType,
+                      isExpanded: true,
+                      decoration: _deco('Pilih jenis surat...'),
+                      items: letterTypeLabels.entries.map((e) => DropdownMenuItem(
+                        value: e.key,
+                        child: Text(e.value, style: GoogleFonts.plusJakartaSans(fontSize: 13)),
+                      )).toList(),
+                      onChanged: (v) => setState(() { _letterType = v!; _pdfReady = false; }),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // ── Data Pemohon ───────────────────────
+                  _card(
+                    icon: Icons.person,
+                    title: 'Data Pemohon',
+                    child: Column(children: [
+                      _field(_nameCtrl, 'Nama Lengkap *'),
+                      _nikField(),
+                      _field(_ttlCtrl, 'Tempat, Tanggal Lahir (contoh: Jakarta, 15-02-2004)'),
+                      _dropdown('Jenis Kelamin', _genderOptions, _gender, (v) => setState(() => _gender = v)),
+                      _dropdown('Agama', _religionOptions, _religion, (v) => setState(() => _religion = v)),
+                      _dropdown('Status Perkawinan', _maritalOptions, _marital, (v) => setState(() => _marital = v)),
+                      _field(_occupationCtrl, 'Pekerjaan'),
+                    ]),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // ── Keperluan ──────────────────────────
+                  _card(
+                    icon: Icons.notes,
+                    title: 'Keperluan / Tujuan Surat (Opsional)',
+                    child: _field(_purposeCtrl, 'Contoh: Untuk keperluan syarat pendaftaran beasiswa KIP Kuliah...', lines: 2),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // ── Tombol Terapkan ────────────────────
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: _applyTemplate,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      icon: const Icon(Icons.auto_fix_high, color: AppColors.onPrimary, size: 20),
+                      label: Text('Terapkan ke Surat', style: GoogleFonts.plusJakartaSans(color: AppColors.onPrimary, fontWeight: FontWeight.w700, fontSize: 14)),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // ── Preview & Edit Isi Surat ───────────
+                  if (_pdfReady) ...[
+                    _card(
+                      icon: Icons.article_outlined,
+                      title: 'Isi Surat (Bisa Diedit Manual)',
+                      child: TextFormField(
+                        controller: _contentCtrl,
+                        maxLines: null,
+                        style: GoogleFonts.plusJakartaSans(fontSize: 13, height: 1.7),
+                        decoration: const InputDecoration(border: InputBorder.none, isDense: true, contentPadding: EdgeInsets.zero),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    Row(children: [
+                      Expanded(child: OutlinedButton.icon(
+                        onPressed: () => _exportPdf(isShare: true),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.primary,
+                          side: const BorderSide(color: AppColors.primary),
+                          padding: const EdgeInsets.symmetric(vertical: 13),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        icon: const Icon(Icons.share_outlined, size: 18),
+                        label: Text('Bagikan', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
+                      )),
+                      const SizedBox(width: 10),
+                      Expanded(child: ElevatedButton.icon(
+                        onPressed: () => _exportPdf(isShare: false),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          padding: const EdgeInsets.symmetric(vertical: 13),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        icon: const Icon(Icons.download, color: AppColors.onPrimary, size: 18),
+                        label: Text('Unduh PDF', style: GoogleFonts.plusJakartaSans(color: AppColors.onPrimary, fontWeight: FontWeight.w600)),
+                      )),
+                    ]),
+                    const SizedBox(height: 32),
+                  ] else ...[
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.07),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
+                      ),
+                      child: Row(children: [
+                        const Icon(Icons.info_outline, color: AppColors.primary, size: 18),
+                        const SizedBox(width: 8),
+                        Expanded(child: Text(
+                          'Isi data pemohon lalu tekan "Terapkan ke Surat".',
+                          style: GoogleFonts.plusJakartaSans(fontSize: 13, color: AppColors.primary),
+                        )),
+                      ]),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ],
+              ),
+            ),
+    );
+  }
+
+  // ── Helper Widgets ────────────────────────────
+  Widget _card({required IconData icon, required String title, required Widget child}) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2))],
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Icon(icon, color: AppColors.primary, size: 18),
+          const SizedBox(width: 6),
+          Text(title, style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.grey600)),
+        ]),
+        const SizedBox(height: 10),
+        child,
+      ]),
+    );
+  }
+
+  Widget _field(TextEditingController ctrl, String hint, {int lines = 1}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: TextField(
+        controller: ctrl,
+        maxLines: lines,
+        style: GoogleFonts.plusJakartaSans(fontSize: 13),
+        decoration: _deco(hint),
+      ),
+    );
+  }
+
+  Widget _nikField() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: TextField(
+        controller: _nikCtrl,
+        keyboardType: TextInputType.number,
+        maxLength: 16,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        style: GoogleFonts.plusJakartaSans(fontSize: 13),
+        decoration: _deco('NIK (maks. 16 digit)').copyWith(counterText: ''),
+      ),
+    );
+  }
+
+  Widget _dropdown(String label, List<String> options, String? value, ValueChanged<String?> onChanged) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: DropdownButtonFormField<String>(
+        initialValue: value,
+        isExpanded: true,
+        decoration: _deco(label),
+        items: options.map((o) => DropdownMenuItem(
+          value: o,
+          child: Text(o, style: GoogleFonts.plusJakartaSans(fontSize: 13)),
+        )).toList(),
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  InputDecoration _deco(String hint) => InputDecoration(
+    hintText: hint,
+    hintStyle: GoogleFonts.plusJakartaSans(fontSize: 12, color: AppColors.grey500),
+    filled: true,
+    fillColor: AppColors.grey100,
+    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+  );
+}
