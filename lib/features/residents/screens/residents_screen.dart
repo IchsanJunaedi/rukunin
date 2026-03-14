@@ -1,1 +1,870 @@
-// TODO: List warga
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
+
+import 'package:go_router/go_router.dart';
+import '../../../app/theme.dart';
+import '../models/resident_model.dart';
+import '../providers/resident_provider.dart';
+import 'package:intl/intl.dart';
+
+class ResidentsScreen extends ConsumerStatefulWidget {
+  const ResidentsScreen({super.key});
+
+  @override
+  ConsumerState<ResidentsScreen> createState() => _ResidentsScreenState();
+}
+
+class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
+  final _searchController = TextEditingController();
+  String _query = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final residentsAsync = ref.watch(residentsProvider);
+
+    return Scaffold(
+      backgroundColor: AppColors.grey100,
+      body: CustomScrollView(
+        slivers: [
+          // Header
+          SliverToBoxAdapter(
+            child: Container(
+              color: AppColors.surface,
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + 16,
+                left: 24,
+                right: 24,
+                bottom: 24,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Data Warga',
+                        style: GoogleFonts.playfairDisplay(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => _importCsv(context),
+                        icon: const Icon(
+                          Icons.file_upload_outlined,
+                          color: Colors.white,
+                        ),
+                        tooltip: 'Import CSV / Excel',
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  // Search bar
+                  TextField(
+                    controller: _searchController,
+                    onChanged: (v) => setState(() => _query = v.toLowerCase()),
+                    style: GoogleFonts.plusJakartaSans(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Cari nama atau nomor unit...',
+                      hintStyle: GoogleFonts.plusJakartaSans(
+                        color: Colors.white38,
+                        fontSize: 14,
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.search_rounded,
+                        color: Colors.white38,
+                        size: 20,
+                      ),
+                      filled: true,
+                      fillColor: Colors.white.withValues(alpha: 0.08),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Counter chip + Pending banner
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                residentsAsync.when(
+                  loading: () => const SizedBox(),
+                  error: (_, _) => const SizedBox(),
+                  data: (list) => Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Text(
+                            '${list.length} Warga',
+                            style: GoogleFonts.plusJakartaSans(
+                              color: AppColors.onPrimary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Pending approval banner
+                _PendingBanner(onApprovalDone: () {
+                  ref.invalidate(residentsProvider);
+                  ref.invalidate(pendingResidentsProvider);
+                }),
+              ],
+            ),
+          ),
+
+          // List
+          residentsAsync.when(
+            loading: () => const SliverFillRemaining(
+              child: Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              ),
+            ),
+            error: (e, _) =>
+                SliverFillRemaining(child: Center(child: Text('Error: $e'))),
+            data: (list) {
+              final filtered = _query.isEmpty
+                  ? list
+                  : list
+                        .where(
+                          (r) =>
+                              r.fullName.toLowerCase().contains(_query) ||
+                              (r.unitNumber?.toLowerCase().contains(_query) ??
+                                  false),
+                        )
+                        .toList();
+
+              if (filtered.isEmpty) {
+                return SliverFillRemaining(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.people_outline_rounded,
+                          size: 64,
+                          color: AppColors.grey400,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          _query.isEmpty
+                              ? 'Belum ada warga terdaftar'
+                              : 'Tidak ditemukan',
+                          style: GoogleFonts.plusJakartaSans(
+                            color: AppColors.grey600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              return SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, i) => _ResidentCard(
+                      resident: filtered[i],
+                      onEdit: () => context
+                          .push('/admin/warga/edit', extra: filtered[i])
+                          .then((_) => ref.invalidate(residentsProvider)),
+                      onTapCard: () => context
+                          .push('/admin/warga/detail', extra: filtered[i])
+                          .then((_) => ref.invalidate(residentsProvider)),
+                      onDelete: () => _confirmDelete(context, filtered[i]),
+                    ),
+                    childCount: filtered.length,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context
+            .push('/admin/warga/tambah')
+            .then((_) => ref.invalidate(residentsProvider)),
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
+        icon: const Icon(Icons.add_rounded),
+        label: Text(
+          'Tambah Warga',
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _confirmDelete(
+    BuildContext context,
+    ResidentModel resident,
+  ) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          'Hapus Warga',
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
+        ),
+        content: Text(
+          'Hapus ${resident.fullName} dari data warga? Tindakan ini tidak bisa dibatalkan.',
+          style: GoogleFonts.plusJakartaSans(fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            child: const Text('Hapus'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true && context.mounted) {
+      await ref
+          .read(residentNotifierProvider.notifier)
+          .deleteResident(resident.id);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${resident.fullName} dihapus'),
+            backgroundColor: AppColors.surface,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _importCsv(BuildContext context) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['csv'],
+        withData: true,
+      );
+
+      if (result == null || result.files.isEmpty) return;
+
+      final file = result.files.first;
+      String csvValue = '';
+
+      if (kIsWeb) {
+        if (file.bytes != null) {
+          csvValue = utf8.decode(file.bytes!);
+        }
+      } else {
+        if (file.path != null) {
+          csvValue = await File(file.path!).readAsString();
+        }
+      }
+
+      if (csvValue.isEmpty) return;
+
+      // Parsing CSV Manual
+      final lines = const LineSplitter().convert(csvValue);
+      final rows = lines
+          .where((line) => line.trim().isNotEmpty)
+          .map((line) => line.split(',').map((e) => e.trim()).toList())
+          .toList();
+
+      if (rows.length < 2) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('File CSV kosong atau format salah.'),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+        return;
+      }
+
+      // Ambil headers (baris pertama)
+      final headers = rows.first
+          .map((e) => e.toString().trim().toLowerCase())
+          .toList();
+
+      // Cek kolom wajib (nama_lengkap)
+      final nameIdx = headers.indexOf('nama_lengkap');
+      final nikIdx = headers.indexOf('nik');
+      final unitIdx = headers.indexOf('nomor_unit');
+      final phoneIdx = headers.indexOf('nomor_hp');
+      final rtIdx = headers.indexOf('rt');
+      final blockIdx = headers.indexOf('blok');
+
+      if (nameIdx == -1) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Kolom wajib "nama_lengkap" tidak ditemukan dalam CSV.',
+              ),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+        return;
+      }
+
+      final List<Map<String, dynamic>> residentsData = [];
+
+      for (int i = 1; i < rows.length; i++) {
+        final row = rows[i];
+        if (row.isEmpty || row[nameIdx].toString().trim().isEmpty) continue;
+
+        residentsData.add({
+          'full_name': row[nameIdx].toString().trim(),
+          'nik': nikIdx != -1 && row.length > nikIdx
+              ? row[nikIdx].toString().trim()
+              : '',
+          'unit_number': unitIdx != -1 && row.length > unitIdx
+              ? row[unitIdx].toString().trim()
+              : '',
+          'phone': phoneIdx != -1 && row.length > phoneIdx
+              ? row[phoneIdx].toString().trim()
+              : '',
+          'rt_number': rtIdx != -1 && row.length > rtIdx
+              ? int.tryParse(row[rtIdx].toString().trim()) ?? 1
+              : 1,
+          'block': blockIdx != -1 && row.length > blockIdx
+              ? row[blockIdx].toString().trim()
+              : '',
+        });
+      }
+
+      if (residentsData.isEmpty) return;
+
+      // Tampilkan dialog konfirmasi
+      if (context.mounted) {
+        final confirm = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(
+              'Import ${residentsData.length} Warga',
+              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
+            ),
+            content: Text(
+              'Apakah Anda yakin ingin mengimpor data ini?',
+              style: GoogleFonts.plusJakartaSans(fontSize: 14),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Batal'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: const Text('Import'),
+              ),
+            ],
+          ),
+        );
+
+        if (confirm == true && context.mounted) {
+          await ref
+              .read(residentNotifierProvider.notifier)
+              .importCsv(residentsData);
+          if (context.mounted) {
+            final state = ref.read(residentNotifierProvider);
+            if (state.hasError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Gagal import: ${state.error}'),
+                  backgroundColor: AppColors.error,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    '${residentsData.length} warga berhasil diimport',
+                  ),
+                  backgroundColor: AppColors.surface,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          }
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error membaca file: $e'),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+}
+
+// ============================================================
+// Pending Approval Banner
+// ============================================================
+class _PendingBanner extends ConsumerWidget {
+  final VoidCallback onApprovalDone;
+
+  const _PendingBanner({required this.onApprovalDone});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pendingAsync = ref.watch(pendingResidentsProvider);
+
+    return pendingAsync.when(
+      loading: () => const SizedBox(),
+      error: (_, _) => const SizedBox(),
+      data: (pending) {
+        if (pending.isEmpty) return const SizedBox();
+        return GestureDetector(
+          onTap: () => _showPendingSheet(context, ref, pending),
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFC107).withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFFFC107).withValues(alpha: 0.4)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.pending_actions_rounded, color: Color(0xFFFFC107), size: 20),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    '${pending.length} warga baru menunggu persetujuan',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFFFFC107),
+                    ),
+                  ),
+                ),
+                const Icon(Icons.chevron_right_rounded, color: Color(0xFFFFC107), size: 18),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showPendingSheet(
+    BuildContext context,
+    WidgetRef ref,
+    List<ResidentModel> pending,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => _PendingSheet(
+        pending: pending,
+        ref: ref,
+        onDone: onApprovalDone,
+      ),
+    );
+  }
+}
+
+class _PendingSheet extends StatelessWidget {
+  final List<ResidentModel> pending;
+  final WidgetRef ref;
+  final VoidCallback onDone;
+
+  const _PendingSheet({
+    required this.pending,
+    required this.ref,
+    required this.onDone,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.6,
+      maxChildSize: 0.9,
+      minChildSize: 0.4,
+      builder: (ctx, scrollCtrl) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          children: [
+            // Handle
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.grey300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
+              child: Row(
+                children: [
+                  Text(
+                    'Permintaan Bergabung',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.grey800,
+                    ),
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFC107),
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: Text(
+                      '${pending.length}',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 13,
+                        color: AppColors.grey800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: ListView.builder(
+                controller: scrollCtrl,
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+                itemCount: pending.length,
+                itemBuilder: (ctx, i) => _PendingCard(
+                  resident: pending[i],
+                  onApprove: () async {
+                    await ref
+                        .read(residentNotifierProvider.notifier)
+                        .approveResident(pending[i].id);
+                    onDone();
+                    if (ctx.mounted) Navigator.of(ctx).pop();
+                  },
+                  onReject: () async {
+                    await ref
+                        .read(residentNotifierProvider.notifier)
+                        .rejectResident(pending[i].id);
+                    onDone();
+                    if (ctx.mounted) Navigator.of(ctx).pop();
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PendingCard extends StatelessWidget {
+  final ResidentModel resident;
+  final VoidCallback onApprove;
+  final VoidCallback onReject;
+
+  const _PendingCard({
+    required this.resident,
+    required this.onApprove,
+    required this.onReject,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final joinedAt = DateFormat('d MMM yyyy', 'id_ID').format(resident.createdAt);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.grey100,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.grey200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: resident.photoUrl != null && resident.photoUrl!.isNotEmpty
+                    ? Image.network(
+                        resident.photoUrl!,
+                        width: 44,
+                        height: 44,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) => _pendingInitialsBox(resident),
+                      )
+                    : _pendingInitialsBox(resident),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      resident.fullName,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        color: AppColors.grey800,
+                      ),
+                    ),
+                    Text(
+                      [
+                        if (resident.phone != null) resident.phone!,
+                        'Daftar $joinedAt',
+                      ].join(' · '),
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 11,
+                        color: AppColors.grey500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: onReject,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.error,
+                    side: const BorderSide(color: AppColors.error),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
+                  child: Text(
+                    'Tolak',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                flex: 2,
+                child: ElevatedButton(
+                  onPressed: onApprove,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.success,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
+                  child: Text(
+                    'Setujui',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+Widget _initialsBox(ResidentModel resident, double size, double radius) {
+  return Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      color: resident.isActive ? AppColors.primary : AppColors.grey200,
+      borderRadius: BorderRadius.circular(radius),
+    ),
+    child: Center(
+      child: Text(
+        resident.initials,
+        style: GoogleFonts.plusJakartaSans(
+          color: resident.isActive ? AppColors.onPrimary : AppColors.grey600,
+          fontSize: size * 0.33,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _pendingInitialsBox(ResidentModel resident) {
+  return Container(
+    width: 44,
+    height: 44,
+    color: const Color(0xFFFFC107).withValues(alpha: 0.2),
+    child: Center(
+      child: Text(
+        resident.initials,
+        style: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w800,
+          fontSize: 15,
+          color: const Color(0xFF7A6000),
+        ),
+      ),
+    ),
+  );
+}
+
+class _ResidentCard extends StatelessWidget {
+  final ResidentModel resident;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+  final VoidCallback onTapCard;
+
+  const _ResidentCard({
+    required this.resident,
+    required this.onEdit,
+    required this.onDelete,
+    required this.onTapCard,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: ListTile(
+        onTap: onTapCard,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: resident.photoUrl != null && resident.photoUrl!.isNotEmpty
+              ? Image.network(
+                  resident.photoUrl!,
+                  width: 46,
+                  height: 46,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => _initialsBox(resident, 46, 14),
+                )
+              : _initialsBox(resident, 46, 14),
+        ),
+        title: Text(
+          resident.fullName,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: AppColors.grey800,
+          ),
+        ),
+        subtitle: Text(
+          [
+            if (resident.block != null && resident.block!.isNotEmpty) 'Blok ${resident.block}',
+            if (resident.unitNumber != null) 'No. ${resident.unitNumber}',
+            if (resident.phone != null) resident.phone!,
+          ].join(' · '),
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 12,
+            color: AppColors.grey600,
+          ),
+        ),
+        trailing: PopupMenuButton<String>(
+          onSelected: (v) {
+            if (v == 'edit') onEdit();
+            if (v == 'delete') onDelete();
+          },
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          itemBuilder: (_) => [
+            const PopupMenuItem(
+              value: 'edit',
+              child: Row(
+                children: [
+                  Icon(Icons.edit_outlined, size: 18),
+                  SizedBox(width: 10),
+                  Text('Edit'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'delete',
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.delete_outline,
+                    size: 18,
+                    color: Color(0xFFEF4444),
+                  ),
+                  SizedBox(width: 10),
+                  Text('Hapus', style: TextStyle(color: Color(0xFFEF4444))),
+                ],
+              ),
+            ),
+          ],
+          child: const Icon(Icons.more_vert_rounded, color: AppColors.grey400),
+        ),
+      ),
+    );
+  }
+}
