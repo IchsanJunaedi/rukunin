@@ -1,0 +1,55 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../core/supabase/supabase_client.dart';
+
+// Stream auth state — dipakai router untuk redirect
+final authStateProvider = StreamProvider<AuthState>((ref) {
+  final client = ref.watch(supabaseClientProvider);
+  return client.auth.onAuthStateChange;
+});
+
+// Data profil user yang sedang login
+final currentProfileProvider = FutureProvider<Map<String, dynamic>?>((ref) async {
+  final client = ref.watch(supabaseClientProvider);
+  final userId = client.auth.currentUser?.id;
+  if (userId == null) return null;
+
+  final data = await client
+      .from('profiles')
+      .select()
+      .eq('id', userId)
+      .maybeSingle();
+
+  return data;
+});
+
+// Notifier untuk aksi login & logout
+class AuthNotifier extends AsyncNotifier<void> {
+  @override
+  Future<void> build() async {}
+
+  Future<void> signIn({
+    required String email,
+    required String password,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final client = ref.read(supabaseClientProvider);
+      await client.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+    });
+  }
+
+  Future<void> signOut() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final client = ref.read(supabaseClientProvider);
+      await client.auth.signOut();
+    });
+  }
+}
+
+final authNotifierProvider =
+    AsyncNotifierProvider<AuthNotifier, void>(AuthNotifier.new);
