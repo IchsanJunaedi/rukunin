@@ -1,1 +1,245 @@
-// TODO: Definisi semua route navigasi menggunakan go_router
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../features/auth/screens/login_screen.dart';
+import '../features/auth/screens/register_admin_screen.dart';
+import '../features/auth/screens/register_resident_screen.dart';
+import '../features/auth/screens/pending_approval_screen.dart';
+import '../features/dashboard/screens/admin_dashboard_screen.dart';
+import '../features/residents/screens/residents_screen.dart';
+import '../features/residents/screens/resident_detail_screen.dart';
+import '../features/residents/screens/add_edit_resident_screen.dart';
+import '../features/residents/models/resident_model.dart';
+import '../features/invoices/screens/invoices_screen.dart';
+import '../features/reports/screens/reports_screen.dart';
+import '../features/ai_assistant/screens/ai_assistant_screen.dart';
+import '../features/community/screens/community_settings_screen.dart';
+import '../features/invoices/screens/billing_types_screen.dart';
+import '../features/invoices/screens/create_invoice_screen.dart';
+import '../features/settings/screens/payment_settings_screen.dart';
+import '../features/expenses/screens/expenses_screen.dart';
+import '../features/letters/screens/letters_screen.dart';
+import '../features/letters/screens/create_letter_screen.dart';
+import '../features/settings/screens/admin_profile_screen.dart';
+import '../features/resident_portal/screens/resident_home_screen.dart';
+import '../features/resident_portal/screens/resident_invoices_screen.dart';
+import '../features/resident_portal/screens/resident_profile_screen.dart';
+import '../features/announcements/screens/announcements_screen.dart';
+import '../features/announcements/screens/create_announcement_screen.dart';
+import '../features/marketplace/screens/marketplace_screen.dart';
+import '../features/marketplace/screens/add_listing_screen.dart';
+import '../features/marketplace/screens/listing_detail_screen.dart';
+import '../features/marketplace/models/marketplace_listing_model.dart';
+import '../features/resident_portal/screens/resident_kas_screen.dart';
+import '../shell/admin_shell.dart';
+import '../shell/resident_shell.dart';
+
+class _AuthChangeNotifier extends ChangeNotifier {
+  _AuthChangeNotifier() {
+    Supabase.instance.client.auth.onAuthStateChange.listen((_) {
+      notifyListeners();
+    });
+  }
+}
+
+final routerProvider = Provider<GoRouter>((ref) {
+  final authNotifier = _AuthChangeNotifier();
+  ref.onDispose(authNotifier.dispose);
+
+  return GoRouter(
+    initialLocation: '/login',
+    refreshListenable: authNotifier,
+    redirect: (BuildContext context, GoRouterState state) async {
+      final session = Supabase.instance.client.auth.currentSession;
+      final isLoggedIn = session != null;
+      final loc = state.matchedLocation;
+
+      const authPages = ['/login', '/register/admin', '/register/resident'];
+
+      if (!isLoggedIn) {
+        if (authPages.contains(loc)) return null;
+        return '/login';
+      }
+
+      // Logged in — fetch profile to determine role & status
+      final userId = Supabase.instance.client.auth.currentUser?.id;
+      if (userId == null) return '/login';
+
+      final profile = await Supabase.instance.client
+          .from('profiles')
+          .select('role, status')
+          .eq('id', userId)
+          .maybeSingle();
+
+      // No profile yet (race condition during registration) — don't interfere
+      if (profile == null) return null;
+
+      final role = profile['role'] as String?;
+      final status = profile['status'] as String?;
+
+      // Pending user → can only access /pending-approval
+      if (status == 'pending') {
+        return loc == '/pending-approval' ? null : '/pending-approval';
+      }
+
+      // Active user on auth/register pages → redirect to home
+      if (authPages.contains(loc)) {
+        if (role == 'admin') return '/admin';
+        if (role == 'resident') return '/resident';
+        return '/login';
+      }
+
+      return null;
+    },
+    routes: [
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/register/admin',
+        builder: (context, state) => const RegisterAdminScreen(),
+      ),
+      GoRoute(
+        path: '/register/resident',
+        builder: (context, state) => const RegisterResidentScreen(),
+      ),
+      GoRoute(
+        path: '/pending-approval',
+        builder: (context, state) => const PendingApprovalScreen(),
+      ),
+      GoRoute(
+        path: '/admin/profil',
+        builder: (context, state) => const AdminProfileScreen(),
+      ),
+      GoRoute(
+        path: '/admin/pengaturan-rek',
+        builder: (context, state) => const PaymentSettingsScreen(),
+      ),
+      // Resident management routes — full-screen, no bottom nav
+      GoRoute(
+        path: '/admin/warga/detail',
+        builder: (context, state) =>
+            ResidentDetailScreen(resident: state.extra as ResidentModel),
+      ),
+      GoRoute(
+        path: '/admin/warga/tambah',
+        builder: (context, state) => const AddEditResidentScreen(),
+      ),
+      GoRoute(
+        path: '/admin/warga/edit',
+        builder: (context, state) =>
+            AddEditResidentScreen(resident: state.extra as ResidentModel),
+      ),
+
+      // Routes yang di-push di luar ShellRoute agar tidak bentrok bottom nav
+      GoRoute(
+        path: '/resident/kas',
+        builder: (context, state) => const ResidentKasScreen(),
+      ),
+      GoRoute(
+        path: '/resident/marketplace/tambah',
+        builder: (context, state) => const AddListingScreen(),
+      ),
+      GoRoute(
+        path: '/resident/marketplace/detail',
+        builder: (context, state) =>
+            ListingDetailScreen(listing: state.extra as MarketplaceListingModel),
+      ),
+
+      // Admin routes
+      ShellRoute(
+        builder: (context, state, child) => AdminShell(child: child),
+        routes: [
+          GoRoute(
+            path: '/admin',
+            builder: (context, state) => const AdminDashboardScreen(),
+          ),
+          GoRoute(
+            path: '/admin/warga',
+            builder: (context, state) => const ResidentsScreen(),
+          ),
+          GoRoute(
+            path: '/admin/tagihan',
+            builder: (context, state) => const InvoicesScreen(),
+          ),
+          GoRoute(
+            path: '/admin/tagihan/buat',
+            builder: (context, state) => const CreateInvoiceScreen(),
+          ),
+          GoRoute(
+            path: '/admin/pengeluaran',
+            builder: (context, state) => const ExpensesScreen(),
+          ),
+          GoRoute(
+            path: '/admin/laporan',
+            builder: (context, state) => const ReportsScreen(),
+          ),
+          GoRoute(
+            path: '/admin/ai',
+            builder: (context, state) => const AiAssistantScreen(),
+          ),
+          GoRoute(
+            path: '/admin/surat',
+            builder: (context, state) => const LettersScreen(),
+          ),
+          GoRoute(
+            path: '/admin/surat/buat',
+            builder: (context, state) => const CreateLetterScreen(),
+          ),
+          GoRoute(
+            path: '/admin/pengumuman',
+            builder: (context, state) => const AnnouncementsScreen(isAdmin: true),
+          ),
+          GoRoute(
+            path: '/admin/pengumuman/buat',
+            builder: (context, state) => const CreateAnnouncementScreen(),
+          ),
+          GoRoute(
+            path: '/admin/pengaturan',
+            builder: (context, state) => const CommunitySettingsScreen(),
+          ),
+
+          GoRoute(
+            path: '/admin/pengaturan-iuran',
+            builder: (context, state) => const BillingTypesScreen(),
+          ),
+        ],
+      ),
+
+      // Resident routes
+      ShellRoute(
+        builder: (context, state, child) => ResidentShell(child: child),
+        routes: [
+          GoRoute(
+            path: '/resident',
+            builder: (context, state) => const ResidentHomeScreen(),
+          ),
+          GoRoute(
+            path: '/resident/tagihan',
+            builder: (context, state) => const ResidentInvoicesScreen(),
+          ),
+          GoRoute(
+            path: '/resident/akun',
+            builder: (context, state) => const ResidentProfileScreen(),
+          ),
+          GoRoute(
+            path: '/resident/pengumuman',
+            builder: (context, state) => const AnnouncementsScreen(),
+          ),
+          GoRoute(
+            path: '/resident/marketplace',
+            builder: (context, state) => const MarketplaceScreen(),
+          ),
+        ],
+      ),
+    ],
+    errorBuilder: (context, state) => Scaffold(
+      body: Center(child: Text('Halaman tidak ditemukan: ${state.error}')),
+    ),
+  );
+});
+
+
