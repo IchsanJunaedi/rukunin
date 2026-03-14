@@ -52,3 +52,24 @@ app.*.map.json
 # Supabase local secrets
 supabase/.branches
 supabase/.temp
+
+# Firebase config — contains credentials, jangan commit
+android/app/google-services.json
+ios/GoogleService-Info.plist
+
+# Local IDE & debug files
+.vscode/
+.claude/settings.local.json
+devtools_options.yaml
+
+# Debug/temp scripts
+analyze.txt
+error.txt
+flutter
+check_db.dart
+create_dummy.dart
+fix_script.dart
+lib/test_share.dart
+
+# Android build artifacts
+android/build/
