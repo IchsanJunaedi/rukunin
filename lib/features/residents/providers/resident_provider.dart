@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/supabase/supabase_client.dart';
+import '../../notifications/providers/notifications_provider.dart';
 import '../models/resident_model.dart';
 import '../models/family_member.dart';
 
@@ -175,10 +176,31 @@ class ResidentNotifier extends AsyncNotifier<void> {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final client = ref.read(supabaseClientProvider);
+
+      // Ambil community_id dari profil warga untuk notifikasi
+      final profile = await client
+          .from('profiles')
+          .select('community_id')
+          .eq('id', id)
+          .maybeSingle();
+      final communityId = profile?['community_id'] as String?;
+
       await client
           .from('profiles')
           .update({'status': 'active'})
           .eq('id', id);
+
+      // Insert notifikasi selamat datang (best-effort)
+      if (communityId != null) {
+        await insertNotification(
+          client: client,
+          communityId: communityId,
+          userId: id,
+          type: 'join_approved',
+          title: 'Selamat Datang!',
+          body: 'Akunmu sudah disetujui admin. Selamat bergabung!',
+        );
+      }
     });
     ref.invalidate(residentsProvider);
     ref.invalidate(pendingResidentsProvider);
@@ -188,6 +210,27 @@ class ResidentNotifier extends AsyncNotifier<void> {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final client = ref.read(supabaseClientProvider);
+
+      // Ambil community_id untuk notifikasi sebelum hapus profil
+      final profile = await client
+          .from('profiles')
+          .select('community_id')
+          .eq('id', id)
+          .maybeSingle();
+      final communityId = profile?['community_id'] as String?;
+
+      // Insert notifikasi penolakan sebelum hapus profil
+      if (communityId != null) {
+        await insertNotification(
+          client: client,
+          communityId: communityId,
+          userId: id,
+          type: 'join_rejected',
+          title: 'Pendaftaran Ditolak',
+          body: 'Maaf, pendaftaranmu tidak disetujui admin. Hubungi admin untuk info lebih lanjut.',
+        );
+      }
+
       // Hapus profil — user auth tetap ada tapi tidak bisa masuk ke komunitas
       await client.from('profiles').delete().eq('id', id);
     });

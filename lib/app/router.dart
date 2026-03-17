@@ -38,6 +38,7 @@ import '../features/resident_portal/screens/resident_kas_screen.dart';
 import '../features/auth/screens/register_resident_step2_screen.dart';
 import '../features/auth/models/register_step1_data.dart';
 import '../features/help/screens/help_center_screen.dart';
+import '../features/notifications/screens/notifications_screen.dart';
 import '../shell/admin_shell.dart';
 import '../shell/resident_shell.dart';
 
@@ -155,6 +156,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/admin/warga/edit',
         builder: (context, state) =>
             AddEditResidentScreen(resident: state.extra as ResidentModel),
+      ),
+
+      // Notification routes — full-screen, no bottom nav
+      GoRoute(
+        path: '/resident/notifikasi',
+        builder: (context, state) => const NotificationsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/notifikasi',
+        builder: (context, state) => const NotificationsScreen(),
       ),
 
       // Routes yang di-push di luar ShellRoute agar tidak bentrok bottom nav

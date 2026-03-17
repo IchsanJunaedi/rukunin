@@ -7,6 +7,7 @@ import '../../../app/theme.dart';
 import '../../../core/supabase/supabase_client.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/resident_invoices_provider.dart';
+import '../../notifications/providers/notifications_provider.dart';
 
 class ResidentProfileScreen extends ConsumerStatefulWidget {
   const ResidentProfileScreen({super.key});
@@ -91,6 +92,41 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
       appBar: AppBar(
         title: const Text('Akun Saya'),
         actions: [
+          // Bell icon dengan badge unread count
+          Stack(
+            children: [
+              IconButton(
+                onPressed: () => context.push('/resident/notifikasi'),
+                icon: const Icon(Icons.notifications_outlined),
+              ),
+              ref.watch(unreadCountProvider).maybeWhen(
+                data: (count) => count > 0
+                    ? Positioned(
+                        right: 8,
+                        top: 8,
+                        child: Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: const BoxDecoration(
+                            color: AppColors.error,
+                            shape: BoxShape.circle,
+                          ),
+                          constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                          child: Text(
+                            '$count',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
+                orElse: () => const SizedBox(),
+              ),
+            ],
+          ),
           IconButton(
             onPressed: () => _logout(context, ref),
             icon: const Icon(Icons.logout_rounded, color: AppColors.error),
