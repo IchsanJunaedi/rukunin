@@ -94,7 +94,14 @@ class RegisterService {
     final userId = response.user?.id;
     if (userId == null) throw Exception('Gagal membuat akun. Coba lagi.');
 
-    // 2. Insert resident profile with status=pending
+    // 2. Pastikan ada session aktif — jika email confirmation ON, signUp()
+    //    tidak langsung memberikan session sehingga insert berikutnya pakai anon
+    //    role dan ditolak RLS. Sign in eksplisit untuk mendapat session.
+    if (response.session == null) {
+      await client.auth.signInWithPassword(email: email, password: password);
+    }
+
+    // 3. Insert resident profile with status=pending
     await client.from('profiles').insert({
       'id': userId,
       'community_id': communityId,
