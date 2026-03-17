@@ -111,9 +111,12 @@ class RegisterService {
     }
     if (response.user == null) throw Exception('Gagal membuat akun. Coba lagi.');
 
-    // Sign out agar user tahu harus konfirmasi email (jika fitur aktif)
-    // atau tunggu approval admin (status pending).
-    await client.auth.signOut();
+    // Jika tidak ada session (email confirmation ON), sign out agar bersih.
+    // Jika ada session (email confirmation OFF), biarkan — router akan redirect
+    // ke /pending-approval karena status = 'pending'.
+    if (response.session == null) {
+      await client.auth.signOut();
+    }
   }
 }
 

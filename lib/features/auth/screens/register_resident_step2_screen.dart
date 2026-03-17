@@ -63,16 +63,7 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
         block: _blockCtrl.text.trim(),
         rtNumber: int.tryParse(_rtCtrl.text.trim()),
       );
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Pendaftaran berhasil! Silakan login dan tunggu persetujuan admin.'),
-          backgroundColor: Color(0xFF22C55E),
-          behavior: SnackBarBehavior.floating,
-          duration: Duration(seconds: 4),
-        ),
-      );
-      context.go('/login');
+      if (mounted) context.go('/login');
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
