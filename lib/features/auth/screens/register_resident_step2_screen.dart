@@ -254,29 +254,23 @@ class _DarkTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
   final IconData icon;
-  final bool obscureText;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
-  final String? Function(String?)? validator;
 
   const _DarkTextField({
     required this.controller,
     required this.hint,
     required this.icon,
-    this.obscureText = false,
     this.keyboardType,
     this.textInputAction,
-    this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      obscureText: obscureText,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
-      validator: validator,
       style: GoogleFonts.plusJakartaSans(
           color: _kWhite, fontSize: 15, fontWeight: FontWeight.w500),
       decoration: InputDecoration(
