@@ -147,11 +147,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 padding: const EdgeInsets.fromLTRB(28, 36, 28, 36),
                 child: Form(
                   key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Masuk ke akunmu',
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Masuk ke akunmu',
                         style: GoogleFonts.plusJakartaSans(
                           color: Colors.white.withValues(alpha: 0.5),
                           fontSize: 13,
@@ -221,7 +222,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         ),
                       ),
 
-                      const Spacer(),
+                      const SizedBox(height: 32),
 
                       // Tombol Masuk
                       GestureDetector(
@@ -279,6 +280,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         ],
                       ),
                     ],
+                  ),
                   ),
                 ),
               ),
