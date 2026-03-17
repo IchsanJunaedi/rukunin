@@ -26,6 +26,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
   final _titleCtrl = TextEditingController();
   final _descCtrl = TextEditingController();
   final _priceCtrl = TextEditingController();
+  final _stockCtrl = TextEditingController(text: '1');
   String _category = 'barang';
   final List<XFile> _pickedImages = [];
   /// URL gambar yang sudah ada (dari Supabase), hanya ada di mode edit
@@ -53,6 +54,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
       _priceCtrl.text = existing.price != null && existing.price! > 0
           ? existing.price.toString()
           : '';
+      _stockCtrl.text = existing.stock.toString();
       _category = existing.category;
       _existingImageUrls = List<String>.from(existing.images);
     }
@@ -63,6 +65,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
     _titleCtrl.dispose();
     _descCtrl.dispose();
     _priceCtrl.dispose();
+    _stockCtrl.dispose();
     super.dispose();
   }
 
@@ -115,6 +118,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
       final price = _priceCtrl.text.isNotEmpty
           ? int.tryParse(_priceCtrl.text.replaceAll('.', ''))
           : null;
+      final stock = int.tryParse(_stockCtrl.text) ?? 1;
 
       if (_isEditMode) {
         // ── MODE EDIT ──
@@ -146,6 +150,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
                   : null,
               price: price,
               imageUrls: newUrls,
+              stock: stock,
             );
 
         if (mounted) {
@@ -181,6 +186,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
                   : null,
               price: price,
               imageUrls: imageUrls,
+              stock: stock,
             );
 
         if (mounted) {
@@ -430,6 +436,22 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
               hint: 'Contoh: 25000',
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            ),
+            const SizedBox(height: 18),
+            // ── Stok ──
+            _label('Stok'),
+            const SizedBox(height: 8),
+            _textField(
+              controller: _stockCtrl,
+              hint: 'Jumlah stok tersedia',
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              validator: (v) {
+                if (v == null || v.isEmpty) return 'Stok wajib diisi';
+                final n = int.tryParse(v);
+                if (n == null || n < 0) return 'Stok harus angka ≥ 0';
+                return null;
+              },
             ),
             const SizedBox(height: 18),
             // ── Deskripsi ──

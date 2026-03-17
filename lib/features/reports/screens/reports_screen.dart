@@ -87,24 +87,71 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
       ),
       body: Column(
         children: [
-          // Filter Header
+          // Filter Mode Chips
           Container(
             color: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.chevron_left),
-                  onPressed: () {
-                    if (state.selectedMonth == 1) {
-                      notifier.changePeriod(12, state.selectedYear - 1);
-                    } else {
-                      notifier.changePeriod(state.selectedMonth - 1, state.selectedYear);
-                    }
-                  },
-                ),
-                Text(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _filterChip('Bulan Ini', ReportFilterMode.currentMonth, state.filterMode, notifier),
+                  const SizedBox(width: 8),
+                  _filterChip('3 Bulan', ReportFilterMode.threeMonths, state.filterMode, notifier),
+                  const SizedBox(width: 8),
+                  _filterChip('6 Bulan', ReportFilterMode.sixMonths, state.filterMode, notifier),
+                  const SizedBox(width: 8),
+                  _filterChip('Pilih Bulan', ReportFilterMode.custom, state.filterMode, notifier),
+                ],
+              ),
+            ),
+          ),
+
+          // Month Selector (only shown in custom mode)
+          if (state.filterMode == ReportFilterMode.custom)
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.chevron_left),
+                    onPressed: () {
+                      if (state.selectedMonth == 1) {
+                        notifier.changePeriod(12, state.selectedYear - 1);
+                      } else {
+                        notifier.changePeriod(state.selectedMonth - 1, state.selectedYear);
+                      }
+                    },
+                  ),
+                  Text(
+                    '$monthName ${state.selectedYear}',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: AppColors.grey800,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.chevron_right),
+                    onPressed: () {
+                      if (state.selectedMonth == 12) {
+                        notifier.changePeriod(1, state.selectedYear + 1);
+                      } else {
+                        notifier.changePeriod(state.selectedMonth + 1, state.selectedYear);
+                      }
+                    },
+                  ),
+                ],
+              ),
+            )
+          else
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Center(
+                child: Text(
                   '$monthName ${state.selectedYear}',
                   style: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w700,
@@ -112,19 +159,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                     color: AppColors.grey800,
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.chevron_right),
-                  onPressed: () {
-                    if (state.selectedMonth == 12) {
-                      notifier.changePeriod(1, state.selectedYear + 1);
-                    } else {
-                      notifier.changePeriod(state.selectedMonth + 1, state.selectedYear);
-                    }
-                  },
-                ),
-              ],
+              ),
             ),
-          ),
           
           Expanded(
             child: state.isLoading
@@ -138,7 +174,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                           children: [
                             _buildSummaryCards(state.currentMonthReport),
                             const SizedBox(height: 24),
-                            _buildChartSection(state.lastSixMonths),
+                            _buildChartSection(state.lastSixMonths, state.filterMode),
                           ],
                         ),
                       ),
@@ -245,11 +281,41 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     );
   }
 
-  Widget _buildChartSection(List<dynamic> sixMonths) {
+  Widget _filterChip(String label, ReportFilterMode mode, ReportFilterMode current, ReportNotifier notifier) {
+    final isSelected = current == mode;
+    return GestureDetector(
+      onTap: () => notifier.setFilterMode(mode),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primary : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: isSelected ? AppColors.primary : AppColors.grey300),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 13,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+            color: isSelected ? AppColors.onPrimary : AppColors.grey600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChartSection(List<dynamic> sixMonths, ReportFilterMode filterMode) {
     if (sixMonths.isEmpty) return const SizedBox();
-    
+
+    // Slice based on filter mode
+    final barsToShow = filterMode == ReportFilterMode.threeMonths ? 3 : 6;
+    final visibleMonths = sixMonths.length > barsToShow
+        ? sixMonths.sublist(sixMonths.length - barsToShow)
+        : sixMonths;
+
     // Reverse array agar bulan paling lama di kiri
-    final reversed = List.from(sixMonths);
+    final reversed = List.from(visibleMonths);
     
     // Hitung maxY biar grafik proper
     double maxY = 100000;
@@ -266,7 +332,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           Text('Kas 6 Bulan Terakhir', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 16)),
+           Text(
+             filterMode == ReportFilterMode.threeMonths ? 'Kas 3 Bulan Terakhir' : 'Kas 6 Bulan Terakhir',
+             style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 16),
+           ),
            const SizedBox(height: 24),
            SizedBox(
              height: 200,
