@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -165,6 +166,10 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                         icon: Icons.badge_rounded,
                         keyboardType: TextInputType.number,
                         textInputAction: TextInputAction.next,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(16),
+                        ],
                       ),
                       const SizedBox(height: 12),
                       _DarkTextField(
@@ -172,6 +177,7 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                         hint: 'Blok (contoh: A)',
                         icon: Icons.home_work_rounded,
                         textInputAction: TextInputAction.next,
+                        inputFormatters: [LengthLimitingTextInputFormatter(2)],
                       ),
                       const SizedBox(height: 12),
                       _DarkTextField(
@@ -180,6 +186,10 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                         icon: Icons.numbers_rounded,
                         keyboardType: TextInputType.number,
                         textInputAction: TextInputAction.next,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(3),
+                        ],
                       ),
                       const SizedBox(height: 12),
                       _DarkTextField(
@@ -188,6 +198,10 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                         icon: Icons.location_on_rounded,
                         keyboardType: TextInputType.number,
                         textInputAction: TextInputAction.done,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(3),
+                        ],
                       ),
                       const Spacer(),
                       // Tombol Daftar
@@ -256,6 +270,7 @@ class _DarkTextField extends StatelessWidget {
   final IconData icon;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
+  final List<TextInputFormatter>? inputFormatters;
 
   const _DarkTextField({
     required this.controller,
@@ -263,6 +278,7 @@ class _DarkTextField extends StatelessWidget {
     required this.icon,
     this.keyboardType,
     this.textInputAction,
+    this.inputFormatters,
   });
 
   @override
@@ -271,6 +287,7 @@ class _DarkTextField extends StatelessWidget {
       controller: controller,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
+      inputFormatters: inputFormatters,
       style: GoogleFonts.plusJakartaSans(
           color: _kWhite, fontSize: 15, fontWeight: FontWeight.w500),
       decoration: InputDecoration(

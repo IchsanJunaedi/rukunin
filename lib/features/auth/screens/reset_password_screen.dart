@@ -63,11 +63,13 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen>
         ),
       );
     } else if (!authState.hasError && mounted) {
+      ref.read(recoveryModeProvider.notifier).setRecovery(false);
       setState(() => _success = true);
     }
   }
 
   String _parseError(String error) {
+    debugPrint('[ResetPassword] error: $error');
     if (error.contains('network')) return 'Tidak ada koneksi internet.';
     if (error.contains('same password')) return 'Password baru tidak boleh sama dengan yang lama.';
     if (error.contains('session')) return 'Sesi telah berakhir. Minta link reset ulang.';

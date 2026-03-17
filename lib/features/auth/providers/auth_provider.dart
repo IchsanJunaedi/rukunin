@@ -3,6 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/supabase/supabase_client.dart';
 
+// Flag apakah sedang dalam mode recovery (reset password via link email)
+class RecoveryModeNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void setRecovery(bool value) => state = value;
+}
+
+final recoveryModeProvider =
+    NotifierProvider<RecoveryModeNotifier, bool>(RecoveryModeNotifier.new);
+
 // Stream auth state — dipakai router untuk redirect
 final authStateProvider = StreamProvider<AuthState>((ref) {
   final client = ref.watch(supabaseClientProvider);

@@ -9,6 +9,7 @@ import '../features/auth/screens/register_resident_screen.dart';
 import '../features/auth/screens/pending_approval_screen.dart';
 import '../features/auth/screens/forgot_password_screen.dart';
 import '../features/auth/screens/reset_password_screen.dart';
+import '../features/auth/providers/auth_provider.dart';
 import '../features/dashboard/screens/admin_dashboard_screen.dart';
 import '../features/residents/screens/residents_screen.dart';
 import '../features/residents/screens/resident_detail_screen.dart';
@@ -42,44 +43,85 @@ import '../features/notifications/screens/notifications_screen.dart';
 import '../shell/admin_shell.dart';
 import '../shell/resident_shell.dart';
 
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _adminShellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'adminShell');
+final _residentShellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'residentShell');
+
 class _AuthChangeNotifier extends ChangeNotifier {
-  _AuthChangeNotifier() {
-    Supabase.instance.client.auth.onAuthStateChange.listen((_) {
+  Map<String, dynamic>? cachedProfile;
+
+  _AuthChangeNotifier({required this.onRecovery, required this.onRecoveryEnd}) {
+    // Fetch profile awal saat app launch (user mungkin sudah login)
+    _refreshProfile().then((_) => notifyListeners());
+
+    Supabase.instance.client.auth.onAuthStateChange.listen((data) async {
+      if (data.event == AuthChangeEvent.passwordRecovery) {
+        onRecovery();
+      } else if (data.event == AuthChangeEvent.userUpdated ||
+          data.event == AuthChangeEvent.signedOut) {
+        onRecoveryEnd();
+      }
+      // Fetch profile dulu sebelum notify — redirect sudah punya data saat dipanggil
+      await _refreshProfile();
       notifyListeners();
     });
   }
+
+  Future<void> _refreshProfile() async {
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) {
+      cachedProfile = null;
+      return;
+    }
+    try {
+      cachedProfile = await Supabase.instance.client
+          .from('profiles')
+          .select('role, status')
+          .eq('id', userId)
+          .maybeSingle();
+    } catch (_) {
+      // Pertahankan cache lama kalau query gagal
+    }
+  }
+
+  final VoidCallback onRecovery;
+  final VoidCallback onRecoveryEnd;
 }
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authNotifier = _AuthChangeNotifier();
+  final authNotifier = _AuthChangeNotifier(
+    onRecovery: () => ref.read(recoveryModeProvider.notifier).setRecovery(true),
+    onRecoveryEnd: () => ref.read(recoveryModeProvider.notifier).setRecovery(false),
+  );
   ref.onDispose(authNotifier.dispose);
 
   return GoRouter(
+    navigatorKey: _rootNavigatorKey,
     initialLocation: '/login',
     refreshListenable: authNotifier,
-    redirect: (BuildContext context, GoRouterState state) async {
+    redirect: (BuildContext context, GoRouterState state) {
       final session = Supabase.instance.client.auth.currentSession;
       final isLoggedIn = session != null;
       final loc = state.matchedLocation;
 
-      const authPages = ['/login', '/register/admin', '/register/resident', '/register/resident/step2', '/forgot-password', '/reset-password', '/bantuan'];
+      const authPages = ['/login', '/register/admin', '/register/resident', '/register/resident/step2', '/forgot-password', '/reset-password'];
+
+      // Halaman publik — bisa diakses oleh siapa saja, login maupun tidak
+      if (loc == '/bantuan') return null;
+
+      // Saat recovery mode aktif, user harus tetap di /reset-password
+      final isRecoveryMode = ref.read(recoveryModeProvider);
+      if (isRecoveryMode && loc == '/reset-password') return null;
 
       if (!isLoggedIn) {
         if (authPages.contains(loc)) return null;
         return '/login';
       }
 
-      // Logged in — fetch profile to determine role & status
-      final userId = Supabase.instance.client.auth.currentUser?.id;
-      if (userId == null) return '/login';
+      // Baca dari cache — sudah di-fetch sebelum notifyListeners dipanggil
+      final profile = authNotifier.cachedProfile;
 
-      final profile = await Supabase.instance.client
-          .from('profiles')
-          .select('role, status')
-          .eq('id', userId)
-          .maybeSingle();
-
-      // No profile yet (race condition during registration) — don't interfere
+      // Profile belum siap (race condition saat registrasi) — jangan interfere
       if (profile == null) return null;
 
       final role = profile['role'] as String?;
@@ -185,6 +227,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // Admin routes
       ShellRoute(
+        navigatorKey: _adminShellNavigatorKey,
         builder: (context, state, child) => AdminShell(child: child),
         routes: [
           GoRoute(
@@ -245,6 +288,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // Resident routes
       ShellRoute(
+        navigatorKey: _residentShellNavigatorKey,
         builder: (context, state, child) => ResidentShell(child: child),
         routes: [
           GoRoute(

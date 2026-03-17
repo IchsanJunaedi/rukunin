@@ -241,13 +241,21 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
                         controller: _adminNameCtrl,
                         hint: 'Nama Lengkap Kamu (contoh: Budi Santoso)',
                         icon: Icons.person_rounded,
-                        validator: (v) => v == null || v.trim().isEmpty ? 'Nama wajib diisi' : null,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
+                        ],
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) return 'Nama wajib diisi';
+                          if (RegExp(r'[0-9]').hasMatch(v)) return 'Nama hanya boleh huruf';
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 10),
                       _DarkTextField(
                         controller: _nameCtrl,
                         hint: 'Nama RT/RW (contoh: RW 03 Bukit Indah)',
                         icon: Icons.home_work_rounded,
+                        inputFormatters: [LengthLimitingTextInputFormatter(50)],
                         validator: (v) => v == null || v.trim().isEmpty ? 'Nama RT/RW wajib diisi' : null,
                       ),
                       const SizedBox(height: 10),
@@ -255,6 +263,11 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
                         controller: _rwCtrl,
                         hint: 'Nomor RW (contoh: 003)',
                         icon: Icons.tag_rounded,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(3),
+                        ],
                         validator: (v) => v == null || v.trim().isEmpty ? 'Nomor RW wajib diisi' : null,
                       ),
                       const SizedBox(height: 10),
@@ -263,6 +276,7 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
                         hint: 'No HP Admin (contoh: 08123456789)',
                         icon: Icons.phone_rounded,
                         keyboardType: TextInputType.phone,
+                        inputFormatters: [LengthLimitingTextInputFormatter(14)],
                         validator: (v) => v == null || v.trim().isEmpty ? 'No HP wajib diisi' : null,
                       ),
                       const SizedBox(height: 10),
@@ -271,6 +285,7 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
                         hint: 'Email',
                         icon: Icons.alternate_email_rounded,
                         keyboardType: TextInputType.emailAddress,
+                        inputFormatters: [LengthLimitingTextInputFormatter(50)],
                         validator: (v) {
                           if (v == null || v.isEmpty) return 'Email wajib diisi';
                           if (!v.contains('@')) return 'Format email tidak valid';
@@ -283,6 +298,7 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
                         hint: 'Password (min. 6 karakter)',
                         icon: Icons.lock_outline_rounded,
                         obscureText: _obscurePass,
+                        inputFormatters: [LengthLimitingTextInputFormatter(50)],
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscurePass ? Icons.visibility_off_outlined : Icons.visibility_outlined,
@@ -303,6 +319,7 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
                         hint: 'Konfirmasi Password',
                         icon: Icons.lock_rounded,
                         obscureText: true,
+                        inputFormatters: [LengthLimitingTextInputFormatter(50)],
                         validator: (v) {
                           if (v != _passCtrl.text) return 'Password tidak sama';
                           return null;
@@ -356,6 +373,7 @@ class _DarkTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final Widget? suffixIcon;
+  final List<TextInputFormatter>? inputFormatters;
 
   const _DarkTextField({
     required this.controller,
@@ -365,6 +383,7 @@ class _DarkTextField extends StatelessWidget {
     this.keyboardType,
     this.validator,
     this.suffixIcon,
+    this.inputFormatters,
   });
 
   @override
@@ -374,6 +393,7 @@ class _DarkTextField extends StatelessWidget {
       obscureText: obscureText,
       keyboardType: keyboardType,
       validator: validator,
+      inputFormatters: inputFormatters,
       style: GoogleFonts.plusJakartaSans(color: _kWhite, fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,

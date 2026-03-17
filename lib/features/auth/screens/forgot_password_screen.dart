@@ -64,6 +64,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen>
   }
 
   String _parseError(String error) {
+    debugPrint('[ForgotPassword] error: $error');
     if (error.contains('network')) return 'Tidak ada koneksi internet.';
     if (error.contains('rate limit')) return 'Terlalu banyak percobaan. Tunggu sebentar.';
     return 'Terjadi kesalahan. Coba lagi.';
