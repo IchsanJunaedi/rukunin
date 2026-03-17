@@ -77,7 +77,7 @@ class RegisterService {
   }
 
   /// Warga mendaftar menggunakan communityId yang sudah divalidasi.
-  /// Profile dibuat dengan status='pending' hingga disetujui admin.
+  /// Profile dibuat via DB trigger dari user_metadata — tidak butuh session aktif.
   Future<void> registerResident({
     required String communityId,
     required String fullName,
@@ -89,32 +89,31 @@ class RegisterService {
     String? block,
     int? rtNumber,
   }) async {
-    // 1. Create auth user
-    final response = await client.auth.signUp(email: email, password: password);
-    final userId = response.user?.id;
-    if (userId == null) throw Exception('Gagal membuat akun. Coba lagi.');
+    // 1. Create auth user + pass profile data sebagai user_metadata.
+    //    DB trigger handle_new_user() akan auto-insert ke profiles.
+    final response = await client.auth.signUp(
+      email: email,
+      password: password,
+      data: {
+        'community_id': communityId,
+        'full_name': fullName,
+        'phone': phone,
+        'nik': (nik == null || nik.isEmpty) ? null : nik,
+        'unit_number': (unitNumber == null || unitNumber.isEmpty) ? null : unitNumber,
+        'block': (block == null || block.isEmpty) ? null : block.toUpperCase(),
+        'rt_number': rtNumber ?? 1,
+      },
+    );
 
-    // 2. Pastikan ada session aktif — jika email confirmation ON, signUp()
-    //    tidak langsung memberikan session sehingga insert berikutnya pakai anon
-    //    role dan ditolak RLS. Sign in eksplisit untuk mendapat session.
-    if (response.session == null) {
-      await client.auth.signInWithPassword(email: email, password: password);
+    // identities kosong = email sudah terdaftar (Supabase tidak error untuk cegah enumeration)
+    if (response.user?.identities?.isEmpty == true) {
+      throw Exception('Email sudah terdaftar. Gunakan email lain atau login.');
     }
+    if (response.user == null) throw Exception('Gagal membuat akun. Coba lagi.');
 
-    // 3. Insert resident profile with status=pending
-    await client.from('profiles').insert({
-      'id': userId,
-      'community_id': communityId,
-      'full_name': fullName,
-      'phone': phone,
-      'email': email,
-      'nik': (nik == null || nik.isEmpty) ? null : nik,
-      'unit_number': (unitNumber == null || unitNumber.isEmpty) ? null : unitNumber,
-      'block': (block == null || block.isEmpty) ? null : block.toUpperCase(),
-      'rt_number': rtNumber ?? 1,
-      'role': 'resident',
-      'status': 'pending',
-    });
+    // Sign out agar user tahu harus konfirmasi email (jika fitur aktif)
+    // atau tunggu approval admin (status pending).
+    await client.auth.signOut();
   }
 }
 
