@@ -38,7 +38,7 @@ final marketplaceListingsProvider = FutureProvider.autoDispose<List<MarketplaceL
       .from('marketplace_listings')
       .select('*, profiles(full_name, phone, unit_number, photo_url)')
       .eq('community_id', communityId)
-      .eq('status', 'available')
+      .eq('status', 'active')
       .gte('created_at', since)
       .order('created_at', ascending: false);
 
@@ -77,6 +77,7 @@ class MarketplaceService {
     String? description,
     int? price,
     required List<String> imageUrls,
+    int stock = 1,
   }) async {
     final client = ref.read(supabaseClientProvider);
     await client.from('marketplace_listings').insert({
@@ -87,7 +88,8 @@ class MarketplaceService {
       'description': description,
       'price': price ?? 0,
       'images': imageUrls,
-      'status': 'available',
+      'status': 'active',
+      'stock': stock,
     });
     ref.invalidate(marketplaceListingsProvider);
     ref.invalidate(myListingsProvider);
@@ -100,6 +102,7 @@ class MarketplaceService {
     String? description,
     int? price,
     List<String>? imageUrls,
+    int? stock,
   }) async {
     final client = ref.read(supabaseClientProvider);
     await client.from('marketplace_listings').update({
@@ -107,7 +110,9 @@ class MarketplaceService {
       'category': category,
       'description': description,
       'price': price ?? 0,
-      'images': ?imageUrls,
+      if (imageUrls != null) 'images': imageUrls,
+      if (stock != null) 'stock': stock,
+      if (stock != null && stock <= 0) 'status': 'sold',
     }).eq('id', listingId);
     ref.invalidate(marketplaceListingsProvider);
     ref.invalidate(myListingsProvider);
@@ -117,7 +122,7 @@ class MarketplaceService {
     final client = ref.read(supabaseClientProvider);
     await client
         .from('marketplace_listings')
-        .update({'status': 'sold'})
+        .update({'status': 'sold', 'stock': 0})
         .eq('id', listingId);
     ref.invalidate(marketplaceListingsProvider);
     ref.invalidate(myListingsProvider);

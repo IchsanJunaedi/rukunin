@@ -62,6 +62,18 @@ class _CommunitySettingsScreenState
         _nameCtrl.text = c['name'] ?? '';
         _rwCtrl.text = c['rw_number'] ?? '';
         _rtCount = (c['rt_count'] as int?) ?? 3;
+        if (c['province'] != null) {
+          _provinsi = WilayahModel(id: '', name: c['province'] as String);
+        }
+        if (c['kabupaten'] != null) {
+          _kabupaten = WilayahModel(id: '', name: c['kabupaten'] as String);
+        }
+        if (c['kecamatan'] != null) {
+          _kecamatan = WilayahModel(id: '', name: c['kecamatan'] as String);
+        }
+        if (c['kelurahan'] != null) {
+          _kelurahan = WilayahModel(id: '', name: c['kelurahan'] as String);
+        }
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);

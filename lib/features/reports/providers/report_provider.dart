@@ -22,6 +22,18 @@ class ReportNotifier extends Notifier<ReportState> {
     );
   }
 
+  void setFilterMode(ReportFilterMode mode) {
+    final now = DateTime.now();
+    state = state.copyWith(
+      filterMode: mode,
+      selectedMonth: mode == ReportFilterMode.currentMonth ? now.month : state.selectedMonth,
+      selectedYear: mode == ReportFilterMode.currentMonth ? now.year : state.selectedYear,
+    );
+    if (mode == ReportFilterMode.currentMonth) {
+      loadReportData(now.month, now.year);
+    }
+  }
+
   void changePeriod(int month, int year) {
     if (state.selectedMonth == month && state.selectedYear == year) return;
     
