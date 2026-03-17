@@ -614,6 +614,137 @@ class _PendingSheet extends StatelessWidget {
   }
 }
 
+void _showPendingDetailSheet(
+  BuildContext context,
+  ResidentModel resident,
+  VoidCallback onApprove,
+  VoidCallback onReject,
+) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (ctx) => Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.grey300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'Detail Warga Pending',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: AppColors.grey800,
+            ),
+          ),
+          const SizedBox(height: 20),
+          _pendingDetailRow(Icons.person_rounded, 'Nama Lengkap', resident.fullName),
+          _pendingDetailRow(Icons.phone_android_rounded, 'No. Handphone', resident.phone ?? '-'),
+          _pendingDetailRow(Icons.badge_rounded, 'NIK', resident.nik ?? '-'),
+          _pendingDetailRow(
+            Icons.home_work_rounded,
+            'Blok / Unit',
+            () {
+              final parts = <String>[];
+              if (resident.block != null && resident.block!.isNotEmpty) parts.add('Blok ${resident.block}');
+              if (resident.unitNumber != null && resident.unitNumber!.isNotEmpty) parts.add('No. ${resident.unitNumber}');
+              return parts.isNotEmpty ? parts.join(' ') : '-';
+            }(),
+          ),
+          _pendingDetailRow(Icons.numbers_rounded, 'RT', resident.rtNumber != null ? 'RT ${resident.rtNumber}' : '-'),
+          _pendingDetailRow(
+            Icons.calendar_today_rounded,
+            'Tanggal Daftar',
+            DateFormat('d MMMM yyyy', 'id_ID').format(resident.createdAt),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    onReject();
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.error,
+                    side: const BorderSide(color: AppColors.error),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: Text('Tolak', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                flex: 2,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    onApprove();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.success,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: Text('Setujui', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _pendingDetailRow(IconData icon, String label, String value) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 14),
+    child: Row(
+      children: [
+        Icon(icon, size: 18, color: AppColors.primary),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: GoogleFonts.plusJakartaSans(fontSize: 11, color: AppColors.grey500),
+            ),
+            Text(
+              value,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.grey800,
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
 class _PendingCard extends StatelessWidget {
   final ResidentModel resident;
   final VoidCallback onApprove;
@@ -628,7 +759,9 @@ class _PendingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final joinedAt = DateFormat('d MMM yyyy', 'id_ID').format(resident.createdAt);
-    return Container(
+    return GestureDetector(
+      onTap: () => _showPendingDetailSheet(context, resident, onApprove, onReject),
+      child: Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -729,6 +862,7 @@ class _PendingCard extends StatelessWidget {
             ],
           ),
         ],
+      ),
       ),
     );
   }
