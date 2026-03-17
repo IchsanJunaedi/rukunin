@@ -29,7 +29,7 @@ serve(async (req) => {
       .select(`
         id, amount, month, year, due_date,
         billing_types(name),
-        profiles:resident_id(full_name, phone),
+        profiles:resident_id(full_name, phone, fcm_token),
         communities!inner(name, bank_name, account_number, account_name)
       `)
       .eq('month', month)
@@ -75,6 +75,36 @@ serve(async (req) => {
       const data = await res.json()
       if (data.status === false) failed++
       else sent++
+
+      // FCM push notification (best-effort, hanya jika fcm_token tersedia)
+      const fcmToken = (inv.profiles as any)?.fcm_token
+      const fcmProjectId = Deno.env.get('FCM_PROJECT_ID')
+      const fcmServiceAccountToken = Deno.env.get('FCM_SERVICE_ACCOUNT_TOKEN')
+      if (fcmToken && fcmProjectId && fcmServiceAccountToken) {
+        try {
+          await fetch(
+            `https://fcm.googleapis.com/v1/projects/${fcmProjectId}/messages:send`,
+            {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${fcmServiceAccountToken}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                message: {
+                  token: fcmToken,
+                  notification: {
+                    title: 'Pengingat Tagihan',
+                    body: `Tagihan bulan ${month}/${year} belum lunas.`,
+                  },
+                },
+              }),
+            }
+          )
+        } catch (_) {
+          // FCM bersifat best-effort
+        }
+      }
     }
 
     return new Response(

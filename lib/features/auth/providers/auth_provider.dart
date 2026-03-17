@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/supabase/supabase_client.dart';
@@ -28,6 +29,19 @@ class AuthNotifier extends AsyncNotifier<void> {
   @override
   Future<void> build() async {}
 
+  Future<void> _saveFcmToken() async {
+    try {
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token == null) return;
+      final client = ref.read(supabaseClientProvider);
+      final userId = client.auth.currentUser?.id;
+      if (userId == null) return;
+      await client.from('profiles').update({'fcm_token': token}).eq('id', userId);
+    } catch (_) {
+      // FCM token save is best-effort
+    }
+  }
+
   Future<void> signIn({
     required String email,
     required String password,
@@ -39,6 +53,7 @@ class AuthNotifier extends AsyncNotifier<void> {
         email: email,
         password: password,
       );
+      await _saveFcmToken();
     });
   }
 
