@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,9 +21,12 @@ Future<void> main() async {
 
   await dotenv.load(fileName: '.env');
 
-  await Firebase.initializeApp();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  await FirebaseMessaging.instance.requestPermission();
+  // Firebase hanya untuk mobile (Android/iOS) — tidak support web
+  if (!kIsWeb) {
+    await Firebase.initializeApp();
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    await FirebaseMessaging.instance.requestPermission();
+  }
 
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,
