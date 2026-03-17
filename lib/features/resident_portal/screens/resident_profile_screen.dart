@@ -359,6 +359,58 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                   ),
                 ),
 
+                const SizedBox(height: 32),
+
+                // Pusat Bantuan
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.02),
+                        blurRadius: 8,
+                      )
+                    ],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () => context.push('/bantuan'),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(Icons.help_outline_rounded,
+                                  color: AppColors.primary, size: 20),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                'Pusat Bantuan',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.grey800,
+                                ),
+                              ),
+                            ),
+                            const Icon(Icons.chevron_right_rounded,
+                                color: AppColors.grey400),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
                 const SizedBox(height: 48),
                 SizedBox(
                   width: double.infinity,

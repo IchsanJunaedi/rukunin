@@ -7,6 +7,8 @@ import '../features/auth/screens/login_screen.dart';
 import '../features/auth/screens/register_admin_screen.dart';
 import '../features/auth/screens/register_resident_screen.dart';
 import '../features/auth/screens/pending_approval_screen.dart';
+import '../features/auth/screens/forgot_password_screen.dart';
+import '../features/auth/screens/reset_password_screen.dart';
 import '../features/dashboard/screens/admin_dashboard_screen.dart';
 import '../features/residents/screens/residents_screen.dart';
 import '../features/residents/screens/resident_detail_screen.dart';
@@ -33,6 +35,9 @@ import '../features/marketplace/screens/add_listing_screen.dart';
 import '../features/marketplace/screens/listing_detail_screen.dart';
 import '../features/marketplace/models/marketplace_listing_model.dart';
 import '../features/resident_portal/screens/resident_kas_screen.dart';
+import '../features/auth/screens/register_resident_step2_screen.dart';
+import '../features/auth/models/register_step1_data.dart';
+import '../features/help/screens/help_center_screen.dart';
 import '../shell/admin_shell.dart';
 import '../shell/resident_shell.dart';
 
@@ -56,7 +61,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isLoggedIn = session != null;
       final loc = state.matchedLocation;
 
-      const authPages = ['/login', '/register/admin', '/register/resident'];
+      const authPages = ['/login', '/register/admin', '/register/resident', '/register/resident/step2', '/forgot-password', '/reset-password', '/bantuan'];
 
       if (!isLoggedIn) {
         if (authPages.contains(loc)) return null;
@@ -109,6 +114,24 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/pending-approval',
         builder: (context, state) => const PendingApprovalScreen(),
+      ),
+      GoRoute(
+        path: '/forgot-password',
+        builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: '/reset-password',
+        builder: (context, state) => const ResetPasswordScreen(),
+      ),
+      GoRoute(
+        path: '/register/resident/step2',
+        builder: (context, state) => RegisterResidentStep2Screen(
+          step1Data: state.extra as RegisterStep1Data,
+        ),
+      ),
+      GoRoute(
+        path: '/bantuan',
+        builder: (context, state) => const HelpCenterScreen(),
       ),
       GoRoute(
         path: '/admin/profil',
