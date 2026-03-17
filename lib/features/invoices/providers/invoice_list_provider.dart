@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/supabase/supabase_client.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../notifications/providers/notifications_provider.dart';
 import '../models/invoice_model.dart';
 
 // State untuk filter bulan & tahun
@@ -164,7 +165,7 @@ class InvoiceListNotifier extends AsyncNotifier<List<InvoiceModel>> {
       // 1. Ambil data invoice untuk dicatat ke tabel payments
       final invoiceData = await client
           .from('invoices')
-          .select('amount, community_id, profiles:resident_id(full_name, phone)')
+          .select('amount, community_id, resident_id, profiles:resident_id(full_name, phone)')
           .eq('id', invoiceId)
           .single();
 
@@ -185,6 +186,20 @@ class InvoiceListNotifier extends AsyncNotifier<List<InvoiceModel>> {
         'method': 'manual_transfer',
         'paid_at': DateTime.now().toIso8601String(),
       });
+
+      // 3b. Insert notifikasi in-app ke warga (best-effort)
+      final residentId = invoiceData['resident_id']?.toString();
+      if (residentId != null) {
+        await insertNotification(
+          client: client,
+          communityId: invoiceData['community_id'] as String,
+          userId: residentId,
+          type: 'payment',
+          title: 'Pembayaran Dikonfirmasi',
+          body: 'Tagihan Anda telah diverifikasi dan dinyatakan lunas.',
+          metadata: {'invoice_id': invoiceId},
+        );
+      }
 
       // 4. Kirim WA konfirmasi ke warga (best-effort, tidak gagalkan proses)
       try {

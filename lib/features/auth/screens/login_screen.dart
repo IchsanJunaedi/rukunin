@@ -203,6 +203,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         },
                       ),
 
+                      const SizedBox(height: 8),
+
+                      // Lupa Password
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: () => context.push('/forgot-password'),
+                          child: Text(
+                            'Lupa password?',
+                            style: GoogleFonts.plusJakartaSans(
+                              color: _kYellow.withValues(alpha: 0.8),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+
                       const Spacer(),
 
                       // Tombol Masuk

@@ -488,21 +488,42 @@ class _ListingHeader extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        Container(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-          decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(
-            listing.categoryLabel,
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: AppColors.primary,
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                listing.categoryLabel,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.primary,
+                ),
+              ),
             ),
-          ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: listing.isAvailable
+                    ? AppColors.success.withValues(alpha: 0.1)
+                    : AppColors.error.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                listing.isAvailable ? 'Stok: ${listing.stock}' : 'Habis',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: listing.isAvailable ? AppColors.success : AppColors.error,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -584,7 +605,7 @@ class _StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isAvailable = status == 'available';
+    final isAvailable = status == 'active';
     final bgColor = isAvailable
         ? AppColors.success.withValues(alpha: 0.1)
         : AppColors.error.withValues(alpha: 0.1);
@@ -805,6 +826,7 @@ class _ActionButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        if (listing.isAvailable)
         ElevatedButton.icon(
           onPressed: listing.sellerPhone != null ? onWhatsApp : null,
           icon: const Icon(Icons.chat_rounded),
@@ -822,7 +844,7 @@ class _ActionButtons extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14)),
           ),
         ),
-        const SizedBox(height: 10),
+        if (listing.isAvailable) const SizedBox(height: 10),
         OutlinedButton.icon(
           onPressed: onRate,
           icon: const Icon(Icons.star_outline_rounded, size: 18),

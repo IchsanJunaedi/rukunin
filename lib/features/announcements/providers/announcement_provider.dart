@@ -53,6 +53,17 @@ class CreateAnnouncementService {
       'created_by': client.auth.currentUser?.id,
     });
     ref.invalidate(announcementsProvider);
+
+    // Kirim notifikasi in-app ke semua warga via Edge Function (fire and forget)
+    try {
+      await client.functions.invoke('send-announcement-notifications', body: {
+        'communityId': communityId,
+        'announcementTitle': title,
+        'announcementBody': body,
+      });
+    } catch (_) {
+      // Jangan break main flow
+    }
   }
 
   Future<void> delete(String id) async {

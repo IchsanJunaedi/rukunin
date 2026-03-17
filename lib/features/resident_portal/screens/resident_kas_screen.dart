@@ -5,18 +5,62 @@ import 'package:intl/intl.dart';
 import '../../../app/theme.dart';
 import '../providers/resident_kas_provider.dart';
 
-class ResidentKasScreen extends ConsumerWidget {
+class ResidentKasScreen extends ConsumerStatefulWidget {
   const ResidentKasScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final kasAsync = ref.watch(residentKasProvider);
+  ConsumerState<ResidentKasScreen> createState() => _ResidentKasScreenState();
+}
+
+class _ResidentKasScreenState extends ConsumerState<ResidentKasScreen> {
+  int _selectedMonth = DateTime.now().month;
+  int _selectedYear = DateTime.now().year;
+
+  @override
+  Widget build(BuildContext context) {
+    final filter = (month: _selectedMonth, year: _selectedYear);
+    final kasAsync = ref.watch(residentKasProvider(filter));
     final currencyFmt = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
+
+    final months = List.generate(12, (i) => i + 1);
+    final years = [DateTime.now().year - 1, DateTime.now().year];
 
     return Scaffold(
       backgroundColor: AppColors.grey100,
       appBar: AppBar(
         title: const Text('Transparansi Kas'),
+        actions: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButton<int>(
+                value: _selectedMonth,
+                underline: const SizedBox(),
+                dropdownColor: Colors.white,
+                style: GoogleFonts.plusJakartaSans(
+                    fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.grey800),
+                items: months.map((m) => DropdownMenuItem(
+                  value: m,
+                  child: Text(DateFormat('MMM', 'id_ID').format(DateTime(0, m))),
+                )).toList(),
+                onChanged: (v) => setState(() => _selectedMonth = v!),
+              ),
+              DropdownButton<int>(
+                value: _selectedYear,
+                underline: const SizedBox(),
+                dropdownColor: Colors.white,
+                style: GoogleFonts.plusJakartaSans(
+                    fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.grey800),
+                items: years.map((y) => DropdownMenuItem(
+                  value: y,
+                  child: Text('$y'),
+                )).toList(),
+                onChanged: (v) => setState(() => _selectedYear = v!),
+              ),
+              const SizedBox(width: 8),
+            ],
+          ),
+        ],
       ),
       body: kasAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -29,7 +73,7 @@ class ResidentKasScreen extends ConsumerWidget {
               Text('Gagal memuat data kas', style: GoogleFonts.plusJakartaSans(color: AppColors.grey600)),
               const SizedBox(height: 8),
               TextButton(
-                onPressed: () => ref.invalidate(residentKasProvider),
+                onPressed: () => ref.invalidate(residentKasProvider(filter)),
                 child: const Text('Coba Lagi'),
               ),
             ],
@@ -39,7 +83,7 @@ class ResidentKasScreen extends ConsumerWidget {
           final monthName = DateFormat('MMMM yyyy', 'id_ID').format(DateTime(kas.currentYear, kas.currentMonth));
 
           return RefreshIndicator(
-            onRefresh: () async => ref.invalidate(residentKasProvider),
+            onRefresh: () async => ref.invalidate(residentKasProvider(filter)),
             child: ListView(
               padding: const EdgeInsets.all(20),
               children: [

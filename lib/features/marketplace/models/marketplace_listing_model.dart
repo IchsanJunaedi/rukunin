@@ -12,6 +12,7 @@ class MarketplaceListingModel {
   final String category; // 'makanan' | 'jasa' | 'barang' | 'tanaman' | 'lainnya'
   final List<String> images;
   final String status; // 'active' | 'sold'
+  final int stock;
   final DateTime createdAt;
 
   const MarketplaceListingModel({
@@ -28,8 +29,11 @@ class MarketplaceListingModel {
     required this.category,
     required this.images,
     required this.status,
+    this.stock = 1,
     required this.createdAt,
   });
+
+  bool get isAvailable => status == 'active' && stock > 0;
 
   factory MarketplaceListingModel.fromMap(Map<String, dynamic> map) {
     final sellerProfile = map['profiles'] as Map<String, dynamic>?;
@@ -53,6 +57,7 @@ class MarketplaceListingModel {
       category: map['category'] as String? ?? 'lainnya',
       images: imageList,
       status: map['status'] as String? ?? 'active',
+      stock: (map['stock'] as num?)?.toInt() ?? 1,
       createdAt: DateTime.parse(map['created_at'] as String),
     );
   }

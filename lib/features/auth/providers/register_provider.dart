@@ -63,10 +63,23 @@ class RegisterService {
     return code;
   }
 
-  /// Warga mendaftar menggunakan kode komunitas.
+  /// Validasi kode komunitas dan return communityId.
+  Future<String> checkCommunityCode(String code) async {
+    final community = await client
+        .from('communities')
+        .select('id')
+        .eq('community_code', code.toUpperCase().trim())
+        .maybeSingle();
+    if (community == null) {
+      throw Exception('Kode komunitas "$code" tidak ditemukan. Pastikan kode benar.');
+    }
+    return community['id'] as String;
+  }
+
+  /// Warga mendaftar menggunakan communityId yang sudah divalidasi.
   /// Profile dibuat dengan status='pending' hingga disetujui admin.
   Future<void> registerResident({
-    required String communityCode,
+    required String communityId,
     required String fullName,
     required String phone,
     required String email,
@@ -76,26 +89,15 @@ class RegisterService {
     String? block,
     int? rtNumber,
   }) async {
-    // 1. Lookup community by code
-    final community = await client
-        .from('communities')
-        .select('id, name')
-        .eq('community_code', communityCode.toUpperCase().trim())
-        .maybeSingle();
-
-    if (community == null) {
-      throw Exception('Kode komunitas "$communityCode" tidak ditemukan. Pastikan kode yang kamu masukkan benar.');
-    }
-
-    // 2. Create auth user
+    // 1. Create auth user
     final response = await client.auth.signUp(email: email, password: password);
     final userId = response.user?.id;
     if (userId == null) throw Exception('Gagal membuat akun. Coba lagi.');
 
-    // 3. Insert resident profile with status=pending
+    // 2. Insert resident profile with status=pending
     await client.from('profiles').insert({
       'id': userId,
-      'community_id': community['id'],
+      'community_id': communityId,
       'full_name': fullName,
       'phone': phone,
       'email': email,

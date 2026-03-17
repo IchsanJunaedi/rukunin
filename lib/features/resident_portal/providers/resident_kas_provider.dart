@@ -20,14 +20,19 @@ class ResidentKasData {
   double get netBalance => totalIncome - totalExpense;
 }
 
-final residentKasProvider = FutureProvider.autoDispose<ResidentKasData>((ref) async {
+typedef KasFilter = ({int month, int year});
+
+final residentKasProvider = FutureProvider.autoDispose.family<ResidentKasData, KasFilter>((ref, filter) async {
   final client = ref.watch(supabaseClientProvider);
   final userId = client.auth.currentUser?.id;
+
+  final month = filter.month;
+  final year = filter.year;
 
   if (userId == null) {
     return ResidentKasData(
       totalIncome: 0, totalExpense: 0, recentExpenses: [],
-      currentMonth: DateTime.now().month, currentYear: DateTime.now().year,
+      currentMonth: month, currentYear: year,
     );
   }
 
@@ -41,13 +46,9 @@ final residentKasProvider = FutureProvider.autoDispose<ResidentKasData>((ref) as
   if (communityId == null) {
     return ResidentKasData(
       totalIncome: 0, totalExpense: 0, recentExpenses: [],
-      currentMonth: DateTime.now().month, currentYear: DateTime.now().year,
+      currentMonth: month, currentYear: year,
     );
   }
-
-  final now = DateTime.now();
-  final month = now.month;
-  final year = now.year;
 
   // Total pemasukan bulan ini dari tagihan yang sudah lunas
   final paidInvoices = await client

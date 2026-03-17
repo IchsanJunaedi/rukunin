@@ -7,6 +7,7 @@ import '../../../app/theme.dart';
 import '../../../core/supabase/supabase_client.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/resident_invoices_provider.dart';
+import '../../notifications/providers/notifications_provider.dart';
 
 class ResidentProfileScreen extends ConsumerStatefulWidget {
   const ResidentProfileScreen({super.key});
@@ -91,6 +92,41 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
       appBar: AppBar(
         title: const Text('Akun Saya'),
         actions: [
+          // Bell icon dengan badge unread count
+          Stack(
+            children: [
+              IconButton(
+                onPressed: () => context.push('/resident/notifikasi'),
+                icon: const Icon(Icons.notifications_outlined),
+              ),
+              ref.watch(unreadCountProvider).maybeWhen(
+                data: (count) => count > 0
+                    ? Positioned(
+                        right: 8,
+                        top: 8,
+                        child: Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: const BoxDecoration(
+                            color: AppColors.error,
+                            shape: BoxShape.circle,
+                          ),
+                          constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                          child: Text(
+                            '$count',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
+                orElse: () => const SizedBox(),
+              ),
+            ],
+          ),
           IconButton(
             onPressed: () => _logout(context, ref),
             icon: const Icon(Icons.logout_rounded, color: AppColors.error),
@@ -229,13 +265,34 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                 const SizedBox(height: 32),
                 
                 // Info Kendaraan
-                Text(
-                  'Kendaraan Terdaftar',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.grey800,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Kendaraan Terdaftar',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.grey800,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => _showEditVehicleSheet(
+                        context,
+                        profile.motorcycleCount,
+                        profile.carCount,
+                        profile.id,
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(Icons.edit_rounded, size: 16, color: AppColors.primary),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 12),
                 Container(
@@ -338,6 +395,58 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                   ),
                 ),
 
+                const SizedBox(height: 32),
+
+                // Pusat Bantuan
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.02),
+                        blurRadius: 8,
+                      )
+                    ],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () => context.push('/bantuan'),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(Icons.help_outline_rounded,
+                                  color: AppColors.primary, size: 20),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                'Pusat Bantuan',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.grey800,
+                                ),
+                              ),
+                            ),
+                            const Icon(Icons.chevron_right_rounded,
+                                color: AppColors.grey400),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
                 const SizedBox(height: 48),
                 SizedBox(
                   width: double.infinity,
@@ -362,6 +471,155 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
         error: (e, _) => Center(child: Text('Gagal memuat profil: $e')),
       ),
     );
+  }
+
+  Future<void> _showEditVehicleSheet(
+    BuildContext context,
+    int initialMotorcycle,
+    int initialCar,
+    String userId,
+  ) async {
+    int motorcycle = initialMotorcycle;
+    int car = initialCar;
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: EdgeInsets.fromLTRB(24, 16, 24, MediaQuery.of(ctx).viewInsets.bottom + 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.grey300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Edit Kendaraan',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.grey800,
+                ),
+              ),
+              const SizedBox(height: 24),
+              _vehicleStepper(
+                icon: Icons.two_wheeler_rounded,
+                label: 'Motor',
+                value: motorcycle,
+                onDecrement: () => setModalState(() { if (motorcycle > 0) motorcycle--; }),
+                onIncrement: () => setModalState(() { if (motorcycle < 10) motorcycle++; }),
+              ),
+              const SizedBox(height: 16),
+              _vehicleStepper(
+                icon: Icons.directions_car_rounded,
+                label: 'Mobil',
+                value: car,
+                onDecrement: () => setModalState(() { if (car > 0) car--; }),
+                onIncrement: () => setModalState(() { if (car < 10) car++; }),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    Navigator.of(ctx).pop();
+                    await _saveVehicle(userId, motorcycle, car);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.onPrimary,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: Text(
+                    'Simpan',
+                    style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 15),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _vehicleStepper({
+    required IconData icon,
+    required String label,
+    required int value,
+    required VoidCallback onDecrement,
+    required VoidCallback onIncrement,
+  }) {
+    return Row(
+      children: [
+        Icon(icon, color: AppColors.primary, size: 22),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            label,
+            style: GoogleFonts.plusJakartaSans(fontSize: 15, fontWeight: FontWeight.w600),
+          ),
+        ),
+        IconButton(
+          onPressed: onDecrement,
+          icon: const Icon(Icons.remove_circle_outline_rounded),
+          color: AppColors.grey500,
+        ),
+        Text(
+          '$value',
+          style: GoogleFonts.plusJakartaSans(fontSize: 18, fontWeight: FontWeight.w800),
+        ),
+        IconButton(
+          onPressed: onIncrement,
+          icon: const Icon(Icons.add_circle_outline_rounded),
+          color: AppColors.primary,
+        ),
+      ],
+    );
+  }
+
+  Future<void> _saveVehicle(String userId, int motorcycle, int car) async {
+    try {
+      final client = ref.read(supabaseClientProvider);
+      await client.from('profiles').update({
+        'motorcycle_count': motorcycle,
+        'car_count': car,
+      }).eq('id', userId);
+      ref.invalidate(currentResidentProfileProvider);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Data kendaraan berhasil diperbarui'),
+            backgroundColor: AppColors.success,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal menyimpan: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
   }
 
   Widget _buildProfileItem(IconData icon, String label, String value) {

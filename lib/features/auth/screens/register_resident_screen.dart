@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../models/register_step1_data.dart';
 import '../providers/register_provider.dart';
 
 const _kYellow = Color(0xFFFFC107);
@@ -22,10 +23,6 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
   final _phoneCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
-  final _nikCtrl = TextEditingController();
-  final _unitCtrl = TextEditingController();
-  final _blockCtrl = TextEditingController();
-  final _rtCtrl = TextEditingController();
   bool _obscurePass = true;
   bool _loading = false;
 
@@ -36,10 +33,6 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
     _phoneCtrl.dispose();
     _emailCtrl.dispose();
     _passCtrl.dispose();
-    _nikCtrl.dispose();
-    _unitCtrl.dispose();
-    _blockCtrl.dispose();
-    _rtCtrl.dispose();
     super.dispose();
   }
 
@@ -48,23 +41,21 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
     setState(() => _loading = true);
     try {
       final service = ref.read(registerServiceProvider);
-      await service.registerResident(
-        communityCode: _codeCtrl.text.trim(),
+      final communityId = await service.checkCommunityCode(_codeCtrl.text.trim());
+      final step1Data = RegisterStep1Data(
+        communityId: communityId,
+        communityCode: _codeCtrl.text.trim().toUpperCase(),
         fullName: _nameCtrl.text.trim(),
         phone: _phoneCtrl.text.trim(),
         email: _emailCtrl.text.trim(),
         password: _passCtrl.text,
-        nik: _nikCtrl.text.trim(),
-        unitNumber: _unitCtrl.text.trim(),
-        block: _blockCtrl.text.trim(),
-        rtNumber: int.tryParse(_rtCtrl.text.trim()),
       );
-      if (mounted) context.go('/pending-approval');
+      if (mounted) context.push('/register/resident/step2', extra: step1Data);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Gagal mendaftar: $e'),
+          content: Text(e.toString().replaceAll('Exception: ', '')),
           backgroundColor: const Color(0xFFEF4444),
           behavior: SnackBarBehavior.floating,
         ),
@@ -241,52 +232,6 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                           return null;
                         },
                       ),
-                      const SizedBox(height: 16),
-
-                      // Opsional fields
-                      Text(
-                        'Opsional (bisa diisi nanti)',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: _kWhite.withValues(alpha: 0.3),
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      _DarkTextField(
-                        controller: _nikCtrl,
-                        hint: 'NIK (16 digit)',
-                        icon: Icons.badge_outlined,
-                        keyboardType: TextInputType.number,
-                      ),
-                      const SizedBox(height: 10),
-                      _DarkTextField(
-                        controller: _unitCtrl,
-                        hint: 'Nomor Rumah / Unit',
-                        icon: Icons.house_rounded,
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _DarkTextField(
-                              controller: _blockCtrl,
-                              hint: 'Blok (A, B, dll)',
-                              icon: Icons.grid_view_rounded,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: _DarkTextField(
-                              controller: _rtCtrl,
-                              hint: 'Nomor RT',
-                              icon: Icons.location_on_rounded,
-                              keyboardType: TextInputType.number,
-                            ),
-                          ),
-                        ],
-                      ),
                       const SizedBox(height: 28),
 
                       GestureDetector(
@@ -306,7 +251,7 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                                     child: CircularProgressIndicator(strokeWidth: 2.5, color: _kBlack),
                                   )
                                 : Text(
-                                    'Gabung Komunitas →',
+                                    'Lanjut →',
                                     style: GoogleFonts.plusJakartaSans(
                                       color: _kBlack,
                                       fontSize: 15,

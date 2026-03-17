@@ -1,3 +1,5 @@
+enum ReportFilterMode { currentMonth, threeMonths, sixMonths, custom }
+
 // State model untuk laporan per bulan
 class MonthlyReport {
   final int month;
@@ -26,6 +28,7 @@ class ReportState {
   final List<MonthlyReport> lastSixMonths;
   final bool isLoading;
   final String? error;
+  final ReportFilterMode filterMode;
 
   ReportState({
     required this.selectedMonth,
@@ -34,6 +37,7 @@ class ReportState {
     required this.lastSixMonths,
     this.isLoading = false,
     this.error,
+    this.filterMode = ReportFilterMode.currentMonth,
   });
 
   ReportState copyWith({
@@ -43,6 +47,7 @@ class ReportState {
     List<MonthlyReport>? lastSixMonths,
     bool? isLoading,
     String? error,
+    ReportFilterMode? filterMode,
   }) {
     return ReportState(
       selectedMonth: selectedMonth ?? this.selectedMonth,
@@ -51,6 +56,7 @@ class ReportState {
       lastSixMonths: lastSixMonths ?? this.lastSixMonths,
       isLoading: isLoading ?? this.isLoading,
       error: error,
+      filterMode: filterMode ?? this.filterMode,
     );
   }
 }
