@@ -49,6 +49,27 @@ class AuthNotifier extends AsyncNotifier<void> {
       await client.auth.signOut();
     });
   }
+
+  Future<void> sendPasswordReset({required String email}) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final client = ref.read(supabaseClientProvider);
+      await client.auth.resetPasswordForEmail(
+        email,
+        redirectTo: 'rukunin://reset-password',
+      );
+    });
+  }
+
+  Future<void> updatePassword({required String newPassword}) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final client = ref.read(supabaseClientProvider);
+      await client.auth.updateUser(
+        UserAttributes(password: newPassword),
+      );
+    });
+  }
 }
 
 final authNotifierProvider =
