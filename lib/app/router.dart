@@ -40,6 +40,9 @@ import '../features/auth/screens/register_resident_step2_screen.dart';
 import '../features/auth/models/register_step1_data.dart';
 import '../features/help/screens/help_center_screen.dart';
 import '../features/notifications/screens/notifications_screen.dart';
+import '../features/layanan/screens/layanan_screen.dart';
+import '../features/layanan/screens/request_letter_screen.dart';
+import '../features/layanan/screens/complaint_form_screen.dart';
 import '../shell/admin_shell.dart';
 import '../shell/resident_shell.dart';
 
@@ -311,7 +314,24 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/resident/marketplace',
             builder: (context, state) => const MarketplaceScreen(),
           ),
+          GoRoute(
+            path: '/resident/layanan',
+            builder: (context, state) => const LayananScreen(),
+          ),
         ],
+      ),
+
+      // Layanan full-screen routes (no bottom nav)
+      GoRoute(
+        path: '/resident/layanan/permohonan',
+        builder: (context, state) {
+          final type = state.uri.queryParameters['type'];
+          return RequestLetterScreen(initialType: type);
+        },
+      ),
+      GoRoute(
+        path: '/resident/layanan/pengaduan-baru',
+        builder: (context, state) => const ComplaintFormScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

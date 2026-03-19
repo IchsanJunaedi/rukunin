@@ -13,12 +13,14 @@ class ResidentShell extends StatelessWidget {
     int currentIndex = 0;
     if (location.startsWith('/resident/pengumuman')) {
       currentIndex = 1;
-    } else if (location.startsWith('/resident/marketplace')) {
+    } else if (location.startsWith('/resident/layanan')) {
       currentIndex = 2;
-    } else if (location.startsWith('/resident/tagihan')) {
+    } else if (location.startsWith('/resident/marketplace')) {
       currentIndex = 3;
-    } else if (location.startsWith('/resident/akun')) {
+    } else if (location.startsWith('/resident/tagihan')) {
       currentIndex = 4;
+    } else if (location.startsWith('/resident/akun')) {
+      currentIndex = 5;
     }
 
     return Scaffold(
@@ -54,21 +56,27 @@ class ResidentShell extends StatelessWidget {
                   onTap: () => context.go('/resident/pengumuman'),
                 ),
                 _NavItem(
+                  icon: Icons.article_outlined,
+                  label: 'Layanan',
+                  isSelected: currentIndex == 2,
+                  onTap: () => context.go('/resident/layanan'),
+                ),
+                _NavItem(
                   icon: Icons.storefront_rounded,
                   label: 'Pasar',
-                  isSelected: currentIndex == 2,
+                  isSelected: currentIndex == 3,
                   onTap: () => context.go('/resident/marketplace'),
                 ),
                 _NavItem(
                   icon: Icons.receipt_long_rounded,
                   label: 'Tagihan',
-                  isSelected: currentIndex == 3,
+                  isSelected: currentIndex == 4,
                   onTap: () => context.go('/resident/tagihan'),
                 ),
                 _NavItem(
                   icon: Icons.person_rounded,
                   label: 'Akun',
-                  isSelected: currentIndex == 4,
+                  isSelected: currentIndex == 5,
                   onTap: () => context.go('/resident/akun'),
                 ),
               ],
