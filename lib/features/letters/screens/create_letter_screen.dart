@@ -11,9 +11,28 @@ import '../providers/letter_provider.dart';
 import '../../../core/supabase/supabase_client.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../../core/utils/letter_pdf_generator.dart';
+import '../../layanan/providers/layanan_provider.dart';
 
 class CreateLetterScreen extends ConsumerStatefulWidget {
-  const CreateLetterScreen({super.key});
+  const CreateLetterScreen({
+    super.key,
+    this.prefilledResidentId,
+    this.prefilledLetterType,
+    this.prefilledPurpose,
+    this.fromRequestId,
+  });
+
+  /// Auto-set selected resident ID (used when linking to a letter request)
+  final String? prefilledResidentId;
+
+  /// Auto-set letter type dropdown value
+  final String? prefilledLetterType;
+
+  /// Auto-fill the purpose text field
+  final String? prefilledPurpose;
+
+  /// If not null, link the created letter to this letter_request id
+  final String? fromRequestId;
 
   @override
   ConsumerState<CreateLetterScreen> createState() => _CreateLetterScreenState();
@@ -35,9 +54,11 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
 
   // ── State ─────────────────────────────────────
   String _letterType = 'ktp_kk';
+  String? _selectedResidentId;
   Map<String, dynamic>? _communityData;
   bool _loadingCommunity = true;
   bool _pdfReady = false;
+  bool _savingLetter = false;
 
   static const _genderOptions = ['Laki-laki', 'Perempuan'];
   static const _religionOptions = ['Islam', 'Kristen Protestan', 'Katolik', 'Hindu', 'Buddha', 'Konghucu'];
@@ -47,6 +68,16 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
   void initState() {
     super.initState();
     _fetchCommunity();
+    // Apply pre-filled values from caller
+    if (widget.prefilledLetterType != null) {
+      _letterType = widget.prefilledLetterType!;
+    }
+    if (widget.prefilledPurpose != null) {
+      _purposeCtrl.text = widget.prefilledPurpose!;
+    }
+    if (widget.prefilledResidentId != null) {
+      _selectedResidentId = widget.prefilledResidentId!;
+    }
   }
 
   @override
@@ -225,6 +256,76 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
     }
   }
 
+  // ── Save letter & link to request ─────────────
+  Future<void> _saveLetterAndLinkRequest() async {
+    if (!_pdfReady) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Tekan "Terapkan ke Surat" terlebih dahulu')));
+      return;
+    }
+    if (_nameCtrl.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Nama lengkap wajib diisi')));
+      return;
+    }
+
+    setState(() => _savingLetter = true);
+    try {
+      final client = ref.read(supabaseClientProvider);
+      final profile = await ref.read(currentProfileProvider.future);
+      final communityId = profile?['community_id'] as String?;
+      if (communityId == null) throw Exception('Community ID tidak ditemukan');
+
+      final now = DateTime.now();
+      final roman = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+      final c = _communityData ?? {};
+      final rw = c['rw_number'] ?? '01';
+      final letterNumber = '${now.millisecondsSinceEpoch % 1000}/RW-$rw/${roman[now.month - 1]}/${now.year}';
+
+      // Determine resident id: use prefilled or fall back to current user
+      final residentId = _selectedResidentId ?? client.auth.currentUser?.id;
+      if (residentId == null) throw Exception('Resident ID tidak ditemukan');
+
+      final inserted = await client.from('letters').insert({
+        'community_id': communityId,
+        'resident_id': residentId,
+        'letter_type': _letterType,
+        'letter_number': letterNumber,
+        'purpose': _purposeCtrl.text.trim().isEmpty ? null : _purposeCtrl.text.trim(),
+        'generated_content': _contentCtrl.text,
+        'status': 'done',
+      }).select('id').single();
+
+      final letterId = inserted['id'] as String;
+
+      if (widget.fromRequestId != null) {
+        final service = ref.read(layananServiceProvider);
+        await service.updateLetterRequestStatus(
+          requestId: widget.fromRequestId!,
+          residentId: residentId,
+          communityId: communityId,
+          newStatus: 'ready',
+          letterId: letterId,
+        );
+      }
+
+      ref.invalidate(lettersProvider);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(backgroundColor: Colors.green, content: Text('Surat berhasil disimpan!')));
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(backgroundColor: Colors.red, content: Text('Error: $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _savingLetter = false);
+    }
+  }
+
   // ── Build ─────────────────────────────────────
   @override
   Widget build(BuildContext context) {
@@ -334,6 +435,27 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
                         label: Text('Unduh PDF', style: GoogleFonts.plusJakartaSans(color: AppColors.onPrimary, fontWeight: FontWeight.w600)),
                       )),
                     ]),
+                    if (widget.fromRequestId != null) ...[
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: _savingLetter ? null : _saveLetterAndLinkRequest,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          icon: _savingLetter
+                              ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                              : const Icon(Icons.check_circle_outline, color: Colors.white, size: 20),
+                          label: Text(
+                            _savingLetter ? 'Menyimpan...' : 'Simpan & Tandai Selesai',
+                            style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14),
+                          ),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 32),
                   ] else ...[
                     Container(
