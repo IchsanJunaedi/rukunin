@@ -43,6 +43,8 @@ import '../features/notifications/screens/notifications_screen.dart';
 import '../features/layanan/screens/layanan_screen.dart';
 import '../features/layanan/screens/request_letter_screen.dart';
 import '../features/layanan/screens/complaint_form_screen.dart';
+import '../features/layanan/screens/admin_requests_screen.dart';
+import '../features/layanan/screens/admin_complaints_screen.dart';
 import '../shell/admin_shell.dart';
 import '../shell/resident_shell.dart';
 
@@ -267,7 +269,15 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/admin/surat/buat',
-            builder: (context, state) => const CreateLetterScreen(),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return CreateLetterScreen(
+                prefilledResidentId: extra?['prefilledResidentId'] as String?,
+                prefilledLetterType: extra?['prefilledLetterType'] as String?,
+                prefilledPurpose: extra?['prefilledPurpose'] as String?,
+                fromRequestId: extra?['fromRequestId'] as String?,
+              );
+            },
           ),
           GoRoute(
             path: '/admin/pengumuman',
@@ -319,6 +329,16 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const LayananScreen(),
           ),
         ],
+      ),
+
+      // Admin layanan full-screen routes (no bottom nav)
+      GoRoute(
+        path: '/admin/layanan-requests',
+        builder: (context, state) => const AdminRequestsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/pengaduan',
+        builder: (context, state) => const AdminComplaintsScreen(),
       ),
 
       // Layanan full-screen routes (no bottom nav)

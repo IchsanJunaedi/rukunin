@@ -136,6 +136,37 @@ class AdminDashboardScreen extends ConsumerWidget {
 
                   // Aksi cepat
                   const _AksiCepat(),
+                  const SizedBox(height: 20),
+
+                  // Layanan Warga
+                  Text(
+                    'Layanan Warga',
+                    style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: _C.textMuted),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _QuickActionCard(
+                          icon: Icons.article_outlined,
+                          label: 'Permohonan\nSurat',
+                          onTap: () =>
+                              context.push('/admin/layanan-requests'),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _QuickActionCard(
+                          icon: Icons.report_problem_outlined,
+                          label: 'Pengaduan\nWarga',
+                          onTap: () => context.push('/admin/pengaduan'),
+                        ),
+                      ),
+                    ],
+                  ),
 
                   // Spacer bawah untuk navbar
                   const SizedBox(height: 110),
@@ -698,6 +729,53 @@ class _AksiButton extends StatefulWidget {
 
   @override
   State<_AksiButton> createState() => _AksiButtonState();
+}
+
+// ════════════════════════════════════════════════════════
+//  QUICK ACTION CARD
+// ════════════════════════════════════════════════════════
+class _QuickActionCard extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  const _QuickActionCard(
+      {required this.icon, required this.label, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: _C.yellow2.withValues(alpha: 0.3)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: _C.yellow2, size: 24),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: GoogleFonts.plusJakartaSans(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: _C.dark),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _AksiButtonState extends State<_AksiButton>
