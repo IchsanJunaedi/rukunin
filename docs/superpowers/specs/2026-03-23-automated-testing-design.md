@@ -230,6 +230,9 @@ List<Override> mockOverrides({
     adminComplaintsProvider.overrideWith((_) async => []),      // untuk AdminComplaintsScreen (gap checklist)
     residentInvoicesProvider.overrideWith((_) async => residentInvoices),
     currentResidentProfileProvider.overrideWith((_) async => null), // untuk ResidentHomeScreen
+    // residentTotalPendingInvoicesProvider adalah Provider.autoDispose<double> sinkron yang
+    // men-derive nilai dari residentInvoicesProvider.value ?? []. Karena residentInvoicesProvider
+    // di-override ke [], provider ini resolve ke 0.0 tanpa Supabase call — tidak perlu di-override.
     // unreadCountProvider (dari notifications_provider.dart) juga di-watch ResidentHomeScreen.
     // Tidak perlu di-override: provider ini punya guard `if (userId == null) return 0`,
     // yang terpenuhi oleh FakeGoTrueClient.currentUser == null.
