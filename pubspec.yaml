@@ -89,6 +89,9 @@ dev_dependencies:
   json_serializable: ^6.9.4
   riverpod_generator: ^4.0.3
 
+  # Testing
+  mocktail: ^0.3.0
+
 flutter:
   uses-material-design: true
 
