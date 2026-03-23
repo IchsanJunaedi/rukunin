@@ -687,6 +687,7 @@ class _AksiCepat extends StatelessWidget {
     (Icons.receipt_long_rounded,              'Buat Tagihan',  '/admin/tagihan/buat'),
     (Icons.account_balance_wallet_rounded,    'Pengeluaran',   '/admin/pengeluaran'),
     (Icons.campaign_rounded,                  'Pengumuman',    '/admin/pengumuman'),
+    (Icons.contacts_rounded,                  'Info Kontak',   '/admin/layanan/kontak'),
     (Icons.account_balance_rounded,           'Rekening RW',   '/admin/pengaturan-rek'),
     (Icons.settings_rounded,                  'Profil RW',     '/admin/pengaturan'),
   ];
