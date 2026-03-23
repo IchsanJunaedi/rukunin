@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rukunin/features/layanan/models/letter_request_model.dart';
 import 'package:rukunin/features/layanan/models/complaint_model.dart';
+import 'package:rukunin/features/layanan/models/community_contact_model.dart';
 
 void main() {
   group('LetterRequestModel', () {
@@ -68,6 +69,47 @@ void main() {
     test('categoryLabel returns correct label', () {
       expect(ComplaintModel.fromMap({...map, 'category': 'infrastruktur'}).categoryLabel, 'Infrastruktur');
       expect(ComplaintModel.fromMap({...map, 'category': 'keamanan'}).categoryLabel, 'Keamanan');
+    });
+  });
+
+  group('CommunityContactModel', () {
+    final map = {
+      'id': 'con-1',
+      'community_id': 'com-1',
+      'nama': 'Pak Budi',
+      'jabatan': 'Ketua RW',
+      'phone': '628123456789',
+      'photo_url': null,
+      'urutan': 0,
+      'created_at': '2026-03-23T08:00:00.000Z',
+      'updated_at': '2026-03-23T08:00:00.000Z',
+    };
+
+    test('fromMap parses correctly', () {
+      final model = CommunityContactModel.fromMap(map);
+      expect(model.id, 'con-1');
+      expect(model.communityId, 'com-1');
+      expect(model.nama, 'Pak Budi');
+      expect(model.jabatan, 'Ketua RW');
+      expect(model.phone, '628123456789');
+      expect(model.photoUrl, isNull);
+      expect(model.urutan, 0);
+    });
+
+    test('fromMap handles photo_url', () {
+      final model = CommunityContactModel.fromMap({
+        ...map,
+        'photo_url': 'https://example.com/photo.jpg',
+      });
+      expect(model.photoUrl, 'https://example.com/photo.jpg');
+    });
+
+    test('initials returns first two letters of name', () {
+      expect(CommunityContactModel.fromMap(map).initials, 'PB');
+      expect(
+        CommunityContactModel.fromMap({...map, 'nama': 'Budi'}).initials,
+        'BU',
+      );
     });
   });
 }
