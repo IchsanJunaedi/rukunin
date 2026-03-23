@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/theme.dart';
 import '../../../core/supabase/supabase_client.dart';
+import '../models/community_contact_model.dart';
 import '../models/letter_request_model.dart';
 import '../models/complaint_model.dart';
 import '../providers/layanan_provider.dart';
@@ -62,7 +64,7 @@ class _LayananScreenState extends ConsumerState<LayananScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -93,6 +95,7 @@ class _LayananScreenState extends ConsumerState<LayananScreen>
           tabs: const [
             Tab(text: 'Surat'),
             Tab(text: 'Pengaduan'),
+            Tab(text: 'Kontak'),
           ],
         ),
       ),
@@ -101,6 +104,7 @@ class _LayananScreenState extends ConsumerState<LayananScreen>
         children: const [
           _SuratTab(),
           _PengaduanTab(),
+          _KontakTab(),
         ],
       ),
     );
@@ -565,6 +569,171 @@ class _GridItem extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Tab Kontak ────────────────────────────────────────────────
+class _KontakTab extends ConsumerWidget {
+  const _KontakTab();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final contactsAsync = ref.watch(communityContactsProvider);
+
+    return RefreshIndicator(
+      onRefresh: () async => ref.invalidate(communityContactsProvider),
+      child: contactsAsync.when(
+        data: (contacts) => contacts.isEmpty
+            ? _buildEmpty()
+            : _buildList(contacts),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(
+          child: Text(
+            'Error: $e',
+            style: GoogleFonts.plusJakartaSans(color: AppColors.error),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmpty() {
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        const SizedBox(height: 60),
+        Center(
+          child: Column(
+            children: [
+              Icon(Icons.people_outline, size: 48, color: AppColors.grey300),
+              const SizedBox(height: 12),
+              Text(
+                'Belum ada informasi kontak',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 14,
+                  color: AppColors.grey500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildList(List<CommunityContactModel> contacts) {
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        Text(
+          'Hubungi pengurus komunitas',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: AppColors.grey800,
+          ),
+        ),
+        const SizedBox(height: 12),
+        ...contacts.map((c) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _KontakCard(contact: c),
+            )),
+      ],
+    );
+  }
+}
+
+// ── Kartu kontak untuk resident ───────────────────────────────
+class _KontakCard extends StatelessWidget {
+  final CommunityContactModel contact;
+
+  const _KontakCard({required this.contact});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          _buildAvatar(),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  contact.nama,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.grey800,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  contact.jabatan,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 12,
+                    color: AppColors.grey500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF25D366),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              minimumSize: Size.zero,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100)),
+              elevation: 0,
+              textStyle: GoogleFonts.plusJakartaSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            onPressed: () => _launchWhatsApp(contact.phone),
+            icon: const Icon(Icons.chat_outlined, size: 14),
+            label: const Text('Chat'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAvatar() {
+    if (contact.photoUrl != null) {
+      return CircleAvatar(
+        radius: 26,
+        backgroundColor: AppColors.grey200,
+        backgroundImage: CachedNetworkImageProvider(contact.photoUrl!),
+      );
+    }
+    return CircleAvatar(
+      radius: 26,
+      backgroundColor: AppColors.primary.withValues(alpha: 0.15),
+      child: Text(
+        contact.initials,
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          color: AppColors.primary,
         ),
       ),
     );
