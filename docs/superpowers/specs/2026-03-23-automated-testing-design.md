@@ -33,11 +33,22 @@ dev_dependencies:
 
 ## `FakeSupabaseClient` — Mock Strategy
 
-`SupabaseClient` adalah concrete class — `mocktail` tidak bisa mock langsung. Gunakan manual stub:
+`SupabaseClient` dan `GoTrueClient` adalah concrete class — `mocktail` tidak bisa mock langsung. Gunakan manual stub dengan hierarki dua level:
 
 ```dart
 // test/helpers/mock_providers.dart
-class FakeSupabaseClient extends Fake implements SupabaseClient {}
+
+// Stub auth client: currentUser = null agar semua private provider yang cek
+// `client.auth.currentUser?.id == null` langsung return early tanpa DB call
+class FakeGoTrueClient extends Fake implements GoTrueClient {
+  @override
+  User? get currentUser => null;
+}
+
+class FakeSupabaseClient extends Fake implements SupabaseClient {
+  @override
+  GoTrueClient get auth => FakeGoTrueClient();
+}
 ```
 
 `supabaseClientProvider` harus selalu di-override di widget tests karena tanpa override, `Supabase.instance.client` akan throw (Supabase tidak diinisialisasi di `flutter test`). Semua widget tests wajib include override ini:
@@ -46,7 +57,9 @@ class FakeSupabaseClient extends Fake implements SupabaseClient {}
 supabaseClientProvider.overrideWithValue(FakeSupabaseClient()),
 ```
 
-Karena semua feature provider (e.g., `invoiceListProvider`) juga di-override, `FakeSupabaseClient` tidak pernah benar-benar dipanggil — override ini hanya mencegah throw saat Riverpod membangun dependency graph.
+**Kenapa `auth` perlu di-stub?** Beberapa screen mendefinisikan private provider di file screen mereka sendiri (contoh: `_adminPhoneProvider` di `layanan_screen.dart`). Provider private tidak bisa di-override dari luar file, sehingga saat widget di-pump, provider tersebut mengakses `client.auth.currentUser?.id`. Jika `auth` melempar `UnimplementedError` (perilaku default `Fake`), test crash sebelum widget selesai render. Dengan meng-stub `auth` → `FakeGoTrueClient` yang mengembalikan `currentUser = null`, semua provider dengan pola `if (userId == null) return null/[]` keluar lebih awal secara aman.
+
+Karena semua feature provider yang di-list di `mockOverrides()` di-override dengan data fixture, `FakeSupabaseClient` tidak pernah benar-benar dipanggil untuk provider tersebut — override ini hanya menjaga private/unoveridable providers tidak crash.
 
 ---
 
@@ -163,6 +176,13 @@ class FakeBillingTypesNotifier extends BillingTypesNotifier {
   @override
   Future<List<BillingTypeModel>> build() async => [];
 }
+
+// ReportNotifier adalah NotifierProvider — stub-nya tidak memanggil loadReportData()
+// agar tidak ada dependency ke supabaseClientProvider atau currentProfileProvider
+class FakeReportNotifier extends ReportNotifier {
+  @override
+  ReportState build() => const ReportState(); // initial/empty state
+}
 ```
 
 **`mockOverrides()` factory** di `test/helpers/mock_providers.dart`:
@@ -191,19 +211,28 @@ List<Override> mockOverrides({
     adminContactsProvider.overrideWith((_) async => contacts),
     myLetterRequestsProvider.overrideWith((_) async => letterRequests),
     myComplaintsProvider.overrideWith((_) async => complaints),
+    adminLetterRequestsProvider.overrideWith((_) async => []),  // untuk AdminRequestsScreen (gap checklist)
+    adminComplaintsProvider.overrideWith((_) async => []),      // untuk AdminComplaintsScreen (gap checklist)
     residentInvoicesProvider.overrideWith((_) async => residentInvoices),
+    currentResidentProfileProvider.overrideWith((_) async => null), // untuk ResidentHomeScreen
 
     // AsyncNotifierProvider — wajib pakai stub notifier subclass
     invoiceListProvider.overrideWith(() => FakeInvoiceListNotifier(invoices)),
     expensesProvider.overrideWith(() => FakeExpensesNotifier()),
     billingTypesProvider.overrideWith(() => FakeBillingTypesNotifier()),
+
+    // NotifierProvider — stub agar tidak memanggil loadReportData/supabase
+    reportProvider.overrideWith(() => FakeReportNotifier()),
   ];
 }
 ```
 
-> `reportProvider` adalah `NotifierProvider<ReportNotifier, ReportState>`. `ReportsScreen` ditest dengan assertion "render tanpa crash" — jika screen langsung crash, override tambahan diperlukan dengan stub `ReportNotifier` serupa.
+> `adminLetterRequestsProvider` dan `adminComplaintsProvider` di-include di `mockOverrides()` agar test yang ditambahkan saat mengikuti gap checklist (AdminRequestsScreen, AdminComplaintsScreen) tidak perlu mengubah factory ini.
+
+> `currentResidentProfileProvider` di-override dengan `null` karena `ResidentHomeScreen` menampilkan UI empty/loading state saat profile null.
 
 **Import paths yang dibutuhkan di `mock_providers.dart`:**
+- `package:supabase_flutter/supabase_flutter.dart` → `GoTrueClient`, `User`
 - `lib/core/supabase/supabase_client.dart` → `supabaseClientProvider`
 - `lib/features/invoices/providers/invoice_list_provider.dart` → `invoiceListProvider`, `InvoiceListNotifier`
 - `lib/features/residents/providers/resident_provider.dart` → `residentsProvider`
@@ -212,8 +241,9 @@ List<Override> mockOverrides({
 - `lib/features/invoices/providers/billing_type_provider.dart` → `billingTypesProvider`, `BillingTypesNotifier`
 - `lib/features/announcements/providers/announcement_provider.dart` → `announcementsProvider`
 - `lib/features/marketplace/providers/marketplace_provider.dart` → `marketplaceListingsProvider`
-- `lib/features/layanan/providers/layanan_provider.dart` → `communityContactsProvider`, `adminContactsProvider`, `myLetterRequestsProvider`, `myComplaintsProvider`
-- `lib/features/resident_portal/providers/resident_invoices_provider.dart` → `residentInvoicesProvider`
+- `lib/features/layanan/providers/layanan_provider.dart` → `communityContactsProvider`, `adminContactsProvider`, `myLetterRequestsProvider`, `myComplaintsProvider`, `adminLetterRequestsProvider`, `adminComplaintsProvider`
+- `lib/features/resident_portal/providers/resident_invoices_provider.dart` → `residentInvoicesProvider`, `currentResidentProfileProvider`
+- `lib/features/reports/providers/report_provider.dart` → `reportProvider`, `ReportNotifier`, `ReportState`
 
 **12 Screen yang di-test:**
 
