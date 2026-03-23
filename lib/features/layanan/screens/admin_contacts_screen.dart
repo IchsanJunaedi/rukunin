@@ -2,6 +2,8 @@
 
 import 'dart:typed_data';
 
+import 'package:flutter/services.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -510,7 +512,9 @@ class _ContactFormSheetState extends ConsumerState<_ContactFormSheet> {
             // Nomor WA
             TextFormField(
               controller: _phoneCtrl,
-              keyboardType: TextInputType.phone,
+              keyboardType: TextInputType.number,
+              maxLength: 15,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: InputDecoration(
                 labelText: 'Nomor WhatsApp',
                 hintText: '628123456789 (format internasional tanpa +)',
@@ -518,9 +522,6 @@ class _ContactFormSheetState extends ConsumerState<_ContactFormSheet> {
               ),
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'Nomor WA wajib diisi';
-                if (!RegExp(r'^\d{10,15}$').hasMatch(v.trim())) {
-                  return 'Format: 628xxx (angka saja, 10-15 digit)';
-                }
                 return null;
               },
             ),
