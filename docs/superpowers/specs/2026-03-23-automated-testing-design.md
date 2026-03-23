@@ -141,26 +141,79 @@ testWidgets('description', (tester) async {
 });
 ```
 
-**`mockOverrides()` factory** di `test/helpers/mock_providers.dart` menggunakan nama provider yang benar:
+**Provider types matter untuk overrides.** Tiga provider pakai `AsyncNotifierProvider` — tidak bisa di-override dengan lambda. Butuh stub notifier class:
+
+```dart
+// Stub notifiers untuk AsyncNotifierProvider
+// Letakkan di test/helpers/mock_providers.dart
+
+class FakeInvoiceListNotifier extends InvoiceListNotifier {
+  final List<InvoiceModel> _data;
+  FakeInvoiceListNotifier(this._data);
+  @override
+  Future<List<InvoiceModel>> build() async => _data;
+}
+
+class FakeExpensesNotifier extends ExpensesNotifier {
+  @override
+  Future<List<ExpenseModel>> build() async => [];
+}
+
+class FakeBillingTypesNotifier extends BillingTypesNotifier {
+  @override
+  Future<List<BillingTypeModel>> build() async => [];
+}
+```
+
+**`mockOverrides()` factory** di `test/helpers/mock_providers.dart`:
 
 ```dart
 List<Override> mockOverrides({
   List<InvoiceModel> invoices = const [],
   List<ResidentModel> residents = const [],
   Map<String, dynamic> dashboardData = const {},
-  // ...
+  List<AnnouncementModel> announcements = const [],
+  List<MarketplaceListingModel> listings = const [],
+  List<CommunityContactModel> contacts = const [],
+  List<LetterRequestModel> letterRequests = const [],
+  List<ComplaintModel> complaints = const [],
+  List<InvoiceModel> residentInvoices = const [],
 }) {
   return [
     supabaseClientProvider.overrideWithValue(FakeSupabaseClient()),
-    invoiceListProvider.overrideWith((_) async => invoices),    // dari invoice_list_provider.dart
-    residentsProvider.overrideWith((_) async => residents),     // dari resident_provider.dart
-    dashboardProvider.overrideWith((_) async => dashboardData), // dari admin_dashboard_screen.dart
-    expensesProvider.overrideWith((_) async => []),
-    billingTypesProvider.overrideWith((_) async => []),
-    // ... semua provider utama
+
+    // FutureProvider.autoDispose — lambda syntax valid
+    residentsProvider.overrideWith((_) async => residents),
+    dashboardProvider.overrideWith((_) async => dashboardData), // import dari lib/features/dashboard/screens/admin_dashboard_screen.dart
+    announcementsProvider.overrideWith((_) async => announcements),
+    marketplaceListingsProvider.overrideWith((_) async => listings),
+    communityContactsProvider.overrideWith((_) async => contacts),
+    adminContactsProvider.overrideWith((_) async => contacts),
+    myLetterRequestsProvider.overrideWith((_) async => letterRequests),
+    myComplaintsProvider.overrideWith((_) async => complaints),
+    residentInvoicesProvider.overrideWith((_) async => residentInvoices),
+
+    // AsyncNotifierProvider — wajib pakai stub notifier subclass
+    invoiceListProvider.overrideWith(() => FakeInvoiceListNotifier(invoices)),
+    expensesProvider.overrideWith(() => FakeExpensesNotifier()),
+    billingTypesProvider.overrideWith(() => FakeBillingTypesNotifier()),
   ];
 }
 ```
+
+> `reportProvider` adalah `NotifierProvider<ReportNotifier, ReportState>`. `ReportsScreen` ditest dengan assertion "render tanpa crash" — jika screen langsung crash, override tambahan diperlukan dengan stub `ReportNotifier` serupa.
+
+**Import paths yang dibutuhkan di `mock_providers.dart`:**
+- `lib/core/supabase/supabase_client.dart` → `supabaseClientProvider`
+- `lib/features/invoices/providers/invoice_list_provider.dart` → `invoiceListProvider`, `InvoiceListNotifier`
+- `lib/features/residents/providers/resident_provider.dart` → `residentsProvider`
+- `lib/features/dashboard/screens/admin_dashboard_screen.dart` → `dashboardProvider`
+- `lib/features/expenses/providers/expense_provider.dart` → `expensesProvider`, `ExpensesNotifier`
+- `lib/features/invoices/providers/billing_type_provider.dart` → `billingTypesProvider`, `BillingTypesNotifier`
+- `lib/features/announcements/providers/announcement_provider.dart` → `announcementsProvider`
+- `lib/features/marketplace/providers/marketplace_provider.dart` → `marketplaceListingsProvider`
+- `lib/features/layanan/providers/layanan_provider.dart` → `communityContactsProvider`, `adminContactsProvider`, `myLetterRequestsProvider`, `myComplaintsProvider`
+- `lib/features/resident_portal/providers/resident_invoices_provider.dart` → `residentInvoicesProvider`
 
 **12 Screen yang di-test:**
 
@@ -207,11 +260,13 @@ final lines = result.stdout.toString().split('\n');
 for (final line in lines) {
   if (line.trim().isEmpty) continue;
   final event = jsonDecode(line);
-  if (event['type'] == 'testDone' && event['result'] == 'error') {
+  // 'failure' = expect() gagal, 'error' = unhandled exception — keduanya harus ditangkap
+  if (event['type'] == 'testDone' &&
+      (event['result'] == 'failure' || event['result'] == 'error')) {
     // test gagal
   }
   if (event['type'] == 'error') {
-    // error message
+    // error message detail
   }
 }
 ```
@@ -230,7 +285,9 @@ Dijalankan setelah semua test selesai:
 
 **2. Screen gap scan:**
 - Scan semua file di `lib/features/**/screens/*.dart`
-- Exclude: file yang mengandung `part of` atau file di `auth/` yang non-interactive
+- Exclude:
+  - File yang mengandung string `part of`
+  - Semua file di `auth/screens/` **kecuali** `login_screen.dart` (register, pending-approval, forgot/reset password di-exclude dari scope testing ini)
 - Untuk setiap `foo_screen.dart`, cek apakah `test/widget/screens/foo_screen_test.dart` ada
 - Kalau tidak ada → masuk checklist: "Belum ada widget test untuk FooScreen"
 
