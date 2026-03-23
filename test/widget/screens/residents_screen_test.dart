@@ -24,6 +24,11 @@ ResidentModel _buildResident() => ResidentModel.fromMap({
 
 void main() {
   testWidgets('ResidentsScreen shows search field when list is empty', (tester) async {
+    tester.view.physicalSize = const Size(1080, 1920);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: mockOverrides(residents: []),
@@ -36,6 +41,11 @@ void main() {
   });
 
   testWidgets('ResidentsScreen shows resident name when data is present', (tester) async {
+    tester.view.physicalSize = const Size(1080, 1920);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: mockOverrides(residents: [_buildResident()]),

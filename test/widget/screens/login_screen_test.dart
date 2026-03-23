@@ -6,7 +6,7 @@ import '../../helpers/mock_providers.dart';
 
 void main() {
   testWidgets('LoginScreen renders email field, password field, and Masuk ke akunmu text', (tester) async {
-    tester.view.physicalSize = const Size(1080, 1920);
+    tester.view.physicalSize = const Size(390, 1200);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -14,13 +14,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: mockOverrides(),
-        child: MediaQuery(
-          data: const MediaQueryData(
-            size: Size(390, 844),
-            padding: EdgeInsets.zero,
-          ),
-          child: const MaterialApp(home: LoginScreen()),
-        ),
+        child: const MaterialApp(home: LoginScreen()),
       ),
     );
     await tester.pumpAndSettle();

@@ -30,5 +30,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Aksi Cepat'), findsOneWidget);
+    expect(find.text('Admin'), findsAtLeastNWidgets(1)); // first word of admin_name
   });
 }
