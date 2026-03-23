@@ -178,10 +178,22 @@ class FakeBillingTypesNotifier extends BillingTypesNotifier {
 }
 
 // ReportNotifier adalah NotifierProvider — stub-nya tidak memanggil loadReportData()
-// agar tidak ada dependency ke supabaseClientProvider atau currentProfileProvider
+// agar tidak ada dependency ke supabaseClientProvider atau currentProfileProvider.
+// ReportState memiliki required fields: selectedMonth, selectedYear, currentMonthReport, lastSixMonths.
 class FakeReportNotifier extends ReportNotifier {
   @override
-  ReportState build() => const ReportState(); // initial/empty state
+  ReportState build() => ReportState(
+    selectedMonth: DateTime.now().month,
+    selectedYear: DateTime.now().year,
+    currentMonthReport: MonthlyReport(
+      month: DateTime.now().month,
+      year: DateTime.now().year,
+      totalIncome: 0,
+      totalExpected: 0,
+      totalExpense: 0,
+    ),
+    lastSixMonths: [],
+  );
 }
 ```
 
@@ -204,7 +216,10 @@ List<Override> mockOverrides({
 
     // FutureProvider.autoDispose — lambda syntax valid
     residentsProvider.overrideWith((_) async => residents),
+    // dashboardProvider didefinisikan di dalam file screen (bukan di providers/) — ini by design di codebase ini
     dashboardProvider.overrideWith((_) async => dashboardData), // import dari lib/features/dashboard/screens/admin_dashboard_screen.dart
+    // invoiceWithResidentProvider (bukan invoiceListProvider) yang di-watch langsung oleh InvoicesScreen
+    invoiceWithResidentProvider.overrideWith((_) async => []),
     announcementsProvider.overrideWith((_) async => announcements),
     marketplaceListingsProvider.overrideWith((_) async => listings),
     communityContactsProvider.overrideWith((_) async => contacts),
@@ -215,6 +230,10 @@ List<Override> mockOverrides({
     adminComplaintsProvider.overrideWith((_) async => []),      // untuk AdminComplaintsScreen (gap checklist)
     residentInvoicesProvider.overrideWith((_) async => residentInvoices),
     currentResidentProfileProvider.overrideWith((_) async => null), // untuk ResidentHomeScreen
+    // unreadCountProvider (dari notifications_provider.dart) juga di-watch ResidentHomeScreen.
+    // Tidak perlu di-override: provider ini punya guard `if (userId == null) return 0`,
+    // yang terpenuhi oleh FakeGoTrueClient.currentUser == null.
+    // Jika test tetap crash, tambah: unreadCountProvider.overrideWith((_) async => 0)
 
     // AsyncNotifierProvider — wajib pakai stub notifier subclass
     invoiceListProvider.overrideWith(() => FakeInvoiceListNotifier(invoices)),
@@ -234,7 +253,7 @@ List<Override> mockOverrides({
 **Import paths yang dibutuhkan di `mock_providers.dart`:**
 - `package:supabase_flutter/supabase_flutter.dart` → `GoTrueClient`, `User`
 - `lib/core/supabase/supabase_client.dart` → `supabaseClientProvider`
-- `lib/features/invoices/providers/invoice_list_provider.dart` → `invoiceListProvider`, `InvoiceListNotifier`
+- `lib/features/invoices/providers/invoice_list_provider.dart` → `invoiceListProvider`, `invoiceWithResidentProvider`, `InvoiceListNotifier`
 - `lib/features/residents/providers/resident_provider.dart` → `residentsProvider`
 - `lib/features/dashboard/screens/admin_dashboard_screen.dart` → `dashboardProvider`
 - `lib/features/expenses/providers/expense_provider.dart` → `expensesProvider`, `ExpensesNotifier`
