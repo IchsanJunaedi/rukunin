@@ -30,7 +30,7 @@ void main() {
         child: const MaterialApp(home: ResidentsScreen()),
       ),
     );
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
 
     expect(find.byType(TextField), findsOneWidget);
   });
@@ -42,7 +42,7 @@ void main() {
         child: const MaterialApp(home: ResidentsScreen()),
       ),
     );
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
 
     expect(find.text('Budi Santoso'), findsOneWidget);
   });

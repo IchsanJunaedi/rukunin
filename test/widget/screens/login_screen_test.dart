@@ -23,7 +23,7 @@ void main() {
         ),
       ),
     );
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
 
     expect(find.widgetWithText(TextFormField, 'Email'), findsOneWidget);
     expect(find.widgetWithText(TextFormField, 'Password'), findsOneWidget);
