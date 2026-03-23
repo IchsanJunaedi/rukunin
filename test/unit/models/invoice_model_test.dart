@@ -13,6 +13,7 @@ void main() {
       expect(model.amount, 150000.0);
       expect(model.month, 3);
       expect(model.year, 2026);
+      expect(model.dueDate, DateTime.parse('2026-03-31'));
       expect(model.status, 'pending');
       expect(model.billingTypeName, 'Iuran Bulanan');
     });

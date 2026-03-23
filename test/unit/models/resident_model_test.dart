@@ -58,9 +58,9 @@ void main() {
 
     test('alamatLengkap includes block, unit, rt', () {
       final model = ResidentModel.fromMap(residentMap);
-      expect(model.alamatLengkap, contains('A'));
-      expect(model.alamatLengkap, contains('12'));
-      expect(model.alamatLengkap, contains('2'));
+      expect(model.alamatLengkap, contains('Blok A'));
+      expect(model.alamatLengkap, contains('No. 12'));
+      expect(model.alamatLengkap, contains('RT 2'));
     });
   });
 }
