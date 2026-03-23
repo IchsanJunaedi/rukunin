@@ -70,16 +70,23 @@ void main() {
       expect(state.filterMode, ReportFilterMode.currentMonth);
     });
 
-    test('copyWith updates selectedMonth', () {
+    test('copyWith updates selectedMonth, preserves all other fields', () {
+      final report = emptyReport();
       final state = ReportState(
         selectedMonth: 3,
         selectedYear: 2026,
-        currentMonthReport: emptyReport(),
-        lastSixMonths: [],
+        currentMonthReport: report,
+        lastSixMonths: [report],
+        isLoading: true,
+        filterMode: ReportFilterMode.threeMonths,
       );
       final updated = state.copyWith(selectedMonth: 4);
       expect(updated.selectedMonth, 4);
-      expect(updated.selectedYear, 2026); // unchanged
+      expect(updated.selectedYear, 2026);
+      expect(updated.currentMonthReport, report);
+      expect(updated.lastSixMonths, [report]);
+      expect(updated.isLoading, isTrue);
+      expect(updated.filterMode, ReportFilterMode.threeMonths);
     });
   });
 }

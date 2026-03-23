@@ -41,8 +41,7 @@ void main() {
 
     test('formattedPrice formats with Rp prefix', () {
       final model = MarketplaceListingModel.fromMap(marketplaceListingMap);
-      expect(model.formattedPrice, startsWith('Rp'));
-      expect(model.formattedPrice, contains('15'));
+      expect(model.formattedPrice, 'Rp 15.000');
     });
 
     test('isAvailable is true for active status with stock > 0', () {

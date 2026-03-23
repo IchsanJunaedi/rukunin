@@ -39,7 +39,7 @@ void main() {
 
     test('icon returns receipt icon for payment type', () {
       final model = NotificationModel.fromMap(notificationMap);
-      expect(model.icon, isA<IconData>());
+      expect(model.icon, Icons.receipt_long_rounded);
     });
 
     test('icon returns notifications icon for unknown type', () {
