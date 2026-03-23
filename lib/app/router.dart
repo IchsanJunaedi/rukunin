@@ -230,66 +230,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) =>
             ListingDetailScreen(listing: state.extra as MarketplaceListingModel),
       ),
-      GoRoute(
-        path: '/resident/layanan/permohonan',
-        builder: (context, state) {
-          final type = state.uri.queryParameters['type'];
-          return RequestLetterScreen(initialType: type);
-        },
-      ),
-      GoRoute(
-        path: '/resident/layanan/pengaduan-baru',
-        builder: (context, state) => const ComplaintFormScreen(),
-      ),
-      GoRoute(
-        path: '/admin/layanan-requests',
-        builder: (context, state) => const AdminRequestsScreen(),
-      ),
-      GoRoute(
-        path: '/admin/pengaduan',
-        builder: (context, state) => const AdminComplaintsScreen(),
-      ),
-      GoRoute(
-        path: '/admin/layanan/kontak',
-        builder: (context, state) => const AdminContactsScreen(),
-      ),
-      GoRoute(
-        path: '/admin/tagihan/buat',
-        builder: (context, state) => const CreateInvoiceScreen(),
-      ),
-      GoRoute(
-        path: '/admin/surat/buat',
-        builder: (context, state) {
-          final extra = state.extra as Map<String, dynamic>?;
-          return CreateLetterScreen(
-            prefilledResidentId: extra?['prefilledResidentId'] as String?,
-            prefilledLetterType: extra?['prefilledLetterType'] as String?,
-            prefilledPurpose: extra?['prefilledPurpose'] as String?,
-            fromRequestId: extra?['fromRequestId'] as String?,
-          );
-        },
-      ),
-      GoRoute(
-        path: '/admin/pengumuman/buat',
-        builder: (context, state) => const CreateAnnouncementScreen(),
-      ),
-
-      GoRoute(
-        path: '/admin/pengeluaran',
-        builder: (context, state) => const ExpensesScreen(),
-      ),
-      GoRoute(
-        path: '/admin/pengumuman',
-        builder: (context, state) => const AnnouncementsScreen(isAdmin: true),
-      ),
-      GoRoute(
-        path: '/admin/pengaturan',
-        builder: (context, state) => const CommunitySettingsScreen(),
-      ),
-      GoRoute(
-        path: '/admin/pengaturan-iuran',
-        builder: (context, state) => const BillingTypesScreen(),
-      ),
 
       // Admin routes
       ShellRoute(
@@ -309,6 +249,14 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const InvoicesScreen(),
           ),
           GoRoute(
+            path: '/admin/tagihan/buat',
+            builder: (context, state) => const CreateInvoiceScreen(),
+          ),
+          GoRoute(
+            path: '/admin/pengeluaran',
+            builder: (context, state) => const ExpensesScreen(),
+          ),
+          GoRoute(
             path: '/admin/laporan',
             builder: (context, state) => const ReportsScreen(),
           ),
@@ -319,6 +267,35 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/admin/surat',
             builder: (context, state) => const LettersScreen(),
+          ),
+          GoRoute(
+            path: '/admin/surat/buat',
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return CreateLetterScreen(
+                prefilledResidentId: extra?['prefilledResidentId'] as String?,
+                prefilledLetterType: extra?['prefilledLetterType'] as String?,
+                prefilledPurpose: extra?['prefilledPurpose'] as String?,
+                fromRequestId: extra?['fromRequestId'] as String?,
+              );
+            },
+          ),
+          GoRoute(
+            path: '/admin/pengumuman',
+            builder: (context, state) => const AnnouncementsScreen(isAdmin: true),
+          ),
+          GoRoute(
+            path: '/admin/pengumuman/buat',
+            builder: (context, state) => const CreateAnnouncementScreen(),
+          ),
+          GoRoute(
+            path: '/admin/pengaturan',
+            builder: (context, state) => const CommunitySettingsScreen(),
+          ),
+
+          GoRoute(
+            path: '/admin/pengaturan-iuran',
+            builder: (context, state) => const BillingTypesScreen(),
           ),
         ],
       ),
@@ -355,6 +332,32 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
 
+      // Admin layanan full-screen routes (no bottom nav)
+      GoRoute(
+        path: '/admin/layanan-requests',
+        builder: (context, state) => const AdminRequestsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/pengaduan',
+        builder: (context, state) => const AdminComplaintsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/layanan/kontak',
+        builder: (context, state) => const AdminContactsScreen(),
+      ),
+
+      // Layanan full-screen routes (no bottom nav)
+      GoRoute(
+        path: '/resident/layanan/permohonan',
+        builder: (context, state) {
+          final type = state.uri.queryParameters['type'];
+          return RequestLetterScreen(initialType: type);
+        },
+      ),
+      GoRoute(
+        path: '/resident/layanan/pengaduan-baru',
+        builder: (context, state) => const ComplaintFormScreen(),
+      ),
     ],
     errorBuilder: (context, state) => Scaffold(
       body: Center(child: Text('Halaman tidak ditemukan: ${state.error}')),
