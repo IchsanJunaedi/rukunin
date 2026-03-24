@@ -24,7 +24,7 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
   final _nikCtrl = TextEditingController();
   final _unitCtrl = TextEditingController();
   final _blockCtrl = TextEditingController();
-  final _rtCtrl = TextEditingController();
+  int? _selectedRt;
   bool _loading = false;
   late AnimationController _animController;
   late Animation<double> _fadeAnim;
@@ -44,12 +44,12 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
     _nikCtrl.dispose();
     _unitCtrl.dispose();
     _blockCtrl.dispose();
-    _rtCtrl.dispose();
     _animController.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() => _loading = true);
     try {
       final service = ref.read(registerServiceProvider);
@@ -62,7 +62,7 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
         nik: _nikCtrl.text.trim(),
         unitNumber: _unitCtrl.text.trim(),
         block: _blockCtrl.text.trim(),
-        rtNumber: int.tryParse(_rtCtrl.text.trim()),
+        rtNumber: _selectedRt,
       );
       if (mounted) context.go('/login');
     } catch (e) {
@@ -112,7 +112,7 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                       ),
                       const Spacer(),
                       Text(
-                        'Info\nTambahan\n(Opsional)',
+                        'Info\nTambahan',
                         style: GoogleFonts.playfairDisplay(
                           fontSize: size.width * 0.115,
                           fontWeight: FontWeight.w900,
@@ -123,7 +123,7 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Boleh dilewati, bisa diisi nanti.',
+                        'Blok dan No. RT wajib diisi.',
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
                           color: _kBlack.withValues(alpha: 0.5),
@@ -178,6 +178,8 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                         icon: Icons.home_work_rounded,
                         textInputAction: TextInputAction.next,
                         inputFormatters: [LengthLimitingTextInputFormatter(2)],
+                        validator: (v) =>
+                            (v == null || v.trim().isEmpty) ? 'Blok wajib diisi' : null,
                       ),
                       const SizedBox(height: 12),
                       _DarkTextField(
@@ -192,16 +194,52 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                         ],
                       ),
                       const SizedBox(height: 12),
-                      _DarkTextField(
-                        controller: _rtCtrl,
-                        hint: 'No. RT',
-                        icon: Icons.location_on_rounded,
-                        keyboardType: TextInputType.number,
-                        textInputAction: TextInputAction.done,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(3),
-                        ],
+                      DropdownButtonFormField<int>(
+                        value: _selectedRt,
+                        dropdownColor: const Color(0xFF1A1A1A),
+                        style: GoogleFonts.plusJakartaSans(
+                            color: _kWhite, fontSize: 15, fontWeight: FontWeight.w500),
+                        decoration: InputDecoration(
+                          hintText: 'Pilih No. RT',
+                          hintStyle: GoogleFonts.plusJakartaSans(
+                            color: _kWhite.withValues(alpha: 0.3),
+                            fontSize: 14,
+                          ),
+                          prefixIcon: Icon(Icons.location_on_rounded,
+                              color: _kWhite.withValues(alpha: 0.35), size: 18),
+                          filled: true,
+                          fillColor: _kWhite.withValues(alpha: 0.06),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide(color: _kWhite.withValues(alpha: 0.1)),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide(color: _kWhite.withValues(alpha: 0.1)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(color: _kYellow, width: 1.5),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(color: Color(0xFFFF6B6B)),
+                          ),
+                          errorStyle: const TextStyle(color: Color(0xFFFF6B6B)),
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        ),
+                        icon: Icon(Icons.keyboard_arrow_down_rounded,
+                            color: _kWhite.withValues(alpha: 0.4)),
+                        items: List.generate(
+                          widget.step1Data.rtCount,
+                          (i) => DropdownMenuItem(
+                            value: i + 1,
+                            child: Text('RT ${i + 1}'),
+                          ),
+                        ),
+                        onChanged: (v) => setState(() => _selectedRt = v),
+                        validator: (v) => v == null ? 'No. RT wajib dipilih' : null,
                       ),
                       const Spacer(),
                       // Tombol Daftar
@@ -235,23 +273,6 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                           ),
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      // Lewati
-                      GestureDetector(
-                        onTap: _loading ? null : _submit,
-                        child: Center(
-                          child: Text(
-                            'Lewati, daftar tanpa info tambahan',
-                            style: GoogleFonts.plusJakartaSans(
-                              color: _kWhite.withValues(alpha: 0.4),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              decoration: TextDecoration.underline,
-                              decorationColor: _kWhite.withValues(alpha: 0.4),
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -271,6 +292,7 @@ class _DarkTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final List<TextInputFormatter>? inputFormatters;
+  final String? Function(String?)? validator;
 
   const _DarkTextField({
     required this.controller,
@@ -279,6 +301,7 @@ class _DarkTextField extends StatelessWidget {
     this.keyboardType,
     this.textInputAction,
     this.inputFormatters,
+    this.validator,
   });
 
   @override
@@ -288,6 +311,7 @@ class _DarkTextField extends StatelessWidget {
       keyboardType: keyboardType,
       textInputAction: textInputAction,
       inputFormatters: inputFormatters,
+      validator: validator,
       style: GoogleFonts.plusJakartaSans(
           color: _kWhite, fontSize: 15, fontWeight: FontWeight.w500),
       decoration: InputDecoration(

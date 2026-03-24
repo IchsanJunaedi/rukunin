@@ -21,6 +21,7 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
   final _adminNameCtrl = TextEditingController(); // nama admin sendiri
   final _nameCtrl = TextEditingController();     // nama RT/RW
   final _rwCtrl = TextEditingController();
+  final _rtCountCtrl = TextEditingController();  // jumlah RT dalam RW
   final _phoneCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
@@ -33,6 +34,7 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
     _adminNameCtrl.dispose();
     _nameCtrl.dispose();
     _rwCtrl.dispose();
+    _rtCountCtrl.dispose();
     _phoneCtrl.dispose();
     _emailCtrl.dispose();
     _passCtrl.dispose();
@@ -48,6 +50,7 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
       final code = await service.registerAdmin(
         communityName: _nameCtrl.text.trim(),
         rwNumber: _rwCtrl.text.trim(),
+        rtCount: int.parse(_rtCountCtrl.text.trim()),
         adminPhone: _phoneCtrl.text.trim(),
         email: _emailCtrl.text.trim(),
         password: _passCtrl.text,
@@ -269,6 +272,23 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
                           LengthLimitingTextInputFormatter(3),
                         ],
                         validator: (v) => v == null || v.trim().isEmpty ? 'Nomor RW wajib diisi' : null,
+                      ),
+                      const SizedBox(height: 10),
+                      _DarkTextField(
+                        controller: _rtCountCtrl,
+                        hint: 'Jumlah RT dalam RW ini (contoh: 5)',
+                        icon: Icons.people_alt_rounded,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(2),
+                        ],
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) return 'Jumlah RT wajib diisi';
+                          final n = int.tryParse(v.trim());
+                          if (n == null || n < 1 || n > 20) return 'Jumlah RT harus antara 1–20';
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 10),
                       _DarkTextField(

@@ -42,14 +42,15 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
     setState(() => _loading = true);
     try {
       final service = ref.read(registerServiceProvider);
-      final communityId = await service.checkCommunityCode(_codeCtrl.text.trim());
+      final community = await service.checkCommunityCode(_codeCtrl.text.trim());
       final step1Data = RegisterStep1Data(
-        communityId: communityId,
+        communityId: community.communityId,
         communityCode: _codeCtrl.text.trim().toUpperCase(),
         fullName: _nameCtrl.text.trim(),
         phone: _phoneCtrl.text.trim(),
         email: _emailCtrl.text.trim(),
         password: _passCtrl.text,
+        rtCount: community.rtCount,
       );
       if (mounted) context.push('/register/resident/step2', extra: step1Data);
     } catch (e) {

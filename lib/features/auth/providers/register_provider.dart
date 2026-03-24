@@ -20,6 +20,7 @@ class RegisterService {
   Future<String> registerAdmin({
     required String communityName,
     required String rwNumber,
+    required int rtCount,
     required String adminPhone,
     required String email,
     required String password,
@@ -47,6 +48,7 @@ class RegisterService {
       'rw_number': rwNumber,
       'admin_phone': adminPhone,
       'community_code': code,
+      'rt_count': rtCount,
     });
 
     // 4. Insert admin profile
@@ -63,17 +65,20 @@ class RegisterService {
     return code;
   }
 
-  /// Validasi kode komunitas dan return communityId.
-  Future<String> checkCommunityCode(String code) async {
+  /// Validasi kode komunitas dan return {communityId, rtCount}.
+  Future<({String communityId, int rtCount})> checkCommunityCode(String code) async {
     final community = await client
         .from('communities')
-        .select('id')
+        .select('id, rt_count')
         .eq('community_code', code.toUpperCase().trim())
         .maybeSingle();
     if (community == null) {
       throw Exception('Kode komunitas "$code" tidak ditemukan. Pastikan kode benar.');
     }
-    return community['id'] as String;
+    return (
+      communityId: community['id'] as String,
+      rtCount: (community['rt_count'] as int?) ?? 1,
+    );
   }
 
   /// Warga mendaftar menggunakan communityId yang sudah divalidasi.

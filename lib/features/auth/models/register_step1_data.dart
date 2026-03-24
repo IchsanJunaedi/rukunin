@@ -5,6 +5,7 @@ class RegisterStep1Data {
   final String phone;
   final String email;
   final String password;
+  final int rtCount;
 
   const RegisterStep1Data({
     required this.communityId,
@@ -13,5 +14,6 @@ class RegisterStep1Data {
     required this.phone,
     required this.email,
     required this.password,
+    required this.rtCount,
   });
 }
