@@ -1,136 +1,92 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../app/theme.dart';
+import 'float_nav.dart';
 
-class ResidentShell extends StatelessWidget {
+// ─── Tab definitions ──────────────────────────────────────────────────────────
+const _tabs = [
+  NavTabDef(Icons.home_outlined,         Icons.home_rounded),
+  NavTabDef(Icons.campaign_outlined,     Icons.campaign_rounded),
+  NavTabDef(Icons.article_outlined,      Icons.article_rounded),
+  NavTabDef(Icons.storefront_outlined,   Icons.storefront_rounded),
+  NavTabDef(Icons.receipt_long_outlined, Icons.receipt_long_rounded),
+  NavTabDef(Icons.person_outline,        Icons.person_rounded),
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+class ResidentShell extends StatefulWidget {
   final Widget child;
   const ResidentShell({super.key, required this.child});
 
   @override
-  Widget build(BuildContext context) {
-    final location = GoRouterState.of(context).uri.toString();
-    int currentIndex = 0;
-    if (location.startsWith('/resident/pengumuman')) {
-      currentIndex = 1;
-    } else if (location.startsWith('/resident/layanan')) {
-      currentIndex = 2;
-    } else if (location.startsWith('/resident/marketplace')) {
-      currentIndex = 3;
-    } else if (location.startsWith('/resident/tagihan')) {
-      currentIndex = 4;
-    } else if (location.startsWith('/resident/akun')) {
-      currentIndex = 5;
-    }
-
-    return Scaffold(
-      backgroundColor: Colors.grey.shade50,
-      body: child,
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 20,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _NavItem(
-                  icon: Icons.home_rounded,
-                  label: 'Beranda',
-                  isSelected: currentIndex == 0,
-                  onTap: () => context.go('/resident'),
-                ),
-                _NavItem(
-                  icon: Icons.campaign_rounded,
-                  label: 'Info RT',
-                  isSelected: currentIndex == 1,
-                  onTap: () => context.go('/resident/pengumuman'),
-                ),
-                _NavItem(
-                  icon: Icons.article_outlined,
-                  label: 'Layanan',
-                  isSelected: currentIndex == 2,
-                  onTap: () => context.go('/resident/layanan'),
-                ),
-                _NavItem(
-                  icon: Icons.storefront_rounded,
-                  label: 'Pasar',
-                  isSelected: currentIndex == 3,
-                  onTap: () => context.go('/resident/marketplace'),
-                ),
-                _NavItem(
-                  icon: Icons.receipt_long_rounded,
-                  label: 'Tagihan',
-                  isSelected: currentIndex == 4,
-                  onTap: () => context.go('/resident/tagihan'),
-                ),
-                _NavItem(
-                  icon: Icons.person_rounded,
-                  label: 'Akun',
-                  isSelected: currentIndex == 5,
-                  onTap: () => context.go('/resident/akun'),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  State<ResidentShell> createState() => _ResidentShellState();
 }
 
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
+class _ResidentShellState extends State<ResidentShell>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _entryCtrl;
+  late Animation<Offset>   _entrySlide;
+  late Animation<double>   _entryFade;
 
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
+  @override
+  void initState() {
+    super.initState();
+    _entryCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 480),
+    );
+    _entrySlide = Tween<Offset>(
+      begin: const Offset(0, 1.6),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _entryCtrl, curve: Curves.easeOutCubic));
+    _entryFade = CurvedAnimation(
+      parent: _entryCtrl,
+      curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
+    );
+    _entryCtrl.forward();
+  }
+
+  @override
+  void dispose() {
+    _entryCtrl.dispose();
+    super.dispose();
+  }
+
+  int _currentIndex(BuildContext context) {
+    final loc = GoRouterState.of(context).uri.toString();
+    if (loc.startsWith('/resident/pengumuman'))  return 1;
+    if (loc.startsWith('/resident/layanan'))     return 2;
+    if (loc.startsWith('/resident/marketplace')) return 3;
+    if (loc.startsWith('/resident/tagihan'))     return 4;
+    if (loc.startsWith('/resident/akun'))        return 5;
+    return 0;
+  }
+
+  void _navigate(BuildContext ctx, int i) {
+    const paths = [
+      '/resident',
+      '/resident/pengumuman',
+      '/resident/layanan',
+      '/resident/marketplace',
+      '/resident/tagihan',
+      '/resident/akun',
+    ];
+    ctx.go(paths[i]);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary.withValues(alpha: 0.12) : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: isSelected ? AppColors.primary : AppColors.grey400,
-              size: 24,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 11,
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected ? AppColors.primary : AppColors.grey500,
-              ),
-            ),
-          ],
+    return Scaffold(
+      extendBody: true,
+      body: widget.child,
+      bottomNavigationBar: FadeTransition(
+        opacity: _entryFade,
+        child: SlideTransition(
+          position: _entrySlide,
+          child: FloatingNavBar(
+            tabs: _tabs,
+            current: _currentIndex(context),
+            onTap: (i) => _navigate(context, i),
+          ),
         ),
       ),
     );

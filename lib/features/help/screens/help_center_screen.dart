@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 
 class HelpCenterScreen extends StatelessWidget {
   const HelpCenterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(title: const Text('Pusat Bantuan')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          _buildSection('Tagihan & Pembayaran', [
+          _buildSection(context, 'Tagihan & Pembayaran', [
             ('Bagaimana cara membayar tagihan?',
               'Buka menu Tagihan → pilih tagihan yang belum dibayar → tap "Upload Bukti Bayar" → upload foto bukti transfer. Admin akan memverifikasi dalam 1x24 jam.'),
             ('Tagihan saya sudah dibayar tapi masih "Pending"?',
@@ -24,7 +26,7 @@ class HelpCenterScreen extends StatelessWidget {
               'Pastikan ukuran foto tidak melebihi 5MB. Coba gunakan foto dari kamera langsung atau compress foto terlebih dahulu.'),
           ]),
           const SizedBox(height: 16),
-          _buildSection('Registrasi & Akun', [
+          _buildSection(context, 'Registrasi & Akun', [
             ('Bagaimana cara bergabung ke komunitas?',
               'Minta kode komunitas ke admin RT/RW kamu. Lalu tap "Gabung sbg Warga" di halaman login, masukkan kode tersebut dan lengkapi data diri.'),
             ('Akun saya sedang "Menunggu Persetujuan"?',
@@ -35,7 +37,7 @@ class HelpCenterScreen extends StatelessWidget {
               'Hubungi admin RT/RW untuk update data profil seperti nama, NIK, atau nomor unit.'),
           ]),
           const SizedBox(height: 16),
-          _buildSection('Marketplace', [
+          _buildSection(context, 'Marketplace', [
             ('Bagaimana cara menjual barang?',
               'Buka menu Marketplace → tap tombol "+" → isi detail barang (judul, kategori, harga, stok, foto) → tap Simpan.'),
             ('Bagaimana menandai barang sudah terjual?',
@@ -44,7 +46,7 @@ class HelpCenterScreen extends StatelessWidget {
               'Buka detail listing → tap tombol "Hubungi Penjual via WA" untuk chat langsung di WhatsApp.'),
           ]),
           const SizedBox(height: 16),
-          _buildSection('Lainnya', [
+          _buildSection(context, 'Lainnya', [
             ('Aplikasi lambat atau error?',
               'Coba tutup dan buka ulang aplikasi. Pastikan koneksi internet stabil. Jika masalah berlanjut, hubungi admin komunitasmu.'),
             ('Bagaimana cara melaporkan masalah?',
@@ -55,7 +57,7 @@ class HelpCenterScreen extends StatelessWidget {
             child: Text(
               'Rukunin v1.0 — Dikembangkan untuk kemudahan warga',
               style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12, color: AppColors.grey400),
+                  fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
               textAlign: TextAlign.center,
             ),
           ),
@@ -65,7 +67,8 @@ class HelpCenterScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSection(String title, List<(String, String)> items) {
+  Widget _buildSection(BuildContext context, String title, List<(String, String)> items) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -74,13 +77,13 @@ class HelpCenterScreen extends StatelessWidget {
           style: GoogleFonts.plusJakartaSans(
             fontSize: 15,
             fontWeight: FontWeight.w700,
-            color: AppColors.grey800,
+            color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
           ),
         ),
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
@@ -106,17 +109,17 @@ class HelpCenterScreen extends StatelessWidget {
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.grey800,
+                        color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                       ),
                     ),
-                    iconColor: AppColors.primary,
-                    collapsedIconColor: AppColors.grey400,
+                    iconColor: RukuninColors.brandGreen,
+                    collapsedIconColor: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                     children: [
                       Text(
                         answer,
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
-                          color: AppColors.grey600,
+                          color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                           height: 1.5,
                         ),
                       ),
@@ -127,7 +130,7 @@ class HelpCenterScreen extends StatelessWidget {
                       height: 1,
                       indent: 16,
                       endIndent: 16,
-                      color: AppColors.grey100,
+                      color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
                     ),
                 ],
               );

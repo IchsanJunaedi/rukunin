@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../models/expense_model.dart';
 import '../providers/expense_provider.dart';
 
@@ -78,12 +79,13 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final dateLabel = DateFormat('dd MMMM yyyy', 'id_ID').format(_expenseDate);
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         foregroundColor: Colors.white,
         title: Text(
           'Catat Pengeluaran',
@@ -101,25 +103,25 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // ── Nominal ──
-                    _label('Nominal (Rp)'),
-                    _card(TextFormField(
+                    _label(context, 'Nominal (Rp)'),
+                    _card(context, TextFormField(
                       controller: _amountCtrl,
                       keyboardType: TextInputType.number,
                       style: GoogleFonts.plusJakartaSans(
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.surface),
+                          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface),
                       decoration: InputDecoration(
                         hintText: '0',
                         hintStyle: GoogleFonts.plusJakartaSans(
                             fontSize: 22,
                             fontWeight: FontWeight.w800,
-                            color: AppColors.grey300),
+                            color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
                         prefixText: 'Rp ',
                         prefixStyle: GoogleFonts.plusJakartaSans(
                             fontSize: 22,
                             fontWeight: FontWeight.w800,
-                            color: AppColors.grey500),
+                            color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 20),
@@ -135,8 +137,8 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                     const SizedBox(height: 16),
 
                     // ── Kategori ──
-                    _label('Kategori'),
-                    _card(Padding(
+                    _label(context, 'Kategori'),
+                    _card(context, Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 4),
                       child: DropdownButtonHideUnderline(
@@ -146,7 +148,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                           style: GoogleFonts.plusJakartaSans(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.grey800),
+                              color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                           items: ExpenseModel.categories
                               .map((c) => DropdownMenuItem(
                                     value: c,
@@ -161,8 +163,8 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                     const SizedBox(height: 16),
 
                     // ── Keterangan ──
-                    _label('Keterangan'),
-                    _card(TextFormField(
+                    _label(context, 'Keterangan'),
+                    _card(context, TextFormField(
                       controller: _descCtrl,
                       maxLines: 3,
                       style: GoogleFonts.plusJakartaSans(fontSize: 14),
@@ -170,7 +172,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                         hintText:
                             'Contoh: Bayar tukang potong rumput Pak Budi...',
                         hintStyle: GoogleFonts.plusJakartaSans(
-                            fontSize: 13, color: AppColors.grey400),
+                            fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.all(16),
                       ),
@@ -181,27 +183,27 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                     const SizedBox(height: 16),
 
                     // ── Tanggal ──
-                    _label('Tanggal Pengeluaran'),
+                    _label(context, 'Tanggal Pengeluaran'),
                     GestureDetector(
                       onTap: _pickDate,
-                      child: _card(Padding(
+                      child: _card(context, Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 14),
                         child: Row(
                           children: [
                             const Icon(Icons.calendar_today_outlined,
-                                size: 18, color: AppColors.primary),
+                                size: 18, color: RukuninColors.brandGreen),
                             const SizedBox(width: 12),
                             Text(
                               dateLabel,
                               style: GoogleFonts.plusJakartaSans(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.grey800),
+                                  color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                             ),
                             const Spacer(),
-                            const Icon(Icons.chevron_right,
-                                color: AppColors.grey400),
+                            Icon(Icons.chevron_right,
+                                color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                           ],
                         ),
                       )),
@@ -214,8 +216,8 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                       height: 54,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: AppColors.onPrimary,
+                          backgroundColor: RukuninColors.brandGreen,
+                          foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16)),
                         ),
@@ -234,24 +236,30 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
     );
   }
 
-  Widget _label(String text) => Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Text(
-          text,
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: AppColors.grey600,
-            letterSpacing: 0.5,
-          ),
+  Widget _label(BuildContext context, String text) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        text,
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
+          letterSpacing: 0.5,
         ),
-      );
+      ),
+    );
+  }
 
-  Widget _card(Widget child) => Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: child,
-      );
+  Widget _card(BuildContext context, Widget child) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: child,
+    );
+  }
 }

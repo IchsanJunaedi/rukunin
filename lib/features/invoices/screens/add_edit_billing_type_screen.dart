@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../models/billing_type_model.dart';
 import '../providers/billing_type_provider.dart';
 
@@ -109,9 +110,10 @@ class _AddEditBillingTypeScreenState
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isEdit = widget.billingType != null;
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
         title: Text(
           isEdit ? 'Edit Iuran' : 'Tambah Iuran',
@@ -130,7 +132,10 @@ class _AddEditBillingTypeScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Nama Iuran', style: AppTextStyles.label(14)),
+                    Text('Nama Iuran', style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14, fontWeight: FontWeight.w600,
+                      color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
+                    )),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _nameCtrl,
@@ -142,7 +147,10 @@ class _AddEditBillingTypeScreenState
                           : null,
                     ),
                     const SizedBox(height: 20),
-                    Text('Nominal (Rp)', style: AppTextStyles.label(14)),
+                    Text('Nominal (Rp)', style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14, fontWeight: FontWeight.w600,
+                      color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
+                    )),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _amountCtrl,
@@ -161,7 +169,10 @@ class _AddEditBillingTypeScreenState
                       },
                     ),
                     const SizedBox(height: 20),
-                    Text('Tangal Jatuh Tempo Tiap Bulan', style: AppTextStyles.label(14)),
+                    Text('Tanggal Jatuh Tempo Tiap Bulan', style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14, fontWeight: FontWeight.w600,
+                      color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
+                    )),
                     const SizedBox(height: 8),
                     DropdownButtonFormField<int>(
                       initialValue: _billingDay,
@@ -177,30 +188,30 @@ class _AddEditBillingTypeScreenState
                       },
                     ),
                     const SizedBox(height: 20),
-                    // Tarif Kendaraan (khusus Ronda/Keamanan)
+                    // Tarif Kendaraan
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.blue.shade50,
+                        color: RukuninColors.brandGreen.withValues(alpha: 0.07),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.blue.shade200),
+                        border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.3)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.two_wheeler, size: 16, color: Colors.blue.shade700),
+                              Icon(Icons.two_wheeler, size: 16, color: RukuninColors.brandGreen),
                               const SizedBox(width: 8),
                               Text('Tarif Tambahan per Kendaraan',
                                   style: GoogleFonts.plusJakartaSans(
-                                    fontWeight: FontWeight.w700, fontSize: 13, color: Colors.blue.shade700)),
+                                    fontWeight: FontWeight.w700, fontSize: 13, color: RukuninColors.brandGreen)),
                             ],
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Isi jika iuran ini dikenakan tambahan berdasarkan jumlah kendaraan warga (misal: iuran Ronda). Kosongkan atau isi 0 jika tidak perlu.',
-                            style: GoogleFonts.plusJakartaSans(fontSize: 11, color: AppColors.grey500),
+                            style: GoogleFonts.plusJakartaSans(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                           ),
                           const SizedBox(height: 12),
                           TextFormField(
@@ -209,8 +220,7 @@ class _AddEditBillingTypeScreenState
                             decoration: InputDecoration(
                               labelText: 'Tambahan per Motor (Rp)',
                               prefixIcon: const Icon(Icons.two_wheeler, size: 18),
-                              filled: true,
-                              fillColor: Colors.white,
+                              fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -220,8 +230,7 @@ class _AddEditBillingTypeScreenState
                             decoration: InputDecoration(
                               labelText: 'Tambahan per Mobil (Rp)',
                               prefixIcon: const Icon(Icons.directions_car_outlined, size: 18),
-                              filled: true,
-                              fillColor: Colors.white,
+                              fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
                             ),
                           ),
                         ],
@@ -231,9 +240,9 @@ class _AddEditBillingTypeScreenState
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.grey200),
+                        border: Border.all(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -246,7 +255,7 @@ class _AddEditBillingTypeScreenState
                                 style: GoogleFonts.plusJakartaSans(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
-                                  color: AppColors.grey800,
+                                  color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -256,14 +265,14 @@ class _AddEditBillingTypeScreenState
                                     : 'Tagihan iuran ini dinonaktifkan',
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 12,
-                                  color: AppColors.grey600,
+                                  color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                                 ),
                               ),
                             ],
                           ),
                           Switch(
                             value: _isActive,
-                            activeThumbColor: AppColors.success,
+                            activeThumbColor: RukuninColors.success,
                             onChanged: (val) => setState(() => _isActive = val),
                           )
                         ],
@@ -275,8 +284,8 @@ class _AddEditBillingTypeScreenState
                       height: 52,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: AppColors.onPrimary,
+                          backgroundColor: RukuninColors.brandGreen,
+                          foregroundColor: Colors.white,
                         ),
                         onPressed: _save,
                         child: Text(isEdit ? 'Simpan Perubahan' : 'Simpan Iuran'),

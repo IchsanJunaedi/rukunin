@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../providers/ai_assistant_provider.dart';
 
 class AiAssistantScreen extends ConsumerStatefulWidget {
@@ -53,9 +54,10 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final state = ref.watch(aiAssistantProvider);
 
-    // Auto scroll ketika ada pesan baru
+    // Auto scroll when new messages arrive
     ref.listen(aiAssistantProvider, (prev, next) {
       if (next.messages.length != prev?.messages.length || next.isLoading != prev?.isLoading) {
         _scrollToBottom();
@@ -63,7 +65,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
     });
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
         title: Row(
           children: [
@@ -72,7 +74,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
               height: 36,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppColors.primary, Colors.purple.shade400],
+                  colors: [RukuninColors.brandGreen, Colors.purple.shade400],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -108,26 +110,26 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
               itemCount: state.messages.length + (state.isLoading ? 1 : 0),
               itemBuilder: (context, index) {
                 if (index == state.messages.length) {
-                  return _buildTypingIndicator();
+                  return _buildTypingIndicator(isDark);
                 }
                 final msg = state.messages[index];
-                return _buildChatBubble(msg);
+                return _buildChatBubble(msg, isDark);
               },
             ),
           ),
 
           // Quick actions
           if (state.messages.length <= 1)
-            _buildQuickActions(),
+            _buildQuickActions(isDark),
 
           // Input
-          _buildInputBar(state),
+          _buildInputBar(state, isDark),
         ],
       ),
     );
   }
 
-  Widget _buildChatBubble(ChatMessage msg) {
+  Widget _buildChatBubble(ChatMessage msg, bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -138,7 +140,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
             Container(
               width: 28, height: 28,
               decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [AppColors.primary, Colors.purple.shade400]),
+                gradient: LinearGradient(colors: [RukuninColors.brandGreen, Colors.purple.shade400]),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.auto_awesome, color: Colors.white, size: 14),
@@ -149,7 +151,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: msg.isUser ? AppColors.primary : Colors.white,
+                color: msg.isUser ? RukuninColors.brandGreen : (isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
                   topRight: const Radius.circular(16),
@@ -164,7 +166,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                   Text(
                     msg.text,
                     style: GoogleFonts.plusJakartaSans(
-                      color: msg.isUser ? Colors.white : AppColors.grey800,
+                      color: msg.isUser ? Colors.white : (isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                       fontSize: 14,
                     ),
                   ),
@@ -173,7 +175,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                     DateFormat('HH:mm').format(msg.timestamp),
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 10,
-                      color: msg.isUser ? Colors.white60 : AppColors.grey500,
+                      color: msg.isUser ? Colors.white60 : (isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                     ),
                   ),
                 ],
@@ -186,7 +188,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
     );
   }
 
-  Widget _buildTypingIndicator() {
+  Widget _buildTypingIndicator(bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -194,7 +196,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
           Container(
             width: 28, height: 28,
             decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [AppColors.primary, Colors.purple.shade400]),
+              gradient: LinearGradient(colors: [RukuninColors.brandGreen, Colors.purple.shade400]),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.auto_awesome, color: Colors.white, size: 14),
@@ -202,7 +204,10 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
           const SizedBox(width: 8),
           Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+            decoration: BoxDecoration(
+              color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Row(
               children: [
                 _buildDot(0),
@@ -224,26 +229,33 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
       duration: const Duration(milliseconds: 600),
       curve: Curves.easeInOut,
       builder: (context, value, child) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         return Transform.translate(
           offset: Offset(0, -4 * value),
           child: Container(
             width: 6,
             height: 6,
-            decoration: const BoxDecoration(color: AppColors.grey500, shape: BoxShape.circle),
+            decoration: BoxDecoration(
+              color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
+              shape: BoxShape.circle,
+            ),
           ),
         );
       },
     );
   }
 
-  Widget _buildQuickActions() {
+  Widget _buildQuickActions(bool isDark) {
     return Container(
-      color: Colors.white,
+      color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
       padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Pertanyaan Cepat:', style: GoogleFonts.plusJakartaSans(fontSize: 12, color: AppColors.grey600)),
+          Text('Pertanyaan Cepat:', style: GoogleFonts.plusJakartaSans(
+            fontSize: 12,
+            color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
+          )),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
@@ -253,11 +265,11 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.08),
+                  color: RukuninColors.brandGreen.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                  border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.3)),
                 ),
-                child: Text(q, style: GoogleFonts.plusJakartaSans(fontSize: 12, color: AppColors.primary)),
+                child: Text(q, style: GoogleFonts.plusJakartaSans(fontSize: 12, color: RukuninColors.brandGreen)),
               ),
             )).toList(),
           ),
@@ -266,11 +278,11 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
     );
   }
 
-  Widget _buildInputBar(AiState state) {
+  Widget _buildInputBar(AiState state, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 10, offset: const Offset(0, -2))],
       ),
       child: SafeArea(
@@ -286,9 +298,12 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                 style: GoogleFonts.plusJakartaSans(fontSize: 14),
                 decoration: InputDecoration(
                   hintText: 'Tanya sesuatu tentang keuangan RW...',
-                  hintStyle: GoogleFonts.plusJakartaSans(color: AppColors.grey500, fontSize: 13),
+                  hintStyle: GoogleFonts.plusJakartaSans(
+                    color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
+                    fontSize: 13,
+                  ),
                   filled: true,
-                  fillColor: AppColors.grey100,
+                  fillColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
                 ),
@@ -304,7 +319,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                 decoration: BoxDecoration(
                   gradient: state.isLoading
                       ? const LinearGradient(colors: [Colors.grey, Colors.grey])
-                      : LinearGradient(colors: [AppColors.primary, Colors.purple.shade500]),
+                      : LinearGradient(colors: [RukuninColors.brandGreen, Colors.purple.shade500]),
                   shape: BoxShape.circle,
                 ),
                 child: state.isLoading

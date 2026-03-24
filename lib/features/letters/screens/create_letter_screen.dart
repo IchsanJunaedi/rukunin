@@ -7,6 +7,7 @@ import 'package:file_saver/file_saver.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../providers/letter_provider.dart';
 import '../../../core/supabase/supabase_client.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -329,8 +330,9 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
   // ── Build ─────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
         title: Text('Buat Surat Keterangan', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
       ),
@@ -343,12 +345,13 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
                 children: [
                   // ── Jenis Surat ────────────────────────
                   _card(
+                    context: context,
                     icon: Icons.article,
                     title: 'Jenis Surat',
                     child: DropdownButtonFormField<String>(
                       initialValue: _letterType,
                       isExpanded: true,
-                      decoration: _deco('Pilih jenis surat...'),
+                      decoration: _deco(context, 'Pilih jenis surat...'),
                       items: letterTypeLabels.entries.map((e) => DropdownMenuItem(
                         value: e.key,
                         child: Text(e.value, style: GoogleFonts.plusJakartaSans(fontSize: 13)),
@@ -360,25 +363,27 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
 
                   // ── Data Pemohon ───────────────────────
                   _card(
+                    context: context,
                     icon: Icons.person,
                     title: 'Data Pemohon',
                     child: Column(children: [
-                      _field(_nameCtrl, 'Nama Lengkap *'),
-                      _nikField(),
-                      _field(_ttlCtrl, 'Tempat, Tanggal Lahir (contoh: Jakarta, 15-02-2004)'),
-                      _dropdown('Jenis Kelamin', _genderOptions, _gender, (v) => setState(() => _gender = v)),
-                      _dropdown('Agama', _religionOptions, _religion, (v) => setState(() => _religion = v)),
-                      _dropdown('Status Perkawinan', _maritalOptions, _marital, (v) => setState(() => _marital = v)),
-                      _field(_occupationCtrl, 'Pekerjaan'),
+                      _field(context, _nameCtrl, 'Nama Lengkap *'),
+                      _nikField(context),
+                      _field(context, _ttlCtrl, 'Tempat, Tanggal Lahir (contoh: Jakarta, 15-02-2004)'),
+                      _dropdown(context, 'Jenis Kelamin', _genderOptions, _gender, (v) => setState(() => _gender = v)),
+                      _dropdown(context, 'Agama', _religionOptions, _religion, (v) => setState(() => _religion = v)),
+                      _dropdown(context, 'Status Perkawinan', _maritalOptions, _marital, (v) => setState(() => _marital = v)),
+                      _field(context, _occupationCtrl, 'Pekerjaan'),
                     ]),
                   ),
                   const SizedBox(height: 12),
 
                   // ── Keperluan ──────────────────────────
                   _card(
+                    context: context,
                     icon: Icons.notes,
                     title: 'Keperluan / Tujuan Surat (Opsional)',
-                    child: _field(_purposeCtrl, 'Contoh: Untuk keperluan syarat pendaftaran beasiswa KIP Kuliah...', lines: 2),
+                    child: _field(context, _purposeCtrl, 'Contoh: Untuk keperluan syarat pendaftaran beasiswa KIP Kuliah...', lines: 2),
                   ),
                   const SizedBox(height: 16),
 
@@ -388,12 +393,12 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
                     child: ElevatedButton.icon(
                       onPressed: _applyTemplate,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: RukuninColors.brandGreen,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
-                      icon: const Icon(Icons.auto_fix_high, color: AppColors.onPrimary, size: 20),
-                      label: Text('Terapkan ke Surat', style: GoogleFonts.plusJakartaSans(color: AppColors.onPrimary, fontWeight: FontWeight.w700, fontSize: 14)),
+                      icon: const Icon(Icons.auto_fix_high, color: Colors.white, size: 20),
+                      label: Text('Terapkan ke Surat', style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14)),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -401,6 +406,7 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
                   // ── Preview & Edit Isi Surat ───────────
                   if (_pdfReady) ...[
                     _card(
+                      context: context,
                       icon: Icons.article_outlined,
                       title: 'Isi Surat (Bisa Diedit Manual)',
                       child: TextFormField(
@@ -415,8 +421,8 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
                       Expanded(child: OutlinedButton.icon(
                         onPressed: () => _exportPdf(isShare: true),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColors.primary,
-                          side: const BorderSide(color: AppColors.primary),
+                          foregroundColor: RukuninColors.brandGreen,
+                          side: const BorderSide(color: RukuninColors.brandGreen),
                           padding: const EdgeInsets.symmetric(vertical: 13),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
@@ -427,12 +433,12 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
                       Expanded(child: ElevatedButton.icon(
                         onPressed: () => _exportPdf(isShare: false),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
+                          backgroundColor: RukuninColors.brandGreen,
                           padding: const EdgeInsets.symmetric(vertical: 13),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
-                        icon: const Icon(Icons.download, color: AppColors.onPrimary, size: 18),
-                        label: Text('Unduh PDF', style: GoogleFonts.plusJakartaSans(color: AppColors.onPrimary, fontWeight: FontWeight.w600)),
+                        icon: const Icon(Icons.download, color: Colors.white, size: 18),
+                        label: Text('Unduh PDF', style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.w600)),
                       )),
                     ]),
                     if (widget.fromRequestId != null) ...[
@@ -461,16 +467,16 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
                     Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.07),
+                        color: RukuninColors.brandGreen.withValues(alpha: 0.07),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
+                        border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.25)),
                       ),
                       child: Row(children: [
-                        const Icon(Icons.info_outline, color: AppColors.primary, size: 18),
+                        const Icon(Icons.info_outline, color: RukuninColors.brandGreen, size: 18),
                         const SizedBox(width: 8),
                         Expanded(child: Text(
                           'Isi data pemohon lalu tekan "Terapkan ke Surat".',
-                          style: GoogleFonts.plusJakartaSans(fontSize: 13, color: AppColors.primary),
+                          style: GoogleFonts.plusJakartaSans(fontSize: 13, color: RukuninColors.brandGreen),
                         )),
                       ]),
                     ),
@@ -483,19 +489,20 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
   }
 
   // ── Helper Widgets ────────────────────────────
-  Widget _card({required IconData icon, required String title, required Widget child}) {
+  Widget _card({required BuildContext context, required IconData icon, required String title, required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2))],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Icon(icon, color: AppColors.primary, size: 18),
+          Icon(icon, color: RukuninColors.brandGreen, size: 18),
           const SizedBox(width: 6),
-          Text(title, style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.grey600)),
+          Text(title, style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
         ]),
         const SizedBox(height: 10),
         child,
@@ -503,19 +510,19 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
     );
   }
 
-  Widget _field(TextEditingController ctrl, String hint, {int lines = 1}) {
+  Widget _field(BuildContext context, TextEditingController ctrl, String hint, {int lines = 1}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: TextField(
         controller: ctrl,
         maxLines: lines,
         style: GoogleFonts.plusJakartaSans(fontSize: 13),
-        decoration: _deco(hint),
+        decoration: _deco(context, hint),
       ),
     );
   }
 
-  Widget _nikField() {
+  Widget _nikField(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: TextField(
@@ -524,18 +531,18 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
         maxLength: 16,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         style: GoogleFonts.plusJakartaSans(fontSize: 13),
-        decoration: _deco('NIK (maks. 16 digit)').copyWith(counterText: ''),
+        decoration: _deco(context, 'NIK (maks. 16 digit)').copyWith(counterText: ''),
       ),
     );
   }
 
-  Widget _dropdown(String label, List<String> options, String? value, ValueChanged<String?> onChanged) {
+  Widget _dropdown(BuildContext context, String label, List<String> options, String? value, ValueChanged<String?> onChanged) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: DropdownButtonFormField<String>(
         initialValue: value,
         isExpanded: true,
-        decoration: _deco(label),
+        decoration: _deco(context, label),
         items: options.map((o) => DropdownMenuItem(
           value: o,
           child: Text(o, style: GoogleFonts.plusJakartaSans(fontSize: 13)),
@@ -545,12 +552,15 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
     );
   }
 
-  InputDecoration _deco(String hint) => InputDecoration(
-    hintText: hint,
-    hintStyle: GoogleFonts.plusJakartaSans(fontSize: 12, color: AppColors.grey500),
-    filled: true,
-    fillColor: AppColors.grey100,
-    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-  );
+  InputDecoration _deco(BuildContext context, String hint) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: GoogleFonts.plusJakartaSans(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+      filled: true,
+      fillColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+    );
+  }
 }

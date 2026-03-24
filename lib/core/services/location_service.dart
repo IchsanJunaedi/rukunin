@@ -11,6 +11,13 @@ class WilayahModel {
   WilayahModel({required this.id, required this.name});
   factory WilayahModel.fromMap(Map<String, dynamic> m) =>
       WilayahModel(id: m['id'].toString(), name: m['name'].toString());
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is WilayahModel && other.id == id;
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 class LocationService {

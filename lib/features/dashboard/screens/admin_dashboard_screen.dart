@@ -3,37 +3,23 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
-import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
+import '../../../app/components.dart';
 import '../../../core/supabase/supabase_client.dart';
 
-// ─────────────────────────────────────────
-//  WARNA LOKAL (tidak konflik dengan AppColors)
-// ─────────────────────────────────────────
-class _C {
-  static const Color dark       = AppColors.surface;       // #0D0D0D
-  static const Color bg         = AppColors.grey100;       // #F4F4F4
-  static const Color yellow1    = Color(0xFFFFF9C4);
-  static const Color yellow2    = AppColors.primary;       // #FFC107
-  static const Color yellow3    = Color(0xFFFF8F00);
-  static const Color statGreen  = Color(0xFF22C55E);
-  static const Color statRed    = Color(0xFFEF4444);
-  static const Color statBlue   = Color(0xFF3B82F6);
-  static const Color textMuted  = AppColors.grey500;
-  static const Color iconInactive = AppColors.grey400;
-}
-
-// ─────────────────────────────────────────
-//  PROVIDER (tidak diubah)
-// ─────────────────────────────────────────
-final dashboardProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+// ─── Provider ────────────────────────────────────────────────────────────────
+final dashboardProvider =
+    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
   final client = ref.watch(supabaseClientProvider);
   final userId = client.auth.currentUser?.id;
   if (userId == null) return {};
 
   final profile = await client
       .from('profiles')
-      .select('community_id, full_name, communities(name, rw_number, community_code)')
+      .select(
+          'community_id, full_name, communities(name, rw_number, community_code)')
       .eq('id', userId)
       .maybeSingle();
 
@@ -49,250 +35,259 @@ final dashboardProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref)
       .eq('month', now.month)
       .eq('year', now.year);
 
-  final sudahBayar        = invoices.where((i) => i['status'] == 'paid').length;
-  final menungguVerifikasi = invoices.where((i) => i['status'] == 'awaiting_verification').length;
-  final belumBayar        = invoices.where((i) => i['status'] == 'pending' || i['status'] == 'overdue').length;
-  final totalTagihan      = invoices.fold(0.0, (sum, i) => sum + (i['amount'] as num).toDouble());
-  final totalTerkumpul    = invoices
+  final sudahBayar = invoices.where((i) => i['status'] == 'paid').length;
+  final menungguVerifikasi =
+      invoices.where((i) => i['status'] == 'awaiting_verification').length;
+  final belumBayar = invoices
+      .where((i) => i['status'] == 'pending' || i['status'] == 'overdue')
+      .length;
+  final totalTagihan = invoices.fold(
+      0.0, (sum, i) => sum + (i['amount'] as num).toDouble());
+  final totalTerkumpul = invoices
       .where((i) => i['status'] == 'paid')
       .fold(0.0, (sum, i) => sum + (i['amount'] as num).toDouble());
 
   return {
-    'admin_name'          : profile['full_name'] ?? 'Admin',
-    'rw_name'             : (profile['communities'] as Map?)?['name'] ?? 'RT/RW',
-    'community_code'      : (profile['communities'] as Map?)?['community_code'] ?? '',
-    'total_unit'          : invoices.length,
-    'sudah_bayar'         : sudahBayar,
-    'menunggu_verifikasi' : menungguVerifikasi,
-    'belum_bayar'         : belumBayar,
-    'total_tagihan'       : totalTagihan,
-    'total_terkumpul'     : totalTerkumpul,
+    'admin_name': profile['full_name'] ?? 'Admin',
+    'rw_name': (profile['communities'] as Map?)?['name'] ?? 'RT/RW',
+    'community_code':
+        (profile['communities'] as Map?)?['community_code'] ?? '',
+    'total_unit': invoices.length,
+    'sudah_bayar': sudahBayar,
+    'menunggu_verifikasi': menungguVerifikasi,
+    'belum_bayar': belumBayar,
+    'total_tagihan': totalTagihan,
+    'total_terkumpul': totalTerkumpul,
   };
 });
 
-// ─────────────────────────────────────────
-//  SCREEN
-// ─────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+//  ADMIN DASHBOARD SCREEN
+// ─────────────────────────────────────────────────────────────────────────────
+
 class AdminDashboardScreen extends ConsumerWidget {
   const AdminDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final data = ref.watch(dashboardProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: _C.bg,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       body: data.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: _C.yellow2),
-        ),
+        loading: () => _buildSkeleton(context),
         error: (e, _) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.error_outline_rounded, color: _C.statRed, size: 48),
-                const SizedBox(height: 12),
-                Text('Gagal memuat data', style: GoogleFonts.plusJakartaSans(color: _C.dark)),
-                const SizedBox(height: 8),
-                TextButton(
-                  onPressed: () => ref.invalidate(dashboardProvider),
-                  child: const Text('Coba Lagi'),
-                ),
-              ],
-            ),
+          child: EmptyState(
+            icon: Icons.error_outline_rounded,
+            title: 'Gagal memuat data',
+            description: e.toString(),
+            ctaLabel: 'Coba lagi',
+            onCta: () => ref.invalidate(dashboardProvider),
           ),
         ),
-        data: (d) => CustomScrollView(
-          slivers: [
-            // ── Header ──────────────────────────────────
-            SliverToBoxAdapter(child: _Header(d: d)),
+        data: (d) => _buildContent(context, ref, d),
+      ),
+    );
+  }
 
-            // ── Konten ──────────────────────────────────
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  // Kas summary
-                  _KasSummaryCard(
-                    terkumpul: (d['total_terkumpul'] as num?)?.toDouble() ?? 0,
-                    tagihan:   (d['total_tagihan']   as num?)?.toDouble() ?? 0,
-                  ),
-                  const SizedBox(height: 14),
-
-                  // Kode komunitas
-                  _CommunityCodeCard(code: d['community_code']?.toString() ?? '-'),
-                  const SizedBox(height: 14),
-
-                  // Statistik 2×2
-                  _StatGrid(
-                    totalUnit:   d['total_unit']           as int? ?? 0,
-                    sudahBayar:  d['sudah_bayar']          as int? ?? 0,
-                    belumBayar:  d['belum_bayar']          as int? ?? 0,
-                    tungguVerif: d['menunggu_verifikasi']  as int? ?? 0,
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Aksi cepat
-                  const _AksiCepat(),
-                  const SizedBox(height: 20),
-
-                  // Layanan Warga
-                  Text(
-                    'Layanan Warga',
-                    style: GoogleFonts.plusJakartaSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: _C.textMuted),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _QuickActionCard(
-                          icon: Icons.article_outlined,
-                          label: 'Permohonan\nSurat',
-                          onTap: () =>
-                              context.push('/admin/layanan-requests'),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _QuickActionCard(
-                          icon: Icons.report_problem_outlined,
-                          label: 'Pengaduan\nWarga',
-                          onTap: () => context.push('/admin/pengaduan'),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // Spacer bawah untuk navbar
-                  const SizedBox(height: 110),
-                ]),
-              ),
-            ),
-          ],
+  Widget _buildSkeleton(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(child: _SkeletonHeader()),
+        SliverPadding(
+          padding: const EdgeInsets.all(20),
+          sliver: SliverList(
+            delegate: SliverChildListDelegate([
+              ShimmerBox(width: double.infinity, height: 140, borderRadius: 20),
+              const SizedBox(height: 14),
+              ShimmerBox(width: double.infinity, height: 72, borderRadius: 16),
+              const SizedBox(height: 14),
+              Row(children: [
+                Expanded(child: ShimmerBox(width: double.infinity, height: 90, borderRadius: 16)),
+                const SizedBox(width: 10),
+                Expanded(child: ShimmerBox(width: double.infinity, height: 90, borderRadius: 16)),
+              ]),
+              const SizedBox(height: 10),
+              Row(children: [
+                Expanded(child: ShimmerBox(width: double.infinity, height: 90, borderRadius: 16)),
+                const SizedBox(width: 10),
+                Expanded(child: ShimmerBox(width: double.infinity, height: 90, borderRadius: 16)),
+              ]),
+            ]),
+          ),
         ),
+      ],
+    );
+  }
+
+  Widget _buildContent(
+      BuildContext context, WidgetRef ref, Map<String, dynamic> d) {
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(child: _DashboardHeader(d: d)),
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+          sliver: SliverList(
+            delegate: SliverChildListDelegate([
+              _KasHeroCard(
+                terkumpul: (d['total_terkumpul'] as num?)?.toDouble() ?? 0,
+                tagihan: (d['total_tagihan'] as num?)?.toDouble() ?? 0,
+              ),
+              const SizedBox(height: 14),
+              _CommunityCodeTile(code: d['community_code']?.toString() ?? '-'),
+              const SizedBox(height: 20),
+              SectionHeader(title: 'Tagihan Bulan Ini'),
+              const SizedBox(height: 12),
+              _StatsGrid(
+                totalUnit: d['total_unit'] as int? ?? 0,
+                sudahBayar: d['sudah_bayar'] as int? ?? 0,
+                belumBayar: d['belum_bayar'] as int? ?? 0,
+                tungguVerif: d['menunggu_verifikasi'] as int? ?? 0,
+              ),
+              const SizedBox(height: 24),
+              SectionHeader(title: 'Aksi Cepat'),
+              const SizedBox(height: 12),
+              _QuickActions(),
+              const SizedBox(height: 24),
+              SectionHeader(title: 'Layanan Warga'),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: _ServiceCard(
+                      icon: Icons.article_outlined,
+                      label: 'Permohonan\nSurat',
+                      onTap: () => context.push('/admin/layanan-requests'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _ServiceCard(
+                      icon: Icons.report_problem_outlined,
+                      label: 'Pengaduan\nWarga',
+                      onTap: () => context.push('/admin/pengaduan'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 100),
+            ]),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+
+class _SkeletonHeader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: RukuninColors.brandGreen,
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + 16,
+        left: 20, right: 20, bottom: 28,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ShimmerBox(width: 80, height: 14, borderRadius: 4),
+              ShimmerBox(width: 100, height: 32, borderRadius: 100),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ShimmerBox(width: 200, height: 28, borderRadius: 8),
+        ],
       ),
     );
   }
 }
 
-// ════════════════════════════════════════════════════════
-//  HEADER
-// ════════════════════════════════════════════════════════
-class _Header extends StatelessWidget {
+class _DashboardHeader extends StatelessWidget {
   final Map<String, dynamic> d;
-  const _Header({required this.d});
+  const _DashboardHeader({required this.d});
 
   @override
   Widget build(BuildContext context) {
-    final firstName = (d['admin_name']?.toString() ?? 'Admin').split(' ').first;
-    final initial   = firstName.isNotEmpty ? firstName[0].toUpperCase() : 'A';
+    final name = d['admin_name']?.toString() ?? 'Admin';
+    final firstName = name.split(' ').first;
+    final initial = firstName.isNotEmpty ? firstName[0].toUpperCase() : 'A';
 
     return Container(
-      color: _C.dark,
+      decoration: const BoxDecoration(
+        gradient: RukuninColors.brandGradient,
+      ),
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top + 16,
-        left: 20, right: 20, bottom: 32,
+        left: 20, right: 20, bottom: 28,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top row: greeting + avatar
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Hei, $firstName 👋',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 13,
-                  color: Colors.white.withValues(alpha: 0.45),
-                  fontWeight: FontWeight.w500,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Selamat datang,',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      color: Colors.white.withValues(alpha: 0.75),
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  Text(
+                    firstName,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 17,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.3,
+                    ),
+                  ),
+                ],
               ),
               GestureDetector(
                 onTap: () => context.push('/admin/profil'),
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(5, 5, 12, 5),
+                  padding: const EdgeInsets.all(3),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.08),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
-                    borderRadius: BorderRadius.circular(24),
+                    color: Colors.white.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
                   ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 28, height: 28,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                            colors: [_C.yellow1, _C.yellow3],
-                          ),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          initial,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w800,
-                            color: _C.dark,
-                          ),
-                        ),
+                  child: CircleAvatar(
+                    radius: 18,
+                    backgroundColor: Colors.white.withValues(alpha: 0.15),
+                    child: Text(
+                      initial,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
                       ),
-                      const SizedBox(width: 7),
-                      Text(
-                        firstName,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 12,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 14),
-
-          // RW name
-          RichText(
-            text: TextSpan(
-              style: GoogleFonts.playfairDisplay(
-                fontSize: 26,
-                fontWeight: FontWeight.w800,
-                color: Colors.white,
-                height: 1.15,
-                letterSpacing: -0.5,
-              ),
-              children: [
-                TextSpan(text: '${d['rw_name'] ?? 'Dashboard'} '),
-                WidgetSpan(
-                  alignment: PlaceholderAlignment.middle,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [_C.yellow1, _C.yellow2],
-                      ),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      'ADMIN',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        color: _C.dark,
-                        letterSpacing: 0.8,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+          const SizedBox(height: 12),
+          Text(
+            d['rw_name']?.toString() ?? 'Dashboard',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 24,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+              letterSpacing: -0.5,
+              height: 1.1,
             ),
           ),
         ],
@@ -301,125 +296,123 @@ class _Header extends StatelessWidget {
   }
 }
 
-// ════════════════════════════════════════════════════════
-//  KAS SUMMARY CARD (yellow gradient)
-// ════════════════════════════════════════════════════════
-class _KasSummaryCard extends StatelessWidget {
+// ── Kas Hero Card ─────────────────────────────────────────────────────────────
+
+class _KasHeroCard extends StatelessWidget {
   final double terkumpul;
   final double tagihan;
-  const _KasSummaryCard({required this.terkumpul, required this.tagihan});
+  const _KasHeroCard({required this.terkumpul, required this.tagihan});
 
   String _fmt(double v) {
-    if (v >= 1000000) return 'Rp ${(v / 1000000).toStringAsFixed(1)}jt';
-    final s = v.toInt().toString();
-    final buf = StringBuffer('Rp ');
-    for (int i = 0; i < s.length; i++) {
-      if (i > 0 && (s.length - i) % 3 == 0) buf.write('.');
-      buf.write(s[i]);
+    if (v >= 1000000) {
+      return 'Rp ${(v / 1000000).toStringAsFixed(1)}jt';
     }
-    return buf.toString();
+    return NumberFormat.currency(
+            locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0)
+        .format(v);
   }
 
   @override
   Widget build(BuildContext context) {
     final pct = tagihan > 0 ? (terkumpul / tagihan).clamp(0.0, 1.0) : 0.0;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         borderRadius: BorderRadius.circular(20),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [_C.yellow1, _C.yellow2, _C.yellow3],
+        border: Border.all(
+          color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
+          width: 0.5,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: _C.yellow2.withValues(alpha: 0.4),
-            blurRadius: 28,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        boxShadow: RukuninShadow.sm,
       ),
-      child: Stack(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Decorative circles
-          Positioned(
-            top: -40, right: -30,
-            child: Container(
-              width: 130, height: 130,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.12),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: -25, left: 30,
-            child: Container(
-              width: 90, height: 90,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.07),
-              ),
-            ),
-          ),
-          // Content
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'TOTAL TERKUMPUL',
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: _C.dark.withValues(alpha: 0.45),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? RukuninColors.darkTextTertiary
+                      : RukuninColors.lightTextTertiary,
                   letterSpacing: 0.8,
                 ),
               ),
-              const SizedBox(height: 4),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  gradient: RukuninColors.brandGradient,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Text(
+                  '${(pct * 100).toInt()}%',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ShaderMask(
+            shaderCallback: (bounds) =>
+                RukuninColors.brandGradient.createShader(bounds),
+            blendMode: BlendMode.srcIn,
+            child: Text(
+              _fmt(terkumpul),
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 32,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -1.0,
+                height: 1.0,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(100),
+            child: LinearProgressIndicator(
+              value: pct,
+              minHeight: 6,
+              backgroundColor: isDark
+                  ? RukuninColors.darkSurface2
+                  : RukuninColors.lightSurface2,
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                  RukuninColors.brandGreen),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
               Text(
-                _fmt(terkumpul),
-                style: GoogleFonts.playfairDisplay(
-                  fontSize: 34,
-                  fontWeight: FontWeight.w800,
-                  color: _C.dark,
-                  letterSpacing: -1.5,
-                  height: 1.1,
+                'Target bulan ini',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  color: isDark
+                      ? RukuninColors.darkTextTertiary
+                      : RukuninColors.lightTextTertiary,
                 ),
               ),
-              const SizedBox(height: 16),
-              // Progress bar
-              ClipRRect(
-                borderRadius: BorderRadius.circular(99),
-                child: LinearProgressIndicator(
-                  value: pct,
-                  backgroundColor: _C.dark.withValues(alpha: 0.12),
-                  valueColor: const AlwaysStoppedAnimation(_C.dark),
-                  minHeight: 6,
+              Text(
+                _fmt(tagihan),
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? RukuninColors.darkTextSecondary
+                      : RukuninColors.lightTextSecondary,
                 ),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '${(pct * 100).toInt()}% dari target',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 11,
-                      color: _C.dark.withValues(alpha: 0.5),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    _fmt(tagihan),
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 11,
-                      color: _C.dark.withValues(alpha: 0.5),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
               ),
             ],
           ),
@@ -429,34 +422,33 @@ class _KasSummaryCard extends StatelessWidget {
   }
 }
 
-// ════════════════════════════════════════════════════════
-//  COMMUNITY CODE CARD
-// ════════════════════════════════════════════════════════
-class _CommunityCodeCard extends StatelessWidget {
+// ── Community Code Tile ───────────────────────────────────────────────────────
+
+class _CommunityCodeTile extends StatelessWidget {
   final String code;
-  const _CommunityCodeCard({required this.code});
+  const _CommunityCodeTile({required this.code});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: _C.dark,
-        borderRadius: BorderRadius.circular(18),
-        border: Border(
-          top: BorderSide(color: _C.yellow1.withValues(alpha: 0.3), width: 1),
-        ),
-      ),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return SurfaceCard(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
         children: [
           Container(
-            width: 40, height: 40,
+            padding: const EdgeInsets.all(9),
             decoration: BoxDecoration(
-              color: _C.yellow1.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: _C.yellow1.withValues(alpha: 0.18)),
+              gradient: LinearGradient(
+                colors: [
+                  RukuninColors.brandGreen.withValues(alpha: 0.15),
+                  RukuninColors.brandTeal.withValues(alpha: 0.10),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Icons.key_rounded, color: _C.yellow1, size: 18),
+            child: const Icon(Icons.key_rounded,
+                color: RukuninColors.brandGreen, size: 18),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -466,52 +458,42 @@ class _CommunityCodeCard extends StatelessWidget {
                 Text(
                   'KODE KOMUNITAS',
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 9,
-                    color: Colors.white.withValues(alpha: 0.35),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: isDark
+                        ? RukuninColors.darkTextTertiary
+                        : RukuninColors.lightTextTertiary,
                     letterSpacing: 0.8,
-                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  code,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    color: _C.yellow1,
-                    letterSpacing: 3,
-                  ),
-                ),
-                const SizedBox(height: 1),
-                Text(
-                  'Bagikan ke warga agar bisa bergabung',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 10,
-                    color: Colors.white.withValues(alpha: 0.3),
+                ShaderMask(
+                  shaderCallback: (bounds) =>
+                      RukuninColors.brandGradient.createShader(bounds),
+                  blendMode: BlendMode.srcIn,
+                  child: Text(
+                    code,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 3,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 10),
           GestureDetector(
             onTap: () {
               Clipboard.setData(ClipboardData(text: code));
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Kode $code disalin!',
-                      style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
-                  backgroundColor: _C.yellow2,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  duration: const Duration(seconds: 2),
-                ),
-              );
+              HapticFeedback.lightImpact();
+              showToast(context, 'Kode $code disalin!');
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [_C.yellow1, _C.yellow2]),
+                gradient: RukuninColors.brandGradient,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -519,7 +501,7 @@ class _CommunityCodeCard extends StatelessWidget {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
-                  color: _C.dark,
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -530,12 +512,11 @@ class _CommunityCodeCard extends StatelessWidget {
   }
 }
 
-// ════════════════════════════════════════════════════════
-//  STAT GRID 2×2
-// ════════════════════════════════════════════════════════
-class _StatGrid extends StatelessWidget {
+// ── Stats Grid ────────────────────────────────────────────────────────────────
+
+class _StatsGrid extends StatelessWidget {
   final int totalUnit, sudahBayar, belumBayar, tungguVerif;
-  const _StatGrid({
+  const _StatsGrid({
     required this.totalUnit,
     required this.sudahBayar,
     required this.belumBayar,
@@ -550,236 +531,84 @@ class _StatGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       crossAxisSpacing: 10,
       mainAxisSpacing: 10,
-      childAspectRatio: 1.55,
+      childAspectRatio: 1.4,
       children: [
-        _StatCard(
-          number: totalUnit.toString(),
+        StatCard(
           label: 'Total Unit',
-          icon: Icons.home_rounded,
-          accentColor: _C.yellow2,
-          iconBg: const Color(0xFFFFF8DC),
-          iconColor: _C.yellow3,
+          value: totalUnit.toString(),
+          icon: Icons.home_outlined,
+          iconColor: const Color(0xFF6366F1),
+          accentColor: const Color(0xFF6366F1),
         ),
-        _StatCard(
-          number: sudahBayar.toString(),
+        StatCard(
           label: 'Sudah Bayar',
-          icon: Icons.check_circle_rounded,
-          accentColor: _C.statGreen,
-          iconBg: const Color(0xFFE9F9EE),
-          iconColor: _C.statGreen,
+          value: sudahBayar.toString(),
+          icon: Icons.check_circle_outline_rounded,
+          iconColor: RukuninColors.success,
+          accentColor: RukuninColors.success,
         ),
-        _StatCard(
-          number: belumBayar.toString(),
+        StatCard(
           label: 'Belum Bayar',
-          icon: Icons.warning_rounded,
-          accentColor: _C.statRed,
-          iconBg: const Color(0xFFFFEDEC),
-          iconColor: _C.statRed,
+          value: belumBayar.toString(),
+          icon: Icons.schedule_rounded,
+          iconColor: RukuninColors.warning,
+          accentColor: RukuninColors.warning,
         ),
-        _StatCard(
-          number: tungguVerif.toString(),
-          label: 'Tunggu Verif',
-          icon: Icons.access_time_rounded,
-          accentColor: _C.statBlue,
-          iconBg: const Color(0xFFE5F4FD),
-          iconColor: _C.statBlue,
+        StatCard(
+          label: 'Perlu Verifikasi',
+          value: tungguVerif.toString(),
+          icon: Icons.pending_outlined,
+          iconColor: RukuninColors.info,
+          accentColor: RukuninColors.info,
         ),
       ],
     );
   }
 }
 
-class _StatCard extends StatelessWidget {
-  final String number;
-  final String label;
-  final IconData icon;
-  final Color accentColor, iconBg, iconColor;
+// ── Quick Actions ─────────────────────────────────────────────────────────────
 
-  const _StatCard({
-    required this.number,
-    required this.label,
-    required this.icon,
-    required this.accentColor,
-    required this.iconBg,
-    required this.iconColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Stack(
-          children: [
-            // Accent bar top
-            Positioned(
-              top: 0, left: 0, right: 0,
-              child: Container(
-                height: 3,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [accentColor, accentColor.withValues(alpha: 0.5)],
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 30, height: 30,
-                    decoration: BoxDecoration(
-                      color: iconBg,
-                      borderRadius: BorderRadius.circular(9),
-                    ),
-                    child: Icon(icon, color: iconColor, size: 15),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    number,
-                    style: GoogleFonts.playfairDisplay(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w800,
-                      color: _C.dark,
-                      height: 1,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    label,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 11,
-                      color: _C.textMuted,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ════════════════════════════════════════════════════════
-//  AKSI CEPAT
-// ════════════════════════════════════════════════════════
-class _AksiCepat extends StatelessWidget {
-  const _AksiCepat();
-
-  static const _actions = [
-    (Icons.person_add_rounded,                'Warga Baru',    '/admin/warga/tambah'),
-    (Icons.receipt_long_rounded,              'Buat Tagihan',  '/admin/tagihan/buat'),
-    (Icons.account_balance_wallet_rounded,    'Pengeluaran',   '/admin/pengeluaran'),
-    (Icons.campaign_rounded,                  'Pengumuman',    '/admin/pengumuman'),
-    (Icons.contacts_rounded,                  'Info Kontak',   '/admin/layanan/kontak'),
-    (Icons.account_balance_rounded,           'Rekening RW',   '/admin/pengaturan-rek'),
-    (Icons.settings_rounded,                  'Profil RW',     '/admin/pengaturan'),
+class _QuickActions extends StatelessWidget {
+  static const _items = [
+    (Icons.person_add_outlined,               'Warga Baru',    '/admin/warga/tambah'),
+    (Icons.receipt_long_outlined,             'Buat Tagihan',  '/admin/tagihan/buat'),
+    (Icons.account_balance_wallet_outlined,   'Pengeluaran',   '/admin/pengeluaran'),
+    (Icons.campaign_outlined,                 'Pengumuman',    '/admin/pengumuman'),
+    (Icons.contacts_outlined,                 'Info Kontak',   '/admin/layanan/kontak'),
+    (Icons.account_balance_outlined,          'Rekening',      '/admin/pengaturan-rek'),
+    (Icons.settings_outlined,                 'Profil RW',     '/admin/pengaturan'),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Aksi Cepat',
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: _C.dark,
-          ),
-        ),
-        const SizedBox(height: 12),
-        GridView.count(
-          crossAxisCount: 4,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 14,
-          childAspectRatio: 0.82,
-          children: _actions
-              .map((a) => _AksiButton(icon: a.$1, label: a.$2, route: a.$3))
-              .toList(),
-        ),
-      ],
+    return GridView.count(
+      crossAxisCount: 4,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisSpacing: 10,
+      mainAxisSpacing: 14,
+      childAspectRatio: 0.85,
+      children: _items
+          .map((a) => _ActionBtn(icon: a.$1, label: a.$2, route: a.$3))
+          .toList(),
     );
   }
 }
 
-class _AksiButton extends StatefulWidget {
+class _ActionBtn extends StatefulWidget {
   final IconData icon;
   final String label;
   final String route;
-  const _AksiButton({required this.icon, required this.label, required this.route});
+  const _ActionBtn({
+    required this.icon, required this.label,
+    required this.route,
+  });
 
   @override
-  State<_AksiButton> createState() => _AksiButtonState();
+  State<_ActionBtn> createState() => _ActionBtnState();
 }
 
-// ════════════════════════════════════════════════════════
-//  QUICK ACTION CARD
-// ════════════════════════════════════════════════════════
-class _QuickActionCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  const _QuickActionCard(
-      {required this.icon, required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: _C.yellow2.withValues(alpha: 0.3)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: _C.yellow2, size: 24),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: GoogleFonts.plusJakartaSans(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: _C.dark),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _AksiButtonState extends State<_AksiButton>
+class _ActionBtnState extends State<_ActionBtn>
     with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
 
@@ -796,53 +625,44 @@ class _AksiButtonState extends State<_AksiButton>
   }
 
   @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
+  void dispose() { _ctrl.dispose(); super.dispose(); }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
-      onTapDown: (_) => _ctrl.reverse(),
-      onTapUp: (_) {
-        _ctrl.forward();
-        context.push(widget.route);
-      },
+      onTapDown: (_) { _ctrl.reverse(); HapticFeedback.selectionClick(); },
+      onTapUp: (_) { _ctrl.forward(); context.push(widget.route); },
       onTapCancel: () => _ctrl.forward(),
       child: ScaleTransition(
         scale: _ctrl,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 54, height: 54,
+              width: 56, height: 56,
               decoration: BoxDecoration(
-                color: _C.dark,
+                color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface,
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.18),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                border: Border.all(
+                  color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
+                  width: 1.0,
+                ),
+                boxShadow: isDark
+                    ? []
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.04),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        )
+                      ],
               ),
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: 0, left: 0, right: 0,
-                    height: 27,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.06),
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(16),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Center(child: Icon(widget.icon, color: _C.yellow1, size: 22)),
-                ],
+              child: Icon(
+                widget.icon, 
+                color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary, 
+                size: 24,
               ),
             ),
             const SizedBox(height: 7),
@@ -850,13 +670,80 @@ class _AksiButtonState extends State<_AksiButton>
               widget.label,
               textAlign: TextAlign.center,
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: FontWeight.w500,
-                color: _C.textMuted,
+                color: isDark
+                    ? RukuninColors.darkTextSecondary
+                    : RukuninColors.lightTextSecondary,
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ── Service Card ──────────────────────────────────────────────────────────────
+
+class _ServiceCard extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _ServiceCard({
+    required this.icon, required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return SurfaceCard(
+      onTap: onTap,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
+                width: 1.0,
+              ),
+              boxShadow: isDark
+                  ? []
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      )
+                    ],
+            ),
+            child: Icon(
+              icon, 
+              color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary, 
+              size: 22,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            label,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: isDark
+                  ? RukuninColors.darkTextPrimary
+                  : RukuninColors.lightTextPrimary,
+              height: 1.4,
+            ),
+          ),
+        ],
       ),
     );
   }

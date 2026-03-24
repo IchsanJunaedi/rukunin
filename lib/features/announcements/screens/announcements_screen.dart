@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../providers/announcement_provider.dart';
 import '../models/announcement_model.dart';
 
@@ -13,15 +14,16 @@ class AnnouncementsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final announcementsAsync = ref.watch(announcementsProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       floatingActionButton: isAdmin
           ? FloatingActionButton(
               onPressed: () => context.push('/admin/pengumuman/buat'),
-              backgroundColor: AppColors.primary,
-              child: const Icon(Icons.add_rounded, color: AppColors.onPrimary),
+              backgroundColor: RukuninColors.brandGreen,
+              child: const Icon(Icons.add_rounded, color: Colors.white),
             )
           : null,
       body: SafeArea(
@@ -29,12 +31,12 @@ class AnnouncementsScreen extends ConsumerWidget {
           children: [
             // Header
             Container(
-              color: AppColors.surface,
+              color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
               child: Row(
                 children: [
-                  const Icon(Icons.campaign_rounded,
-                      color: AppColors.primary, size: 28),
+                  Icon(Icons.campaign_rounded,
+                      color: RukuninColors.brandGreen, size: 28),
                   const SizedBox(width: 12),
                   Text(
                     'Pengumuman RT',
@@ -49,19 +51,19 @@ class AnnouncementsScreen extends ConsumerWidget {
             ),
             Expanded(
               child: announcementsAsync.when(
-                loading: () => const Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
+                loading: () => Center(
+                  child: CircularProgressIndicator(color: RukuninColors.brandGreen),
                 ),
                 error: (e, _) => Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.error_outline_rounded,
-                          color: AppColors.error, size: 48),
+                      Icon(Icons.error_outline_rounded,
+                          color: RukuninColors.error, size: 48),
                       const SizedBox(height: 12),
                       Text('Gagal memuat pengumuman',
                           style: GoogleFonts.plusJakartaSans(
-                              color: AppColors.grey600)),
+                              color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                       const SizedBox(height: 8),
                       TextButton(
                         onPressed: () => ref.invalidate(announcementsProvider),
@@ -77,21 +79,21 @@ class AnnouncementsScreen extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.campaign_outlined,
-                              size: 72, color: AppColors.grey400),
+                              size: 72, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                           const SizedBox(height: 16),
                           Text(
                             'Belum ada pengumuman',
                             style: GoogleFonts.plusJakartaSans(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.grey600),
+                                color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
                           ),
                           const SizedBox(height: 6),
                           Text(
                             'Pengumuman dari pengurus RT\nakan muncul di sini.',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.plusJakartaSans(
-                                fontSize: 13, color: AppColors.grey500),
+                                fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                           ),
                         ],
                       ),
@@ -120,7 +122,7 @@ class AnnouncementsScreen extends ConsumerWidget {
                                       TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Batal')),
                                       TextButton(
                                         onPressed: () => Navigator.pop(ctx, true),
-                                        child: Text('Hapus', style: GoogleFonts.plusJakartaSans(color: AppColors.error)),
+                                        child: Text('Hapus', style: GoogleFonts.plusJakartaSans(color: RukuninColors.error)),
                                       ),
                                     ],
                                   ),
@@ -151,9 +153,10 @@ class _AnnouncementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final typeColor = switch (item.type) {
-      'urgent' => AppColors.error,
-      'penting' => AppColors.warning,
+      'urgent' => RukuninColors.error,
+      'penting' => RukuninColors.warning,
       _ => const Color(0xFF3B82F6),
     };
     final typeLabel = switch (item.type) {
@@ -173,7 +176,7 @@ class _AnnouncementCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
           borderRadius: BorderRadius.circular(16),
           border: Border(left: BorderSide(color: typeColor, width: 4)),
           boxShadow: [
@@ -216,14 +219,14 @@ class _AnnouncementCard extends StatelessWidget {
                 Text(
                   DateFormat('dd MMM yyyy', 'id').format(item.createdAt),
                   style: GoogleFonts.plusJakartaSans(
-                      fontSize: 11, color: AppColors.grey500),
+                      fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                 ),
                 if (isAdmin && onDelete != null) ...[
                   const SizedBox(width: 4),
                   GestureDetector(
                     onTap: onDelete,
-                    child: const Icon(Icons.delete_outline_rounded,
-                        size: 18, color: AppColors.error),
+                    child: Icon(Icons.delete_outline_rounded,
+                        size: 18, color: RukuninColors.error),
                   ),
                 ],
               ],
@@ -234,7 +237,7 @@ class _AnnouncementCard extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.grey800),
+                  color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
             ),
             const SizedBox(height: 6),
             Text(
@@ -242,7 +245,7 @@ class _AnnouncementCard extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.plusJakartaSans(
-                  fontSize: 13, color: AppColors.grey600, height: 1.5),
+                  fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, height: 1.5),
             ),
           ],
         ),
@@ -251,6 +254,7 @@ class _AnnouncementCard extends StatelessWidget {
   }
 
   void _showDetail(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -260,9 +264,9 @@ class _AnnouncementCard extends StatelessWidget {
         maxChildSize: 0.95,
         minChildSize: 0.4,
         builder: (_, controller) => Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          decoration: BoxDecoration(
+            color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
           child: ListView(
@@ -273,7 +277,7 @@ class _AnnouncementCard extends StatelessWidget {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: AppColors.grey300,
+                    color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -284,13 +288,13 @@ class _AnnouncementCard extends StatelessWidget {
                 style: GoogleFonts.plusJakartaSans(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.grey800),
+                    color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
               ),
               const SizedBox(height: 6),
               Text(
                 DateFormat('EEEE, dd MMMM yyyy', 'id').format(item.createdAt),
                 style: GoogleFonts.plusJakartaSans(
-                    fontSize: 12, color: AppColors.grey500),
+                    fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
               ),
               const SizedBox(height: 16),
               const Divider(),
@@ -298,7 +302,7 @@ class _AnnouncementCard extends StatelessWidget {
               Text(
                 item.body,
                 style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14, color: AppColors.grey800, height: 1.7),
+                    fontSize: 14, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary, height: 1.7),
               ),
             ],
           ),

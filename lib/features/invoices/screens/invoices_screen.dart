@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../providers/invoice_list_provider.dart';
 
 // Extension untuk kapitalisasi
@@ -22,10 +23,11 @@ class InvoicesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Inisialisasi value state filter bulan dan tahun 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Inisialisasi value state filter bulan dan tahun
     final selectedMonth = ref.watch(invoiceMonthFilterProvider);
     final selectedYear = ref.watch(invoiceYearFilterProvider);
-    
+
     // Watch future provider untuk list tagihan yang ada info Warga nya
     final invoiceListAsync = ref.watch(invoiceWithResidentProvider);
 
@@ -34,7 +36,7 @@ class InvoicesScreen extends ConsumerWidget {
     return DefaultTabController(
       length: 4,
       child: Scaffold(
-        backgroundColor: AppColors.grey100,
+        backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
         appBar: AppBar(
           title: const Text('Tagihan Warga'),
           actions: [
@@ -53,14 +55,14 @@ class InvoicesScreen extends ConsumerWidget {
               onPressed: () => context.push('/admin/pengaturan-iuran'),
             ),
           ],
-          bottom: const TabBar(
-            labelColor: AppColors.primary,
-            unselectedLabelColor: AppColors.grey500,
-            indicatorColor: AppColors.primary,
+          bottom: TabBar(
+            labelColor: RukuninColors.brandGreen,
+            unselectedLabelColor: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
+            indicatorColor: RukuninColors.brandGreen,
             indicatorWeight: 3,
             isScrollable: true,
             tabAlignment: TabAlignment.start,
-            tabs: [
+            tabs: const [
               Tab(text: 'Semua'),
               Tab(text: 'Belum Lunas'),
               Tab(text: 'Verifikasi'),
@@ -72,7 +74,7 @@ class InvoicesScreen extends ConsumerWidget {
           children: [
             // Filter Header Bulan/Tahun
             Container(
-              color: Colors.white,
+              color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -93,7 +95,7 @@ class InvoicesScreen extends ConsumerWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
-                      color: AppColors.grey800,
+                      color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                     ),
                   ),
                   IconButton(
@@ -110,7 +112,7 @@ class InvoicesScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            
+
             // List Konten Berdasarkan Tab
             Expanded(
               child: invoiceListAsync.when(
@@ -132,16 +134,17 @@ class InvoicesScreen extends ConsumerWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => context.push('/admin/tagihan/buat'),
-          backgroundColor: AppColors.primary,
-          child: const Icon(Icons.add_card_outlined, color: AppColors.onPrimary),
+          backgroundColor: RukuninColors.brandGreen,
+          child: const Icon(Icons.add_card_outlined, color: Colors.white),
         ),
       ),
     );
   }
 
   Widget _buildInvoiceList(BuildContext context, WidgetRef ref, List<Map<String, dynamic>> allInvoices, String tabFilter) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final currencyFormat = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
-    
+
     // Filter data tagihan sesuai tipe tab
     final filteredInvoices = allInvoices.where((inv) {
       if (tabFilter == 'semua') return true;
@@ -155,11 +158,11 @@ class InvoicesScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.receipt_long_outlined, size: 60, color: AppColors.grey400),
+            Icon(Icons.receipt_long_outlined, size: 60, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
             const SizedBox(height: 16),
             Text(
               'Tidak ada tagihan',
-              style: GoogleFonts.plusJakartaSans(color: AppColors.grey600, fontWeight: FontWeight.w500),
+              style: GoogleFonts.plusJakartaSans(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, fontWeight: FontWeight.w500),
             ),
           ],
         ),
@@ -175,7 +178,7 @@ class InvoicesScreen extends ConsumerWidget {
         final amount = double.tryParse(item['amount'].toString()) ?? 0;
         final residentName = item['profiles']?['full_name'] ?? 'Warga';
         final status = item['status']?.toString() ?? 'pending';
-        
+
         DateTime? dueDate;
         if (item['due_date'] != null) {
           dueDate = DateTime.tryParse(item['due_date'].toString());
@@ -189,9 +192,9 @@ class InvoicesScreen extends ConsumerWidget {
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.grey200),
+            border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
           ),
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -214,7 +217,7 @@ class InvoicesScreen extends ConsumerWidget {
                 const SizedBox(height: 6),
                 Text(
                   billingName,
-                  style: GoogleFonts.plusJakartaSans(color: AppColors.grey600, fontSize: 14),
+                  style: GoogleFonts.plusJakartaSans(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, fontSize: 14),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -222,7 +225,7 @@ class InvoicesScreen extends ConsumerWidget {
                   style: GoogleFonts.playfairDisplay(
                     fontWeight: FontWeight.w800,
                     fontSize: 16,
-                    color: AppColors.primary,
+                    color: RukuninColors.brandGreen,
                   ),
                 ),
               ],
@@ -243,20 +246,20 @@ class InvoicesScreen extends ConsumerWidget {
     String label;
 
     if (status == 'paid') {
-      bgColor = AppColors.success.withValues(alpha: 0.1);
-      textColor = AppColors.success;
+      bgColor = RukuninColors.success.withValues(alpha: 0.1);
+      textColor = RukuninColors.success;
       label = 'Lunas';
     } else if (status == 'awaiting_verification') {
       bgColor = Colors.blue.withValues(alpha: 0.1);
       textColor = Colors.blue;
       label = 'Menunggu Verif';
     } else if (isLate) {
-      bgColor = AppColors.error.withValues(alpha: 0.1);
-      textColor = AppColors.error;
+      bgColor = RukuninColors.error.withValues(alpha: 0.1);
+      textColor = RukuninColors.error;
       label = 'Terlambat';
     } else {
-      bgColor = AppColors.warning.withValues(alpha: 0.1);
-      textColor = AppColors.warning;
+      bgColor = RukuninColors.warning.withValues(alpha: 0.1);
+      textColor = RukuninColors.warning;
       label = 'Belum Lunas';
     }
 
@@ -278,11 +281,12 @@ class InvoicesScreen extends ConsumerWidget {
   }
 
   void _showInvoiceActionDialog(BuildContext context, Map<String, dynamic> invoice, WidgetRef ref) {
+     final isDark = Theme.of(context).brightness == Brightness.dark;
      final residentName = invoice['profiles']?['full_name'] ?? 'Warga';
      final status = invoice['status']?.toString() ?? 'pending';
      final isPaid = status == 'paid';
      final isAwaitingVerif = status == 'awaiting_verification';
-     
+
      showDialog(
        context: context,
        builder: (ctx) => AlertDialog(
@@ -293,10 +297,10 @@ class InvoicesScreen extends ConsumerWidget {
            children: [
              Text(residentName, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 15)),
              const SizedBox(height: 4),
-             Text('Status: $status', style: GoogleFonts.plusJakartaSans(color: AppColors.grey600, fontSize: 13)),
+             Text('Status: $status', style: GoogleFonts.plusJakartaSans(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, fontSize: 13)),
              if (isAwaitingVerif) ...[
               const SizedBox(height: 12),
-              Text('Bukti Transfer:', style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.grey800)),
+              Text('Bukti Transfer:', style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w600, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary)),
               const SizedBox(height: 8),
               if (invoice['proof_url'] != null)
                 GestureDetector(
@@ -314,14 +318,14 @@ class InvoicesScreen extends ConsumerWidget {
                       placeholder: (context, url) => Container(
                         height: 200,
                         width: 260,
-                        color: AppColors.grey200,
+                        color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
                         child: const Center(child: CircularProgressIndicator()),
                       ),
                       errorWidget: (context, url, error) => Container(
                         height: 200,
                         width: 260,
-                        color: AppColors.grey200,
-                        child: const Center(child: Icon(Icons.broken_image_outlined, color: AppColors.grey500, size: 40)),
+                        color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
+                        child: Center(child: Icon(Icons.broken_image_outlined, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary, size: 40)),
                       ),
                     ),
                   ),
@@ -349,13 +353,13 @@ class InvoicesScreen extends ConsumerWidget {
              ),
            if (!isPaid)
              ElevatedButton(
-               style: ElevatedButton.styleFrom(backgroundColor: AppColors.success),
+               style: ElevatedButton.styleFrom(backgroundColor: RukuninColors.success),
                onPressed: () async {
                  Navigator.pop(ctx);
                  try {
                    await ref.read(invoiceListProvider.notifier).markInvoiceAsPaid(invoice['id'].toString());
                    ref.invalidate(invoiceWithResidentProvider);
-                   if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tagihan berhasil ditandai lunas!'), backgroundColor: AppColors.success));
+                   if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tagihan berhasil ditandai lunas!'), backgroundColor: RukuninColors.success));
                  } catch (e) {
                    if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal: $e')));
                  }
@@ -364,22 +368,22 @@ class InvoicesScreen extends ConsumerWidget {
              ),
            if (isAwaitingVerif)
              TextButton(
-               style: TextButton.styleFrom(foregroundColor: AppColors.error),
+               style: TextButton.styleFrom(foregroundColor: RukuninColors.error),
                onPressed: () async {
                  Navigator.pop(ctx);
                  try {
                    await ref.read(invoiceListProvider.notifier).rejectInvoice(invoice['id'].toString());
                    ref.invalidate(invoiceWithResidentProvider);
-                   if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tagihan dikembalikan ke Belum Lunas.'), backgroundColor: AppColors.error));
+                   if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tagihan dikembalikan ke Belum Lunas.'), backgroundColor: RukuninColors.error));
                  } catch (e) {
                    if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal: $e')));
                  }
                },
-               child: Text('Tolak', style: GoogleFonts.plusJakartaSans(color: AppColors.error)),
+               child: Text('Tolak', style: GoogleFonts.plusJakartaSans(color: RukuninColors.error)),
              ),
            TextButton(
              onPressed: () => Navigator.pop(ctx),
-             child: Text('Tutup', style: GoogleFonts.plusJakartaSans(color: AppColors.grey600)),
+             child: Text('Tutup', style: GoogleFonts.plusJakartaSans(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
            ),
          ],
        )
@@ -410,6 +414,7 @@ class InvoicesScreen extends ConsumerWidget {
   }
 
   void _confirmBroadcast(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showDialog(
        context: context,
        builder: (ctx) => AlertDialog(
@@ -418,10 +423,10 @@ class InvoicesScreen extends ConsumerWidget {
          actions: [
            TextButton(
              onPressed: () => Navigator.pop(ctx),
-             child: Text('Batal', style: GoogleFonts.plusJakartaSans(color: AppColors.grey600)),
+             child: Text('Batal', style: GoogleFonts.plusJakartaSans(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
            ),
            ElevatedButton(
-             style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+             style: ElevatedButton.styleFrom(backgroundColor: RukuninColors.brandGreen),
              onPressed: () async {
                Navigator.pop(ctx);
                ScaffoldMessenger.of(context).showSnackBar(
@@ -434,15 +439,15 @@ class InvoicesScreen extends ConsumerWidget {
                     final failInfo = lastError.isNotEmpty ? '\nAlasan gagal: $lastError' : '';
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Selesai! Terkirim: ${results['success']}, Gagal: ${results['fail']}$failInfo'), 
-                        backgroundColor: (results['success'] as int) > 0 ? AppColors.success : AppColors.error,
+                        content: Text('Selesai! Terkirim: ${results['success']}, Gagal: ${results['fail']}$failInfo'),
+                        backgroundColor: (results['success'] as int) > 0 ? RukuninColors.success : RukuninColors.error,
                         duration: const Duration(seconds: 6),
                       )
                     );
                   }
                 } catch (e) {
                  if (context.mounted) {
-                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Terjadi Kesalahan: $e'), backgroundColor: AppColors.error));
+                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Terjadi Kesalahan: $e'), backgroundColor: RukuninColors.error));
                  }
                }
              },

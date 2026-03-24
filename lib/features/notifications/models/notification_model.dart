@@ -44,6 +44,8 @@ class NotificationModel {
       'join_request' => Icons.person_add_rounded,
       'join_approved' => Icons.check_circle_rounded,
       'join_rejected' => Icons.cancel_rounded,
+      'letter_request' => Icons.article_rounded,
+      'complaint' => Icons.report_problem_rounded,
       _ => Icons.notifications_rounded,
     };
   }

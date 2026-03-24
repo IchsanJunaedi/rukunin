@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:go_router/go_router.dart';
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../models/resident_model.dart';
 import '../providers/resident_provider.dart';
 import 'package:intl/intl.dart';
@@ -31,16 +32,17 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final residentsAsync = ref.watch(residentsProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       body: CustomScrollView(
         slivers: [
           // Header
           SliverToBoxAdapter(
             child: Container(
-              color: AppColors.surface,
+              color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
               padding: EdgeInsets.only(
                 top: MediaQuery.of(context).padding.top + 16,
                 left: 24,
@@ -127,13 +129,13 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.primary,
+                            color: RukuninColors.brandGreen,
                             borderRadius: BorderRadius.circular(100),
                           ),
                           child: Text(
                             '${list.length} Warga',
                             style: GoogleFonts.plusJakartaSans(
-                              color: AppColors.onPrimary,
+                              color: Colors.white,
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                             ),
@@ -154,9 +156,9 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
 
           // List
           residentsAsync.when(
-            loading: () => const SliverFillRemaining(
+            loading: () => SliverFillRemaining(
               child: Center(
-                child: CircularProgressIndicator(color: AppColors.primary),
+                child: CircularProgressIndicator(color: RukuninColors.brandGreen),
               ),
             ),
             error: (e, _) =>
@@ -182,7 +184,7 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
                         Icon(
                           Icons.people_outline_rounded,
                           size: 64,
-                          color: AppColors.grey400,
+                          color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                         ),
                         const SizedBox(height: 12),
                         Text(
@@ -190,7 +192,7 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
                               ? 'Belum ada warga terdaftar'
                               : 'Tidak ditemukan',
                           style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.grey600,
+                            color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                             fontSize: 14,
                           ),
                         ),
@@ -226,8 +228,8 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
         onPressed: () => context
             .push('/admin/warga/tambah')
             .then((_) => ref.invalidate(residentsProvider)),
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.onPrimary,
+        backgroundColor: RukuninColors.brandGreen,
+        foregroundColor: Colors.white,
         icon: const Icon(Icons.add_rounded),
         label: Text(
           'Tambah Warga',
@@ -259,7 +261,7 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            style: TextButton.styleFrom(foregroundColor: RukuninColors.error),
             child: const Text('Hapus'),
           ),
         ],
@@ -271,10 +273,11 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
           .read(residentNotifierProvider.notifier)
           .deleteResident(resident.id);
       if (context.mounted) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${resident.fullName} dihapus'),
-            backgroundColor: AppColors.surface,
+            backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -319,7 +322,7 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('File CSV kosong atau format salah.'),
-              backgroundColor: AppColors.error,
+              backgroundColor: RukuninColors.error,
             ),
           );
         }
@@ -346,7 +349,7 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
               content: Text(
                 'Kolom wajib "nama_lengkap" tidak ditemukan dalam CSV.',
               ),
-              backgroundColor: AppColors.error,
+              backgroundColor: RukuninColors.error,
             ),
           );
         }
@@ -412,12 +415,13 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
               .read(residentNotifierProvider.notifier)
               .importCsv(residentsData);
           if (context.mounted) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
             final state = ref.read(residentNotifierProvider);
             if (state.hasError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('Gagal import: ${state.error}'),
-                  backgroundColor: AppColors.error,
+                  backgroundColor: RukuninColors.error,
                   behavior: SnackBarBehavior.floating,
                 ),
               );
@@ -427,7 +431,7 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
                   content: Text(
                     '${residentsData.length} warga berhasil diimport',
                   ),
-                  backgroundColor: AppColors.surface,
+                  backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
                   behavior: SnackBarBehavior.floating,
                 ),
               );
@@ -440,7 +444,7 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error membaca file: $e'),
-            backgroundColor: AppColors.error,
+            backgroundColor: RukuninColors.error,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -472,13 +476,13 @@ class _PendingBanner extends ConsumerWidget {
             margin: const EdgeInsets.fromLTRB(20, 0, 20, 8),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFC107).withValues(alpha: 0.12),
+              color: RukuninColors.brandGreen.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFFFC107).withValues(alpha: 0.4)),
+              border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.4)),
             ),
             child: Row(
               children: [
-                const Icon(Icons.pending_actions_rounded, color: Color(0xFFFFC107), size: 20),
+                Icon(Icons.pending_actions_rounded, color: RukuninColors.brandGreen, size: 20),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -486,11 +490,11 @@ class _PendingBanner extends ConsumerWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFFFFC107),
+                      color: RukuninColors.brandGreen,
                     ),
                   ),
                 ),
-                const Icon(Icons.chevron_right_rounded, color: Color(0xFFFFC107), size: 18),
+                Icon(Icons.chevron_right_rounded, color: RukuninColors.brandGreen, size: 18),
               ],
             ),
           ),
@@ -530,14 +534,15 @@ class _PendingSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return DraggableScrollableSheet(
       initialChildSize: 0.6,
       maxChildSize: 0.9,
       minChildSize: 0.4,
       builder: (ctx, scrollCtrl) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        decoration: BoxDecoration(
+          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
           children: [
@@ -547,7 +552,7 @@ class _PendingSheet extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: AppColors.grey300,
+                color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -560,14 +565,14 @@ class _PendingSheet extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.grey800,
+                      color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                     ),
                   ),
                   const Spacer(),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFC107),
+                      color: RukuninColors.brandGreen,
                       borderRadius: BorderRadius.circular(100),
                     ),
                     child: Text(
@@ -575,7 +580,7 @@ class _PendingSheet extends StatelessWidget {
                       style: GoogleFonts.plusJakartaSans(
                         fontWeight: FontWeight.w800,
                         fontSize: 13,
-                        color: AppColors.grey800,
+                        color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                       ),
                     ),
                   ),
@@ -624,95 +629,98 @@ void _showPendingDetailSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (ctx) => Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: AppColors.grey300,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'Detail Warga Pending',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-              color: AppColors.grey800,
-            ),
-          ),
-          const SizedBox(height: 20),
-          _pendingDetailRow(Icons.person_rounded, 'Nama Lengkap', resident.fullName),
-          _pendingDetailRow(Icons.phone_android_rounded, 'No. Handphone', resident.phone ?? '-'),
-          _pendingDetailRow(Icons.badge_rounded, 'NIK', resident.nik ?? '-'),
-          _pendingDetailRow(
-            Icons.home_work_rounded,
-            'Blok / Unit',
-            () {
-              final parts = <String>[];
-              if (resident.block != null && resident.block!.isNotEmpty) parts.add('Blok ${resident.block}');
-              if (resident.unitNumber != null && resident.unitNumber!.isNotEmpty) parts.add('No. ${resident.unitNumber}');
-              return parts.isNotEmpty ? parts.join(' ') : '-';
-            }(),
-          ),
-          _pendingDetailRow(Icons.numbers_rounded, 'RT', resident.rtNumber != null ? 'RT ${resident.rtNumber}' : '-'),
-          _pendingDetailRow(
-            Icons.calendar_today_rounded,
-            'Tanggal Daftar',
-            DateFormat('d MMMM yyyy', 'id_ID').format(resident.createdAt),
-          ),
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                    onReject();
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.error,
-                    side: const BorderSide(color: AppColors.error),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: Text('Tolak', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
+    builder: (ctx) {
+      final isDark = Theme.of(ctx).brightness == Brightness.dark;
+      return Container(
+        decoration: BoxDecoration(
+          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
+                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                flex: 2,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                    onApprove();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.success,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: Text('Setujui', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
-                ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Detail Warga Pending',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
               ),
-            ],
-          ),
-        ],
-      ),
-    ),
+            ),
+            const SizedBox(height: 20),
+            _pendingDetailRow(Icons.person_rounded, 'Nama Lengkap', resident.fullName),
+            _pendingDetailRow(Icons.phone_android_rounded, 'No. Handphone', resident.phone ?? '-'),
+            _pendingDetailRow(Icons.badge_rounded, 'NIK', resident.nik ?? '-'),
+            _pendingDetailRow(
+              Icons.home_work_rounded,
+              'Blok / Unit',
+              () {
+                final parts = <String>[];
+                if (resident.block != null && resident.block!.isNotEmpty) parts.add('Blok ${resident.block}');
+                if (resident.unitNumber != null && resident.unitNumber!.isNotEmpty) parts.add('No. ${resident.unitNumber}');
+                return parts.isNotEmpty ? parts.join(' ') : '-';
+              }(),
+            ),
+            _pendingDetailRow(Icons.numbers_rounded, 'RT', resident.rtNumber != null ? 'RT ${resident.rtNumber}' : '-'),
+            _pendingDetailRow(
+              Icons.calendar_today_rounded,
+              'Tanggal Daftar',
+              DateFormat('d MMMM yyyy', 'id_ID').format(resident.createdAt),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                      onReject();
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: RukuninColors.error,
+                      side: const BorderSide(color: RukuninColors.error),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child: Text('Tolak', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                      onApprove();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: RukuninColors.success,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child: Text('Setujui', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    },
   );
 }
 
@@ -721,22 +729,32 @@ Widget _pendingDetailRow(IconData icon, String label, String value) {
     padding: const EdgeInsets.only(bottom: 14),
     child: Row(
       children: [
-        Icon(icon, size: 18, color: AppColors.primary),
+        Icon(icon, size: 18, color: RukuninColors.brandGreen),
         const SizedBox(width: 12),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              label,
-              style: GoogleFonts.plusJakartaSans(fontSize: 11, color: AppColors.grey500),
-            ),
-            Text(
-              value,
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppColors.grey800,
-              ),
+            Builder(
+              builder: (context) {
+                final isDark = Theme.of(context).brightness == Brightness.dark;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: GoogleFonts.plusJakartaSans(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+                    ),
+                    Text(
+                      value,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ],
         ),
@@ -758,6 +776,7 @@ class _PendingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final joinedAt = DateFormat('d MMM yyyy', 'id_ID').format(resident.createdAt);
     return GestureDetector(
       onTap: () => _showPendingDetailSheet(context, resident, onApprove, onReject),
@@ -765,9 +784,9 @@ class _PendingCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.grey100,
+        color: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -796,7 +815,7 @@ class _PendingCard extends StatelessWidget {
                       style: GoogleFonts.plusJakartaSans(
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
-                        color: AppColors.grey800,
+                        color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                       ),
                     ),
                     Text(
@@ -806,7 +825,7 @@ class _PendingCard extends StatelessWidget {
                       ].join(' · '),
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 11,
-                        color: AppColors.grey500,
+                        color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                       ),
                     ),
                   ],
@@ -821,8 +840,8 @@ class _PendingCard extends StatelessWidget {
                 child: OutlinedButton(
                   onPressed: onReject,
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.error,
-                    side: const BorderSide(color: AppColors.error),
+                    foregroundColor: RukuninColors.error,
+                    side: const BorderSide(color: RukuninColors.error),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -843,7 +862,7 @@ class _PendingCard extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: onApprove,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.success,
+                    backgroundColor: RukuninColors.success,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -873,14 +892,14 @@ Widget _initialsBox(ResidentModel resident, double size, double radius) {
     width: size,
     height: size,
     decoration: BoxDecoration(
-      color: resident.isActive ? AppColors.primary : AppColors.grey200,
+      color: resident.isActive ? RukuninColors.brandGreen : const Color(0xFF3A3A3A),
       borderRadius: BorderRadius.circular(radius),
     ),
     child: Center(
       child: Text(
         resident.initials,
         style: GoogleFonts.plusJakartaSans(
-          color: resident.isActive ? AppColors.onPrimary : AppColors.grey600,
+          color: Colors.white,
           fontSize: size * 0.33,
           fontWeight: FontWeight.w800,
         ),
@@ -893,14 +912,14 @@ Widget _pendingInitialsBox(ResidentModel resident) {
   return Container(
     width: 44,
     height: 44,
-    color: const Color(0xFFFFC107).withValues(alpha: 0.2),
+    color: RukuninColors.brandGreen.withValues(alpha: 0.15),
     child: Center(
       child: Text(
         resident.initials,
         style: GoogleFonts.plusJakartaSans(
           fontWeight: FontWeight.w800,
           fontSize: 15,
-          color: const Color(0xFF7A6000),
+          color: Colors.white,
         ),
       ),
     ),
@@ -922,10 +941,11 @@ class _ResidentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         borderRadius: BorderRadius.circular(16),
       ),
       child: ListTile(
@@ -948,7 +968,7 @@ class _ResidentCard extends StatelessWidget {
           style: GoogleFonts.plusJakartaSans(
             fontSize: 14,
             fontWeight: FontWeight.w700,
-            color: AppColors.grey800,
+            color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
           ),
         ),
         subtitle: Text(
@@ -959,7 +979,7 @@ class _ResidentCard extends StatelessWidget {
           ].join(' · '),
           style: GoogleFonts.plusJakartaSans(
             fontSize: 12,
-            color: AppColors.grey600,
+            color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
           ),
         ),
         trailing: PopupMenuButton<String>(
@@ -996,7 +1016,7 @@ class _ResidentCard extends StatelessWidget {
               ),
             ),
           ],
-          child: const Icon(Icons.more_vert_rounded, color: AppColors.grey400),
+          child: Icon(Icons.more_vert_rounded, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
         ),
       ),
     );

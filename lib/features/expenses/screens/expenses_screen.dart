@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../models/expense_model.dart';
 import '../providers/expense_provider.dart';
 import 'add_expense_screen.dart';
@@ -13,6 +14,7 @@ class ExpensesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final expensesAsync = ref.watch(expensesProvider);
     final totalAsync = ref.watch(totalExpensesProvider);
     final currencyFormat =
@@ -20,9 +22,9 @@ class ExpensesScreen extends ConsumerWidget {
     final monthLabel = DateFormat('MMMM yyyy', 'id_ID').format(DateTime.now());
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         foregroundColor: Colors.white,
         title: Text(
           'Pengeluaran Kas',
@@ -31,8 +33,8 @@ class ExpensesScreen extends ConsumerWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.onPrimary,
+        backgroundColor: RukuninColors.brandGreen,
+        foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
         label: Text('Catat Pengeluaran',
             style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
@@ -47,9 +49,9 @@ class ExpensesScreen extends ConsumerWidget {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-            decoration: const BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+            decoration: BoxDecoration(
+              color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,12 +86,12 @@ class ExpensesScreen extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.receipt_long_outlined,
-                            size: 64, color: AppColors.grey300),
+                            size: 64, color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
                         const SizedBox(height: 16),
                         Text(
                           'Belum ada pengeluaran bulan ini',
                           style: GoogleFonts.plusJakartaSans(
-                              color: AppColors.grey500,
+                              color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                               fontWeight: FontWeight.w600),
                         ),
                       ],
@@ -147,8 +149,9 @@ class _ExpenseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final icon = _categoryIcons[expense.category] ?? Icons.receipt;
-    final color = _categoryColors[expense.category] ?? AppColors.grey600;
+    final color = _categoryColors[expense.category] ?? (isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary);
     final dateStr = DateFormat('dd MMM yyyy', 'id_ID').format(expense.expenseDate);
 
     return Dismissible(
@@ -158,10 +161,10 @@ class _ExpenseCard extends StatelessWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          color: AppColors.error.withValues(alpha: 0.1),
+          color: RukuninColors.error.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Icon(Icons.delete_outline, color: AppColors.error),
+        child: const Icon(Icons.delete_outline, color: RukuninColors.error),
       ),
       confirmDismiss: (_) async {
         return await showDialog<bool>(
@@ -177,7 +180,7 @@ class _ExpenseCard extends StatelessWidget {
                 child: Text('Batal', style: GoogleFonts.plusJakartaSans()),
               ),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
+                style: ElevatedButton.styleFrom(backgroundColor: RukuninColors.error),
                 onPressed: () => Navigator.pop(ctx, true),
                 child: Text('Hapus',
                     style: GoogleFonts.plusJakartaSans(color: Colors.white)),
@@ -197,9 +200,9 @@ class _ExpenseCard extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.grey200),
+          border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
         ),
         child: ListTile(
           contentPadding:
@@ -218,21 +221,21 @@ class _ExpenseCard extends StatelessWidget {
             style: GoogleFonts.plusJakartaSans(
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
-                color: AppColors.grey800),
+                color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           subtitle: Text(
             '${expense.category} · $dateStr',
             style: GoogleFonts.plusJakartaSans(
-                fontSize: 12, color: AppColors.grey500),
+                fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
           ),
           trailing: Text(
             format.format(expense.amount),
             style: GoogleFonts.plusJakartaSans(
               fontWeight: FontWeight.w800,
               fontSize: 15,
-              color: AppColors.error,
+              color: RukuninColors.error,
             ),
           ),
         ),

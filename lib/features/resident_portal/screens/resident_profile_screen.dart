@@ -4,10 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../../../core/supabase/supabase_client.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/resident_invoices_provider.dart';
-import '../../notifications/providers/notifications_provider.dart';
 
 class ResidentProfileScreen extends ConsumerStatefulWidget {
   const ResidentProfileScreen({super.key});
@@ -38,7 +38,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
       if (bytes.length > 2 * 1024 * 1024) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Ukuran foto maksimal 2MB'), backgroundColor: AppColors.error),
+            const SnackBar(content: Text('Ukuran foto maksimal 2MB'), backgroundColor: RukuninColors.error),
           );
         }
         return;
@@ -69,13 +69,13 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Foto profil berhasil diperbarui! ✅'), backgroundColor: AppColors.success),
+          const SnackBar(content: Text('Foto profil berhasil diperbarui! ✅'), backgroundColor: RukuninColors.success),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal mengubah foto: $e'), backgroundColor: AppColors.error),
+          SnackBar(content: Text('Gagal mengubah foto: $e'), backgroundColor: RukuninColors.error),
         );
       }
     } finally {
@@ -85,51 +85,17 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final profileAsync = ref.watch(currentResidentProfileProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
         title: const Text('Akun Saya'),
         actions: [
-          // Bell icon dengan badge unread count
-          Stack(
-            children: [
-              IconButton(
-                onPressed: () => context.push('/resident/notifikasi'),
-                icon: const Icon(Icons.notifications_outlined),
-              ),
-              ref.watch(unreadCountProvider).maybeWhen(
-                data: (count) => count > 0
-                    ? Positioned(
-                        right: 8,
-                        top: 8,
-                        child: Container(
-                          padding: const EdgeInsets.all(2),
-                          decoration: const BoxDecoration(
-                            color: AppColors.error,
-                            shape: BoxShape.circle,
-                          ),
-                          constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
-                          child: Text(
-                            '$count',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      )
-                    : const SizedBox(),
-                orElse: () => const SizedBox(),
-              ),
-            ],
-          ),
           IconButton(
             onPressed: () => _logout(context, ref),
-            icon: const Icon(Icons.logout_rounded, color: AppColors.error),
+            icon: const Icon(Icons.logout_rounded, color: RukuninColors.error),
             tooltip: 'Keluar',
           ),
         ],
@@ -153,7 +119,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                         children: [
                           CircleAvatar(
                             radius: 48,
-                            backgroundColor: AppColors.primary,
+                            backgroundColor: RukuninColors.brandGreen,
                             backgroundImage: profile.photoUrl != null && profile.photoUrl!.isNotEmpty
                                 ? NetworkImage(profile.photoUrl!)
                                 : null,
@@ -178,7 +144,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                               child: Container(
                                 padding: const EdgeInsets.all(6),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
@@ -188,10 +154,10 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                                     ),
                                   ],
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.camera_alt_rounded,
                                   size: 18,
-                                  color: AppColors.primary,
+                                  color: RukuninColors.brandGreen,
                                 ),
                               ),
                             ),
@@ -204,14 +170,14 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 24,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.grey800,
+                          color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: profile.isActive ? AppColors.success.withValues(alpha: 0.1) : AppColors.warning.withValues(alpha: 0.1),
+                          color: profile.isActive ? RukuninColors.success.withValues(alpha: 0.1) : RukuninColors.warning.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
@@ -219,7 +185,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: profile.isActive ? AppColors.success : AppColors.warning,
+                            color: profile.isActive ? RukuninColors.success : RukuninColors.warning,
                           ),
                         ),
                       ),
@@ -227,21 +193,21 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                   ),
                 ),
                 const SizedBox(height: 32),
-                
+
                 // Info Rumah
                 Text(
                   'Info Hunian & Kontak',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.grey800,
+                    color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                   ),
                 ),
                 const SizedBox(height: 12),
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
@@ -253,17 +219,17 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                   ),
                   child: Column(
                     children: [
-                      _buildProfileItem(Icons.home_work_rounded, 'Alamat', profile.alamatLengkap),
-                      const Divider(height: 24, color: AppColors.grey200),
-                      _buildProfileItem(Icons.phone_android_rounded, 'No. Handphone', profile.phone ?? '-'),
-                      const Divider(height: 24, color: AppColors.grey200),
-                      _buildProfileItem(Icons.badge_rounded, 'NIK', profile.nik ?? '-'),
+                      _buildProfileItem(Icons.home_work_rounded, 'Alamat', profile.alamatLengkap, isDark),
+                      Divider(height: 24, color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
+                      _buildProfileItem(Icons.phone_android_rounded, 'No. Handphone', profile.phone ?? '-', isDark),
+                      Divider(height: 24, color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
+                      _buildProfileItem(Icons.badge_rounded, 'NIK', profile.nik ?? '-', isDark),
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // Info Kendaraan
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -273,7 +239,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.grey800,
+                        color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                       ),
                     ),
                     GestureDetector(
@@ -282,14 +248,15 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                         profile.motorcycleCount,
                         profile.carCount,
                         profile.id,
+                        isDark,
                       ),
                       child: Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.1),
+                          color: RukuninColors.brandGreen.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Icon(Icons.edit_rounded, size: 16, color: AppColors.primary),
+                        child: Icon(Icons.edit_rounded, size: 16, color: RukuninColors.brandGreen),
                       ),
                     ),
                   ],
@@ -298,7 +265,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
@@ -310,28 +277,28 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                   ),
                   child: Column(
                     children: [
-                      _buildProfileItem(Icons.directions_car_rounded, 'Mobil', '${profile.carCount} Unit'),
-                      const Divider(height: 24, color: AppColors.grey200),
-                      _buildProfileItem(Icons.two_wheeler_rounded, 'Motor', '${profile.motorcycleCount} Unit'),
+                      _buildProfileItem(Icons.directions_car_rounded, 'Mobil', '${profile.carCount} Unit', isDark),
+                      Divider(height: 24, color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
+                      _buildProfileItem(Icons.two_wheeler_rounded, 'Motor', '${profile.motorcycleCount} Unit', isDark),
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // Transparansi
                 Text(
                   'Transparansi Lingkungan',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.grey800,
+                    color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                   ),
                 ),
                 const SizedBox(height: 12),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
@@ -373,7 +340,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w700,
-                                      color: AppColors.grey800,
+                                      color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                                     ),
                                   ),
                                   const SizedBox(height: 2),
@@ -381,13 +348,13 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                                     'Lihat ringkasan kas bulan ini',
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 12,
-                                      color: AppColors.grey500,
+                                      color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const Icon(Icons.chevron_right_rounded, color: AppColors.grey400),
+                            Icon(Icons.chevron_right_rounded, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                           ],
                         ),
                       ),
@@ -400,7 +367,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                 // Pusat Bantuan
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
@@ -421,11 +388,11 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(alpha: 0.1),
+                                color: RukuninColors.brandGreen.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: const Icon(Icons.help_outline_rounded,
-                                  color: AppColors.primary, size: 20),
+                              child: Icon(Icons.help_outline_rounded,
+                                  color: RukuninColors.brandGreen, size: 20),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
@@ -434,12 +401,12 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
-                                  color: AppColors.grey800,
+                                  color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                                 ),
                               ),
                             ),
-                            const Icon(Icons.chevron_right_rounded,
-                                color: AppColors.grey400),
+                            Icon(Icons.chevron_right_rounded,
+                                color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                           ],
                         ),
                       ),
@@ -452,8 +419,8 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                   width: double.infinity,
                   child: OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.error,
-                      side: const BorderSide(color: AppColors.error),
+                      foregroundColor: RukuninColors.error,
+                      side: const BorderSide(color: RukuninColors.error),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
@@ -478,6 +445,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
     int initialMotorcycle,
     int initialCar,
     String userId,
+    bool isDark,
   ) async {
     int motorcycle = initialMotorcycle;
     int car = initialCar;
@@ -488,9 +456,9 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
       backgroundColor: Colors.transparent,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setModalState) => Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          decoration: BoxDecoration(
+            color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           padding: EdgeInsets.fromLTRB(24, 16, 24, MediaQuery.of(ctx).viewInsets.bottom + 32),
           child: Column(
@@ -502,7 +470,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: AppColors.grey300,
+                    color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -513,7 +481,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.grey800,
+                  color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                 ),
               ),
               const SizedBox(height: 24),
@@ -521,6 +489,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                 icon: Icons.two_wheeler_rounded,
                 label: 'Motor',
                 value: motorcycle,
+                isDark: isDark,
                 onDecrement: () => setModalState(() { if (motorcycle > 0) motorcycle--; }),
                 onIncrement: () => setModalState(() { if (motorcycle < 10) motorcycle++; }),
               ),
@@ -529,6 +498,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                 icon: Icons.directions_car_rounded,
                 label: 'Mobil',
                 value: car,
+                isDark: isDark,
                 onDecrement: () => setModalState(() { if (car > 0) car--; }),
                 onIncrement: () => setModalState(() { if (car < 10) car++; }),
               ),
@@ -541,8 +511,8 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                     await _saveVehicle(userId, motorcycle, car);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.onPrimary,
+                    backgroundColor: RukuninColors.brandGreen,
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
@@ -563,12 +533,13 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
     required IconData icon,
     required String label,
     required int value,
+    required bool isDark,
     required VoidCallback onDecrement,
     required VoidCallback onIncrement,
   }) {
     return Row(
       children: [
-        Icon(icon, color: AppColors.primary, size: 22),
+        Icon(icon, color: RukuninColors.brandGreen, size: 22),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
@@ -579,7 +550,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
         IconButton(
           onPressed: onDecrement,
           icon: const Icon(Icons.remove_circle_outline_rounded),
-          color: AppColors.grey500,
+          color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
         ),
         Text(
           '$value',
@@ -588,7 +559,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
         IconButton(
           onPressed: onIncrement,
           icon: const Icon(Icons.add_circle_outline_rounded),
-          color: AppColors.primary,
+          color: RukuninColors.brandGreen,
         ),
       ],
     );
@@ -606,7 +577,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Data kendaraan berhasil diperbarui'),
-            backgroundColor: AppColors.success,
+            backgroundColor: RukuninColors.success,
           ),
         );
       }
@@ -615,23 +586,23 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Gagal menyimpan: $e'),
-            backgroundColor: AppColors.error,
+            backgroundColor: RukuninColors.error,
           ),
         );
       }
     }
   }
 
-  Widget _buildProfileItem(IconData icon, String label, String value) {
+  Widget _buildProfileItem(IconData icon, String label, String value, bool isDark) {
     return Row(
       children: [
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
+            color: RukuninColors.brandGreen.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(icon, color: AppColors.primary, size: 20),
+          child: Icon(icon, color: RukuninColors.brandGreen, size: 20),
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -642,7 +613,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                 label,
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 12,
-                  color: AppColors.grey500,
+                  color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -652,7 +623,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.grey800,
+                  color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                 ),
               ),
             ],

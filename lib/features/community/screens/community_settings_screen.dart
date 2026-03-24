@@ -1,7 +1,10 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../../../core/services/location_service.dart';
 import '../../../core/supabase/supabase_client.dart';
 
@@ -62,17 +65,31 @@ class _CommunitySettingsScreenState
         _nameCtrl.text = c['name'] ?? '';
         _rwCtrl.text = c['rw_number'] ?? '';
         _rtCount = (c['rt_count'] as int?) ?? 3;
-        if (c['province'] != null) {
-          _provinsi = WilayahModel(id: '', name: c['province'] as String);
+
+        // Resolve saved names back to real WilayahModel objects (with proper IDs)
+        // so DropdownButton can match by reference against the fetched list.
+        final service = ref.read(locationServiceProvider);
+
+        final savedProvince = c['province'] as String?;
+        final savedKabupaten = c['kabupaten'] as String?;
+        final savedKecamatan = c['kecamatan'] as String?;
+        final savedKelurahan = c['kelurahan'] as String?;
+
+        if (savedProvince != null) {
+          final list = await service.getProvinsi();
+          _provinsi = list.firstWhereOrNull((w) => w.name == savedProvince);
         }
-        if (c['kabupaten'] != null) {
-          _kabupaten = WilayahModel(id: '', name: c['kabupaten'] as String);
+        if (savedKabupaten != null && _provinsi != null) {
+          final list = await service.getKabupaten(_provinsi!.id);
+          _kabupaten = list.firstWhereOrNull((w) => w.name == savedKabupaten);
         }
-        if (c['kecamatan'] != null) {
-          _kecamatan = WilayahModel(id: '', name: c['kecamatan'] as String);
+        if (savedKecamatan != null && _kabupaten != null) {
+          final list = await service.getKecamatan(_kabupaten!.id);
+          _kecamatan = list.firstWhereOrNull((w) => w.name == savedKecamatan);
         }
-        if (c['kelurahan'] != null) {
-          _kelurahan = WilayahModel(id: '', name: c['kelurahan'] as String);
+        if (savedKelurahan != null && _kecamatan != null) {
+          final list = await service.getKelurahan(_kecamatan!.id);
+          _kelurahan = list.firstWhereOrNull((w) => w.name == savedKelurahan);
         }
       }
     } finally {
@@ -101,13 +118,13 @@ class _CommunitySettingsScreenState
           backgroundColor: Color(0xFF22C55E),
           behavior: SnackBarBehavior.floating,
         ));
-        Navigator.pop(context);
+        context.pop();
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Gagal: $e'),
-          backgroundColor: AppColors.error,
+          backgroundColor: RukuninColors.error,
           behavior: SnackBarBehavior.floating,
         ));
       }
@@ -118,16 +135,17 @@ class _CommunitySettingsScreenState
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final provinsiAsync = ref.watch(provinsiProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded,
               color: Colors.white, size: 20),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
         title: Text('Profil Community',
             style: GoogleFonts.plusJakartaSans(
@@ -136,17 +154,18 @@ class _CommunitySettingsScreenState
                 fontWeight: FontWeight.w700)),
       ),
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: AppColors.primary))
+          ? Center(
+              child: CircularProgressIndicator(color: RukuninColors.brandGreen))
           : Form(
               key: _formKey,
               child: ListView(
                 padding: const EdgeInsets.all(20),
                 children: [
                   // === INFO DASAR ===
-                  _sectionLabel('Informasi Dasar'),
-                  _card([
+                  _sectionLabel(context, 'Informasi Dasar'),
+                  _card(context, [
                     _textField(
+                      context: context,
                       ctrl: _nameCtrl,
                       label: 'Nama Community / RW',
                       icon: Icons.home_work_outlined,
@@ -154,6 +173,7 @@ class _CommunitySettingsScreenState
                     ),
                     _divider(),
                     _textField(
+                      context: context,
                       ctrl: _rwCtrl,
                       label: 'Nomor RW',
                       icon: Icons.tag_rounded,
@@ -161,16 +181,17 @@ class _CommunitySettingsScreenState
                       validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
                     ),
                     _divider(),
-                    _rtCountRow(),
+                    _rtCountRow(context),
                   ]),
 
                   const SizedBox(height: 16),
 
                   // === ALAMAT WILAYAH ===
-                  _sectionLabel('Alamat Wilayah'),
-                  _card([
+                  _sectionLabel(context, 'Alamat Wilayah'),
+                  _card(context, [
                     // Provinsi
                     _wilayahDropdown(
+                      context: context,
                       label: 'Provinsi',
                       icon: Icons.map_outlined,
                       asyncValue: provinsiAsync,
@@ -186,6 +207,7 @@ class _CommunitySettingsScreenState
 
                     // Kabupaten/Kota
                     _wilayahDropdown(
+                      context: context,
                       label: 'Kabupaten / Kota',
                       icon: Icons.location_city_outlined,
                       asyncValue: _provinsi != null
@@ -203,6 +225,7 @@ class _CommunitySettingsScreenState
 
                     // Kecamatan
                     _wilayahDropdown(
+                      context: context,
                       label: 'Kecamatan',
                       icon: Icons.place_outlined,
                       asyncValue: _kabupaten != null
@@ -219,6 +242,7 @@ class _CommunitySettingsScreenState
 
                     // Kelurahan/Desa
                     _wilayahDropdown(
+                      context: context,
                       label: 'Kelurahan / Desa',
                       icon: Icons.holiday_village_outlined,
                       asyncValue: _kecamatan != null
@@ -239,21 +263,21 @@ class _CommunitySettingsScreenState
                       height: 54,
                       decoration: BoxDecoration(
                         color: _isSaving
-                            ? AppColors.surface.withValues(alpha: 0.6)
-                            : AppColors.surface,
+                            ? (isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface).withValues(alpha: 0.6)
+                            : (isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface),
                         borderRadius: BorderRadius.circular(100),
                       ),
                       child: Center(
                         child: _isSaving
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 22,
                                 height: 22,
                                 child: CircularProgressIndicator(
                                     strokeWidth: 2.5,
-                                    color: AppColors.primary))
+                                    color: RukuninColors.brandGreen))
                             : Text('Simpan',
                                 style: GoogleFonts.plusJakartaSans(
-                                    color: AppColors.primary,
+                                    color: RukuninColors.brandGreen,
                                     fontSize: 15,
                                     fontWeight: FontWeight.w700)),
                       ),
@@ -266,20 +290,21 @@ class _CommunitySettingsScreenState
     );
   }
 
-  Widget _rtCountRow() {
+  Widget _rtCountRow(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
         children: [
-          const Icon(Icons.tag_rounded, size: 18, color: AppColors.grey400),
+          Icon(Icons.tag_rounded, size: 18, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
           const SizedBox(width: 16),
           Text('Jumlah RT',
               style: GoogleFonts.plusJakartaSans(
-                  fontSize: 13, color: AppColors.grey600)),
+                  fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
           const Spacer(),
           IconButton(
             icon: const Icon(Icons.remove_circle_outline, size: 22),
-            color: _rtCount > 1 ? AppColors.primary : AppColors.grey400,
+            color: _rtCount > 1 ? RukuninColors.brandGreen : (isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
             onPressed: _rtCount > 1
                 ? () => setState(() => _rtCount--)
                 : null,
@@ -294,7 +319,7 @@ class _CommunitySettingsScreenState
           ),
           IconButton(
             icon: const Icon(Icons.add_circle_outline, size: 22),
-            color: AppColors.primary,
+            color: RukuninColors.brandGreen,
             onPressed: () => setState(() => _rtCount++),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
@@ -305,6 +330,7 @@ class _CommunitySettingsScreenState
   }
 
   Widget _wilayahDropdown({
+    required BuildContext context,
     required String label,
     required IconData icon,
     required AsyncValue<List<WilayahModel>> asyncValue,
@@ -312,11 +338,12 @@ class _CommunitySettingsScreenState
     required void Function(WilayahModel) onSelected,
     bool enabled = true,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: AppColors.grey400),
+          Icon(icon, size: 18, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -324,35 +351,35 @@ class _CommunitySettingsScreenState
               children: [
                 Text(label,
                     style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12, color: AppColors.grey600)),
+                        fontSize: 12, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                 const SizedBox(height: 4),
                 asyncValue.when(
-                  loading: () => const SizedBox(
+                  loading: () => SizedBox(
                     height: 16,
                     width: 16,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: AppColors.primary),
+                        strokeWidth: 2, color: RukuninColors.brandGreen),
                   ),
                   error: (e, _) => Text('Gagal memuat',
                       style: GoogleFonts.plusJakartaSans(
-                          fontSize: 13, color: AppColors.error)),
+                          fontSize: 13, color: RukuninColors.error)),
                   data: (list) => !enabled || list.isEmpty
                       ? Text(
                           enabled ? 'Tidak ada data' : 'Pilih ${_prevLabel(label)} dulu',
                           style: GoogleFonts.plusJakartaSans(
-                              fontSize: 13, color: AppColors.grey400))
+                              fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary))
                       : DropdownButton<WilayahModel>(
                           value: selected,
                           hint: Text('Pilih $label',
                               style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 13, color: AppColors.grey400)),
+                                  fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
                           underline: const SizedBox(),
                           isDense: true,
                           isExpanded: true,
                           style: GoogleFonts.plusJakartaSans(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.grey800),
+                              color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                           items: list
                               .map((w) => DropdownMenuItem(
                                     value: w,
@@ -378,54 +405,64 @@ class _CommunitySettingsScreenState
     return '';
   }
 
-  Widget _sectionLabel(String label) => Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Text(label,
-            style: GoogleFonts.plusJakartaSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: AppColors.grey600,
-                letterSpacing: 0.5)),
-      );
+  Widget _sectionLabel(BuildContext context, String label) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(label,
+          style: GoogleFonts.plusJakartaSans(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
+              letterSpacing: 0.5)),
+    );
+  }
 
-  Widget _card(List<Widget> children) => Container(
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(16)),
-        child: Column(children: children),
-      );
+  Widget _card(BuildContext context, List<Widget> children) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      decoration: BoxDecoration(
+          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+          borderRadius: BorderRadius.circular(16)),
+      child: Column(children: children),
+    );
+  }
 
   Widget _divider() => const Divider(height: 1, indent: 52);
 
   Widget _textField({
+    required BuildContext context,
     required TextEditingController ctrl,
     required String label,
     required IconData icon,
     TextInputType? keyboardType,
     String? Function(String?)? validator,
-  }) =>
-      TextFormField(
-        controller: ctrl,
-        keyboardType: keyboardType,
-        validator: validator,
-        style: GoogleFonts.plusJakartaSans(
-            fontSize: 14, color: AppColors.grey800),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: GoogleFonts.plusJakartaSans(
-              fontSize: 13, color: AppColors.grey600),
-          prefixIcon: Icon(icon, size: 18, color: AppColors.grey400),
-          filled: true,
-          fillColor: Colors.white,
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.primary, width: 2),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.error),
-          ),
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return TextFormField(
+      controller: ctrl,
+      keyboardType: keyboardType,
+      validator: validator,
+      style: GoogleFonts.plusJakartaSans(
+          fontSize: 14, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: GoogleFonts.plusJakartaSans(
+            fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
+        prefixIcon: Icon(icon, size: 18, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+        filled: true,
+        fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+        border: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: RukuninColors.brandGreen, width: 2),
         ),
-      );
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: RukuninColors.error),
+        ),
+      ),
+    );
+  }
 }

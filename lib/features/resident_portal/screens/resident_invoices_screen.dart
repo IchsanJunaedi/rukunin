@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../../invoices/models/invoice_model.dart';
 import '../providers/resident_invoices_provider.dart';
 import '../providers/upload_proof_provider.dart';
@@ -34,17 +35,18 @@ class _ResidentInvoicesScreenState extends ConsumerState<ResidentInvoicesScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final invoicesAsync = ref.watch(residentInvoicesProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
         title: const Text('Riwayat Tagihan'),
         bottom: TabBar(
           controller: _tabController,
-          labelColor: AppColors.primary,
-          unselectedLabelColor: AppColors.grey500,
-          indicatorColor: AppColors.primary,
+          labelColor: RukuninColors.brandGreen,
+          unselectedLabelColor: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
+          indicatorColor: RukuninColors.brandGreen,
           labelStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
           tabs: const [
             Tab(text: 'Semua'),
@@ -60,11 +62,11 @@ class _ResidentInvoicesScreenState extends ConsumerState<ResidentInvoicesScreen>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.receipt_long_outlined, size: 64, color: AppColors.grey300),
+                  Icon(Icons.receipt_long_outlined, size: 64, color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
                   const SizedBox(height: 16),
                   Text(
                     'Belum ada tagihan sama sekali',
-                    style: GoogleFonts.plusJakartaSans(color: AppColors.grey500),
+                    style: GoogleFonts.plusJakartaSans(color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                   ),
                 ],
               ),
@@ -154,6 +156,8 @@ class _InvoiceListBuilderState extends ConsumerState<_InvoiceListBuilder> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     // Prefetch payment info agar sudah tersedia saat user tap tagihan
     ref.watch(residentCommunityPaymentProvider);
 
@@ -161,7 +165,7 @@ class _InvoiceListBuilderState extends ConsumerState<_InvoiceListBuilder> {
       return Center(
         child: Text(
           'Tidak ada tagihan di kategori ini',
-          style: GoogleFonts.plusJakartaSans(color: AppColors.grey500),
+          style: GoogleFonts.plusJakartaSans(color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
         ),
       );
     }
@@ -180,16 +184,16 @@ class _InvoiceListBuilderState extends ConsumerState<_InvoiceListBuilder> {
           Color statusColor;
           String statusText;
           if (inv.status == 'paid') {
-            statusColor = AppColors.success;
+            statusColor = RukuninColors.success;
             statusText = 'Lunas';
           } else if (inv.status == 'overdue') {
-            statusColor = AppColors.error;
+            statusColor = RukuninColors.error;
             statusText = 'Terlambat';
           } else if (inv.status == 'awaiting_verification') {
             statusColor = const Color(0xFF3B82F6);
             statusText = 'Menunggu Verifikasi Admin';
           } else {
-            statusColor = AppColors.warning;
+            statusColor = RukuninColors.warning;
             statusText = 'Belum Dibayar';
           }
 
@@ -199,9 +203,9 @@ class _InvoiceListBuilderState extends ConsumerState<_InvoiceListBuilder> {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.grey200),
+                border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
               ),
               child: Row(
                 children: [
@@ -223,7 +227,7 @@ class _InvoiceListBuilderState extends ConsumerState<_InvoiceListBuilder> {
                           style: GoogleFonts.plusJakartaSans(
                             fontWeight: FontWeight.w700,
                             fontSize: 15,
-                            color: AppColors.grey800,
+                            color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -231,7 +235,7 @@ class _InvoiceListBuilderState extends ConsumerState<_InvoiceListBuilder> {
                           'Periode $monthName',
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 13,
-                            color: AppColors.grey500,
+                            color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                           ),
                         ),
                         const SizedBox(height: 6),
@@ -258,7 +262,7 @@ class _InvoiceListBuilderState extends ConsumerState<_InvoiceListBuilder> {
                     style: GoogleFonts.plusJakartaSans(
                       fontWeight: FontWeight.w800,
                       fontSize: 15,
-                      color: AppColors.grey800,
+                      color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                     ),
                   ),
                 ],
@@ -338,17 +342,18 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SafeArea(
         child: switch (_step) {
-          _PaymentStep.selectMethod => _buildSelectMethod(),
-          _PaymentStep.transferDetails => _buildTransferDetails(),
-          _PaymentStep.qrisDetails => _buildQrisDetails(),
+          _PaymentStep.selectMethod => _buildSelectMethod(isDark),
+          _PaymentStep.transferDetails => _buildTransferDetails(isDark),
+          _PaymentStep.qrisDetails => _buildQrisDetails(isDark),
         },
       ),
     );
@@ -356,7 +361,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
 
   // ── Step 1: Pilih Metode ──────────────────────────────────────────────────
 
-  Widget _buildSelectMethod() {
+  Widget _buildSelectMethod(bool isDark) {
     final info = widget.paymentInfo;
     return Padding(
       padding: const EdgeInsets.all(24),
@@ -364,16 +369,16 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSheetHeader('Bayar Tagihan', onBack: null),
+          _buildSheetHeader('Bayar Tagihan', onBack: null, isDark: isDark),
           const SizedBox(height: 16),
-          _buildInvoiceSummaryCard(),
+          _buildInvoiceSummaryCard(isDark),
           const SizedBox(height: 24),
           Text(
             'Pilih cara pembayaran',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: AppColors.grey500,
+              color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
             ),
           ),
           const SizedBox(height: 12),
@@ -386,6 +391,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
                 title: 'Transfer Bank',
                 subtitle: '${info.bankName} · ${_maskAccountNumber(info.accountNumber ?? '')}',
                 onTap: () => setState(() => _step = _PaymentStep.transferDetails),
+                isDark: isDark,
               ),
             if (info.hasBank && info.hasQris) const SizedBox(height: 12),
             if (info.hasQris)
@@ -394,6 +400,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
                 title: 'Bayar via QRIS',
                 subtitle: 'Scan QR dengan e-wallet atau m-banking',
                 onTap: () => setState(() => _step = _PaymentStep.qrisDetails),
+                isDark: isDark,
               ),
           ],
           const SizedBox(height: 8),
@@ -407,6 +414,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
     required String title,
     required String subtitle,
     required VoidCallback onTap,
+    required bool isDark,
   }) {
     return InkWell(
       onTap: onTap,
@@ -414,19 +422,19 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.grey200),
+          border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.12),
+                color: RukuninColors.brandGreen.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon, color: AppColors.primary, size: 22),
+              child: Icon(icon, color: RukuninColors.brandGreen, size: 22),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -438,18 +446,18 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
                     style: GoogleFonts.plusJakartaSans(
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
-                      color: AppColors.grey800,
+                      color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.plusJakartaSans(fontSize: 12, color: AppColors.grey500),
+                    style: GoogleFonts.plusJakartaSans(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, color: AppColors.grey500),
+            Icon(Icons.chevron_right_rounded, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
           ],
         ),
       ),
@@ -460,18 +468,18 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.warning.withValues(alpha: 0.1),
+        color: RukuninColors.warning.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
+        border: Border.all(color: RukuninColors.warning.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
-          Icon(Icons.info_outline_rounded, color: AppColors.warning, size: 20),
+          Icon(Icons.info_outline_rounded, color: RukuninColors.warning, size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               'Admin belum mengatur info pembayaran. Hubungi pengurus RT.',
-              style: GoogleFonts.plusJakartaSans(fontSize: 13, color: AppColors.warning),
+              style: GoogleFonts.plusJakartaSans(fontSize: 13, color: RukuninColors.warning),
             ),
           ),
         ],
@@ -481,7 +489,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
 
   // ── Step 2a: Transfer Bank ────────────────────────────────────────────────
 
-  Widget _buildTransferDetails() {
+  Widget _buildTransferDetails(bool isDark) {
     final info = widget.paymentInfo!;
     return Padding(
       padding: const EdgeInsets.all(24),
@@ -489,29 +497,30 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSheetHeader('Transfer Bank', onBack: _onBack),
+          _buildSheetHeader('Transfer Bank', onBack: _onBack, isDark: isDark),
           const SizedBox(height: 16),
-          _buildInvoiceSummaryCard(),
+          _buildInvoiceSummaryCard(isDark),
           const SizedBox(height: 20),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.grey100,
+              color: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.grey200),
+              border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
             ),
             child: Column(
               children: [
-                _buildDetailRow('Bank', info.bankName ?? '-'),
+                _buildDetailRow('Bank', info.bankName ?? '-', isDark: isDark),
                 const Divider(height: 24),
                 _buildDetailRow(
                   'No. Rekening',
                   info.accountNumber ?? '-',
                   canCopy: true,
                   copyValue: info.accountNumber ?? '',
+                  isDark: isDark,
                 ),
                 const Divider(height: 24),
-                _buildDetailRow('Atas Nama', info.accountName ?? '-'),
+                _buildDetailRow('Atas Nama', info.accountName ?? '-', isDark: isDark),
                 const Divider(height: 24),
                 _buildDetailRow(
                   'Nominal',
@@ -521,16 +530,17 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
                   valueStyle: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w800,
                     fontSize: 16,
-                    color: AppColors.grey800,
+                    color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                   ),
+                  isDark: isDark,
                 ),
               ],
             ),
           ),
           const SizedBox(height: 12),
-          _buildInfoTip('Gunakan nominal yang tepat agar mudah diverifikasi oleh admin.'),
+          _buildInfoTip('Gunakan nominal yang tepat agar mudah diverifikasi oleh admin.', isDark),
           const SizedBox(height: 20),
-          _buildUploadLabel(),
+          _buildUploadLabel(isDark),
           const SizedBox(height: 12),
           _buildUploadButtons(),
           const SizedBox(height: 8),
@@ -545,6 +555,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
     bool canCopy = false,
     String copyValue = '',
     TextStyle? valueStyle,
+    required bool isDark,
   }) {
     return Row(
       children: [
@@ -552,7 +563,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
           flex: 2,
           child: Text(
             label,
-            style: GoogleFonts.plusJakartaSans(fontSize: 13, color: AppColors.grey500),
+            style: GoogleFonts.plusJakartaSans(fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
           ),
         ),
         Expanded(
@@ -568,7 +579,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
                       GoogleFonts.plusJakartaSans(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
-                        color: AppColors.grey800,
+                        color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                       ),
                 ),
               ),
@@ -584,7 +595,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
                       ),
                     );
                   },
-                  child: Icon(Icons.copy_rounded, size: 16, color: AppColors.primary),
+                  child: Icon(Icons.copy_rounded, size: 16, color: RukuninColors.brandGreen),
                 ),
               ],
             ],
@@ -596,7 +607,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
 
   // ── Step 2b: QRIS ─────────────────────────────────────────────────────────
 
-  Widget _buildQrisDetails() {
+  Widget _buildQrisDetails(bool isDark) {
     final qrisUrl = widget.paymentInfo!.qrisUrl!;
     return Padding(
       padding: const EdgeInsets.all(24),
@@ -604,16 +615,16 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSheetHeader('Bayar via QRIS', onBack: _onBack),
+          _buildSheetHeader('Bayar via QRIS', onBack: _onBack, isDark: isDark),
           const SizedBox(height: 16),
-          _buildInvoiceSummaryCard(),
+          _buildInvoiceSummaryCard(isDark),
           const SizedBox(height: 20),
           Center(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.grey200, width: 1.5),
+                border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2, width: 1.5),
               ),
               padding: const EdgeInsets.all(16),
               child: CachedNetworkImage(
@@ -626,18 +637,18 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
                   height: 220,
                   child: Center(child: CircularProgressIndicator()),
                 ),
-                errorWidget: (_, _, _) => const SizedBox(
+                errorWidget: (_, _, _) => SizedBox(
                   width: 220,
                   height: 220,
-                  child: Center(child: Icon(Icons.broken_image_rounded, size: 48, color: AppColors.grey300)),
+                  child: Center(child: Icon(Icons.broken_image_rounded, size: 48, color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder)),
                 ),
               ),
             ),
           ),
           const SizedBox(height: 12),
-          _buildInfoTip('Buka e-wallet atau m-banking → pilih Scan QR / QRIS → scan kode di atas.'),
+          _buildInfoTip('Buka e-wallet atau m-banking → pilih Scan QR / QRIS → scan kode di atas.', isDark),
           const SizedBox(height: 20),
-          _buildUploadLabel(),
+          _buildUploadLabel(isDark),
           const SizedBox(height: 12),
           _buildUploadButtons(),
           const SizedBox(height: 8),
@@ -648,13 +659,13 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
 
   // ── Shared Widgets ────────────────────────────────────────────────────────
 
-  Widget _buildSheetHeader(String title, {required VoidCallback? onBack}) {
+  Widget _buildSheetHeader(String title, {required VoidCallback? onBack, required bool isDark}) {
     return Row(
       children: [
         if (onBack != null) ...[
           GestureDetector(
             onTap: onBack,
-            child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.grey800),
+            child: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
           ),
           const SizedBox(width: 10),
         ],
@@ -663,20 +674,20 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
           style: GoogleFonts.plusJakartaSans(
             fontSize: 20,
             fontWeight: FontWeight.w800,
-            color: AppColors.grey800,
+            color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildInvoiceSummaryCard() {
+  Widget _buildInvoiceSummaryCard(bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.08),
+        color: RukuninColors.brandGreen.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+        border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -686,12 +697,12 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
             children: [
               Text(
                 widget.billingTypeName,
-                style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, color: AppColors.grey800),
+                style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
               ),
               const SizedBox(height: 2),
               Text(
                 widget.periodLabel,
-                style: GoogleFonts.plusJakartaSans(fontSize: 12, color: AppColors.grey500),
+                style: GoogleFonts.plusJakartaSans(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
               ),
             ],
           ),
@@ -700,7 +711,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
             style: GoogleFonts.plusJakartaSans(
               fontWeight: FontWeight.w800,
               fontSize: 16,
-              color: AppColors.grey800,
+              color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
             ),
           ),
         ],
@@ -708,22 +719,22 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
     );
   }
 
-  Widget _buildInfoTip(String message) {
+  Widget _buildInfoTip(String message, bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.08),
+        color: RukuninColors.brandGreen.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.tips_and_updates_rounded, size: 16, color: AppColors.primary),
+          Icon(Icons.tips_and_updates_rounded, size: 16, color: RukuninColors.brandGreen),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               message,
-              style: GoogleFonts.plusJakartaSans(fontSize: 12, color: AppColors.grey500),
+              style: GoogleFonts.plusJakartaSans(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
             ),
           ),
         ],
@@ -731,13 +742,13 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
     );
   }
 
-  Widget _buildUploadLabel() {
+  Widget _buildUploadLabel(bool isDark) {
     return Text(
       'Sudah bayar? Unggah bukti pembayaran',
       style: GoogleFonts.plusJakartaSans(
         fontWeight: FontWeight.w600,
         fontSize: 14,
-        color: AppColors.grey800,
+        color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
       ),
     );
   }
@@ -748,8 +759,8 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
         Expanded(
           child: ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary.withValues(alpha: 0.12),
-              foregroundColor: AppColors.primary,
+              backgroundColor: RukuninColors.brandGreen.withValues(alpha: 0.12),
+              foregroundColor: RukuninColors.brandGreen,
               elevation: 0,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -763,7 +774,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
         Expanded(
           child: ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: RukuninColors.brandGreen,
               foregroundColor: Colors.white,
               elevation: 0,
               padding: const EdgeInsets.symmetric(vertical: 14),

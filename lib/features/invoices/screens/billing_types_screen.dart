@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../models/billing_type_model.dart';
 import '../providers/billing_type_provider.dart';
 import 'add_edit_billing_type_screen.dart';
@@ -13,12 +14,13 @@ class BillingTypesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final billingTypesAsync = ref.watch(billingTypesProvider);
     final currencyFormat = NumberFormat.currency(
         locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
         title: Text(
           'Konfigurasi Iuran',
@@ -50,12 +52,12 @@ class BillingTypesScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.request_page_outlined, size: 64, color: AppColors.grey400),
+                  Icon(Icons.request_page_outlined, size: 64, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                   const SizedBox(height: 16),
                   Text(
                     'Belum ada jenis iuran',
                     style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.grey600,
+                      color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -83,20 +85,21 @@ class BillingTypesScreen extends ConsumerWidget {
             ),
           );
         },
-        backgroundColor: AppColors.primary,
-        child: const Icon(Icons.add, color: AppColors.onPrimary),
+        backgroundColor: RukuninColors.brandGreen,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
   Widget _buildBillingTypeCard(BuildContext context, WidgetRef ref, BillingTypeModel type, NumberFormat format) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: type.isActive ? AppColors.grey200 : AppColors.grey200,
+          color: type.isActive ? (isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2) : (isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
         ),
       ),
       child: Opacity(
@@ -119,7 +122,7 @@ class BillingTypesScreen extends ConsumerWidget {
                               style: GoogleFonts.plusJakartaSans(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 15,
-                                color: AppColors.grey800,
+                                color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -127,14 +130,14 @@ class BillingTypesScreen extends ConsumerWidget {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: AppColors.grey200,
+                                  color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text('Nonaktif',
                                     style: GoogleFonts.plusJakartaSans(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w600,
-                                        color: AppColors.grey500)),
+                                        color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
                               ),
                           ],
                         ),
@@ -144,7 +147,7 @@ class BillingTypesScreen extends ConsumerWidget {
                           style: GoogleFonts.plusJakartaSans(
                             fontWeight: FontWeight.w800,
                             fontSize: 18,
-                            color: AppColors.primary,
+                            color: RukuninColors.brandGreen,
                           ),
                         ),
                         if (type.costPerMotorcycle > 0 || type.costPerCar > 0)
@@ -154,7 +157,7 @@ class BillingTypesScreen extends ConsumerWidget {
                               '+${format.format(type.costPerMotorcycle)}/motor · +${format.format(type.costPerCar)}/mobil',
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 11,
-                                color: AppColors.grey500,
+                                color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                               ),
                             ),
                           ),
@@ -163,7 +166,7 @@ class BillingTypesScreen extends ConsumerWidget {
                   ),
                   Switch(
                     value: type.isActive,
-                    activeThumbColor: AppColors.success,
+                    activeThumbColor: RukuninColors.success,
                     onChanged: (val) async {
                       final notifier = ref.read(billingTypesProvider.notifier);
                       try {
@@ -178,7 +181,7 @@ class BillingTypesScreen extends ConsumerWidget {
                     },
                   ),
                   PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert, color: AppColors.grey600),
+                    icon: Icon(Icons.more_vert, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
                     onSelected: (val) async {
                       if (val == 'edit') {
                         Navigator.push(
@@ -203,7 +206,7 @@ class BillingTypesScreen extends ConsumerWidget {
                                 child: Text('Batal', style: GoogleFonts.plusJakartaSans()),
                               ),
                               ElevatedButton(
-                                style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
+                                style: ElevatedButton.styleFrom(backgroundColor: RukuninColors.error),
                                 onPressed: () => Navigator.pop(ctx, true),
                                 child: Text('Hapus',
                                     style: GoogleFonts.plusJakartaSans(color: Colors.white)),
@@ -218,7 +221,7 @@ class BillingTypesScreen extends ConsumerWidget {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('${type.name} berhasil dihapus'),
-                                  backgroundColor: AppColors.success,
+                                  backgroundColor: RukuninColors.success,
                                 ),
                               );
                             }
@@ -237,7 +240,7 @@ class BillingTypesScreen extends ConsumerWidget {
                         value: 'edit',
                         child: Row(
                           children: [
-                            const Icon(Icons.edit_outlined, size: 18, color: AppColors.grey600),
+                            Icon(Icons.edit_outlined, size: 18, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
                             const SizedBox(width: 8),
                             Text('Edit Iuran', style: GoogleFonts.plusJakartaSans()),
                           ],
@@ -247,9 +250,9 @@ class BillingTypesScreen extends ConsumerWidget {
                         value: 'delete',
                         child: Row(
                           children: [
-                            const Icon(Icons.delete_outline, size: 18, color: AppColors.error),
+                            Icon(Icons.delete_outline, size: 18, color: RukuninColors.error),
                             const SizedBox(width: 8),
-                            Text('Hapus', style: GoogleFonts.plusJakartaSans(color: AppColors.error)),
+                            Text('Hapus', style: GoogleFonts.plusJakartaSans(color: RukuninColors.error)),
                           ],
                         ),
                       ),
@@ -263,13 +266,13 @@ class BillingTypesScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today_outlined, size: 15, color: AppColors.grey400),
+                  Icon(Icons.calendar_today_outlined, size: 15, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                   const SizedBox(width: 8),
                   Text(
                     'Jatuh tempo tiap tanggal ${type.billingDay} setiap bulan',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
-                      color: AppColors.grey500,
+                      color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                     ),
                   ),
                 ],

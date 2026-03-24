@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import '../../../app/theme.dart';
+
+import '../../../app/tokens.dart';
+import '../../../app/components.dart';
 import '../providers/resident_invoices_provider.dart';
 
 class ResidentHomeScreen extends ConsumerWidget {
@@ -14,356 +16,375 @@ class ResidentHomeScreen extends ConsumerWidget {
     final profileAsync = ref.watch(currentResidentProfileProvider);
     final totalPending = ref.watch(residentTotalPendingInvoicesProvider);
     final invoicesAsync = ref.watch(residentInvoicesProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () async {
-            ref.invalidate(currentResidentProfileProvider);
-            ref.invalidate(residentInvoicesProvider);
-          },
-          child: ListView(
-            padding: const EdgeInsets.all(24),
-            children: [
-              // Header
-              profileAsync.when(
-                data: (profile) => Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 24,
-                      backgroundColor: AppColors.primary,
-                      backgroundImage: profile?.photoUrl != null && profile!.photoUrl!.isNotEmpty
-                          ? NetworkImage(profile.photoUrl!)
-                          : null,
-                      child: (profile?.photoUrl == null || profile!.photoUrl!.isEmpty)
-                          ? Text(
-                              profile?.initials ?? '?',
-                              style: GoogleFonts.plusJakartaSans(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            )
-                          : null,
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Halo, ${profile?.fullName ?? 'Warga'} 👋',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.grey800,
-                            ),
-                          ),
-                          Text(
-                            profile?.alamatLengkap ?? 'Memuat info...',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 13,
-                              color: AppColors.grey500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Text('Error memuat profil: $e'),
-              ),
-
-              const SizedBox(height: 32),
-
-              // Card Total Tagihan
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [AppColors.primary, Color(0xFF6B4AC6)], // primary to deeper primary
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
+      body: RefreshIndicator(
+        color: RukuninColors.brandGreen,
+        onRefresh: () async {
+          ref.invalidate(currentResidentProfileProvider);
+          ref.invalidate(residentInvoicesProvider);
+        },
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: _ResidentHeader(profileAsync: profileAsync),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  _TagihanHeroCard(totalPending: totalPending),
+                  const SizedBox(height: 14),
+                  _KasBanner(onTap: () => context.push('/resident/kas')),
+                  const SizedBox(height: 24),
+                  SectionHeader(
+                    title: 'Tagihan Terkini',
+                    actionLabel: 'Lihat semua',
+                    onAction: () => context.push('/resident/tagihan'),
                   ),
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.3),
-                      blurRadius: 16,
-                      offset: const Offset(0, 8),
-                    )
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Sisa Tagihan Anda',
-                          style: GoogleFonts.plusJakartaSans(
-                            color: Colors.white.withValues(alpha: 0.8),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Icon(Icons.account_balance_wallet_rounded, 
-                             color: Colors.white.withValues(alpha: 0.8), size: 20),
-                      ],
+                  const SizedBox(height: 12),
+                  invoicesAsync.when(
+                    loading: () => Column(
+                      children: List.generate(
+                          2, (_) => Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: InvoiceCardSkeleton(),
+                          )),
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      NumberFormat.currency(locale: 'id', symbol: 'Rp ', decimalDigits: 0)
-                          .format(totalPending),
-                      style: GoogleFonts.plusJakartaSans(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    if (totalPending > 0)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.info_outline_rounded, color: Colors.white, size: 16),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Harap segera dilunasi bulan ini',
-                              style: GoogleFonts.plusJakartaSans(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    else 
-                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: AppColors.success.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.check_circle_rounded, color: Colors.white, size: 16),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Semua tagihan bulan ini telah lunas ✨',
-                              style: GoogleFonts.plusJakartaSans(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Card Transparansi Kas
-              GestureDetector(
-                onTap: () => context.push('/resident/kas'),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.grey200),
+                    error: (e, _) => Text('Error: $e'),
+                    data: (invoices) {
+                      if (invoices.isEmpty) {
+                        return const EmptyState(
+                          icon: Icons.receipt_long_outlined,
+                          title: 'Belum ada tagihan',
+                          description:
+                              'Tagihan dari pengurus akan muncul di sini.',
+                        );
+                      }
+                      return Column(
+                        children: invoices.take(3).map((inv) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: _InvoiceItem(inv: inv),
+                          );
+                        }).toList(),
+                      );
+                    },
                   ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: AppColors.success.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(Icons.account_balance_rounded,
-                            color: AppColors.success, size: 22),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Transparansi Kas Lingkungan',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 14,
-                                color: AppColors.grey800,
-                              ),
-                            ),
-                            Text(
-                              'Lihat pemasukan & pengeluaran RW',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                color: AppColors.grey500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Icon(Icons.chevron_right_rounded, color: AppColors.grey400),
-                    ],
-                  ),
-                ),
+                  const SizedBox(height: 100),
+                ]),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
-              const SizedBox(height: 28),
+class _ResidentHeader extends StatelessWidget {
+  final AsyncValue profileAsync;
+  const _ResidentHeader({required this.profileAsync});
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: RukuninColors.brandGradient,
+      ),
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + 16,
+        left: 20, right: 20, bottom: 28,
+      ),
+      child: profileAsync.when(
+        loading: () => Row(
+          children: [
+            ShimmerBox(width: 46, height: 46, borderRadius: 100),
+            const SizedBox(width: 12),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              ShimmerBox.line(width: 80),
+              const SizedBox(height: 6),
+              ShimmerBox.line(width: 140),
+            ]),
+          ],
+        ),
+        error: (e, _) => const SizedBox(),
+        data: (profile) => Row(
+          children: [
+            GradientAvatar(
+              initials: profile?.initials ?? '?',
+              imageUrl: profile?.photoUrl,
+              size: 46,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Tagihan Terkini',
+                    'Halo, ${profile?.fullName?.split(' ').first ?? 'Warga'} 👋',
                     style: GoogleFonts.plusJakartaSans(
-                      fontSize: 16,
+                      fontSize: 17,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.grey800,
+                      color: Colors.white,
+                      letterSpacing: -0.3,
+                    ),
+                  ),
+                  Text(
+                    profile?.alamatLengkap ?? '',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      color: Colors.white.withValues(alpha: 0.75),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
-              // Preview 3 Invoices Terakhir
-              invoicesAsync.when(
-                data: (invoices) {
-                  if (invoices.isEmpty) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 40),
-                        child: Column(
-                          children: [
-                            Icon(Icons.receipt_long_outlined, size: 48, color: AppColors.grey300),
-                            const SizedBox(height: 12),
-                            Text(
-                              'Belum ada riwayat tagihan',
-                              style: GoogleFonts.plusJakartaSans(color: AppColors.grey500),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
+class _TagihanHeroCard extends StatelessWidget {
+  final double totalPending;
+  const _TagihanHeroCard({required this.totalPending});
 
-                  // Tampilkan maks 3 saja dari yang paling baru
-                  final recent = invoices.take(3).toList();
-                  return Column(
-                    children: recent.map((inv) {
-                      final monthName = DateFormat('MMMM yyyy', 'id_ID').format(DateTime(inv.year, inv.month));
-                      final amountFmt = NumberFormat.currency(locale: 'id', symbol: 'Rp', decimalDigits: 0).format(inv.amount);
-                      
-                      Color statusColor;
-                      String statusText;
-                      if (inv.status == 'paid') {
-                        statusColor = AppColors.success;
-                        statusText = 'Lunas';
-                      } else if (inv.status == 'overdue') {
-                        statusColor = AppColors.error;
-                        statusText = 'Terlambat';
-                      } else if (inv.status == 'awaiting_verification') {
-                        statusColor = const Color(0xFF3B82F6);
-                        statusText = 'Menunggu Verifikasi';
-                      } else {
-                        statusColor = AppColors.warning;
-                        statusText = 'Belum Dibayar';
-                      }
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final lunas = totalPending == 0;
+    final fmt = NumberFormat.currency(
+        locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
 
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.02),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            )
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: statusColor.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Icon(Icons.receipt_rounded, color: statusColor, size: 24),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    inv.billingTypeName,
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 14,
-                                      color: AppColors.grey800,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Periode $monthName',
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 12,
-                                      color: AppColors.grey500,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    statusText,
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w600,
-                                      color: statusColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Text(
-                              amountFmt,
-                              style: GoogleFonts.plusJakartaSans(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 14,
-                                color: AppColors.grey800,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  );
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Text('Error: $e'),
+    return Container(
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: lunas
+              ? RukuninColors.success.withValues(alpha: 0.3)
+              : RukuninColors.warning.withValues(alpha: 0.3),
+          width: 0.5,
+        ),
+        boxShadow: RukuninShadow.sm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'SISA TAGIHAN',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? RukuninColors.darkTextTertiary
+                      : RukuninColors.lightTextTertiary,
+                  letterSpacing: 0.8,
+                ),
+              ),
+              StatusBadge(
+                lunas ? 'Lunas' : 'Perlu Dibayar',
+                status: lunas ? BadgeStatus.success : BadgeStatus.warning,
               ),
             ],
           ),
-        ),
+          const SizedBox(height: 8),
+          Text(
+            fmt.format(totalPending),
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 30,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -1.0,
+              height: 1.0,
+              color: lunas
+                  ? RukuninColors.success
+                  : (isDark
+                      ? RukuninColors.darkTextPrimary
+                      : RukuninColors.lightTextPrimary),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: lunas
+                  ? RukuninColors.success.withValues(alpha: 0.08)
+                  : RukuninColors.warning.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  lunas
+                      ? Icons.check_circle_outline_rounded
+                      : Icons.info_outline_rounded,
+                  size: 16,
+                  color: lunas
+                      ? RukuninColors.success
+                      : RukuninColors.warning,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    lunas
+                        ? 'Semua tagihan bulan ini lunas ✨'
+                        : 'Harap segera dilunasi sebelum jatuh tempo',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: lunas
+                          ? RukuninColors.success
+                          : RukuninColors.warning,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _KasBanner extends StatelessWidget {
+  final VoidCallback onTap;
+  const _KasBanner({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return SurfaceCard(
+      onTap: onTap,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  RukuninColors.brandGreen.withValues(alpha: 0.15),
+                  RukuninColors.brandTeal.withValues(alpha: 0.10),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(Icons.account_balance_outlined,
+                color: RukuninColors.brandGreen, size: 20),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Transparansi Kas Lingkungan',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? RukuninColors.darkTextPrimary
+                        : RukuninColors.lightTextPrimary,
+                  ),
+                ),
+                Text(
+                  'Lihat pemasukan & pengeluaran RW',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 12,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? RukuninColors.darkTextSecondary
+                        : RukuninColors.lightTextSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.arrow_forward_ios_rounded,
+            size: 14,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? RukuninColors.darkTextTertiary
+                : RukuninColors.lightTextTertiary,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InvoiceItem extends StatelessWidget {
+  final dynamic inv;
+  const _InvoiceItem({required this.inv});
+
+  @override
+  Widget build(BuildContext context) {
+    final fmt = NumberFormat.currency(
+        locale: 'id_ID', symbol: 'Rp', decimalDigits: 0);
+    final monthName =
+        DateFormat('MMMM yyyy', 'id_ID').format(DateTime(inv.year, inv.month));
+
+    final (statusLabel, statusBadge, accentColor) = switch (inv.status) {
+      'paid' => ('Lunas', BadgeStatus.success, RukuninColors.success),
+      'awaiting_verification' =>
+        ('Verifikasi', BadgeStatus.info, RukuninColors.info),
+      'overdue' => ('Terlambat', BadgeStatus.error, RukuninColors.error),
+      _ => ('Belum Bayar', BadgeStatus.warning, RukuninColors.warning),
+    };
+
+    return SurfaceCard(
+      accentColor: accentColor,
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  inv.billingTypeName,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? RukuninColors.darkTextPrimary
+                        : RukuninColors.lightTextPrimary,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Periode $monthName',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 12,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? RukuninColors.darkTextSecondary
+                        : RukuninColors.lightTextSecondary,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                StatusBadge(statusLabel, status: statusBadge, small: true),
+              ],
+            ),
+          ),
+          Text(
+            fmt.format(inv.amount),
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 15,
+              fontWeight: FontWeight.w800,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? RukuninColors.darkTextPrimary
+                  : RukuninColors.lightTextPrimary,
+              letterSpacing: -0.3,
+            ),
+          ),
+        ],
       ),
     );
   }

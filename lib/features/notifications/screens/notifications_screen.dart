@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../../../core/supabase/supabase_client.dart';
+import 'package:go_router/go_router.dart' as import_go_router;
 import '../models/notification_model.dart';
 import '../providers/notifications_provider.dart';
 
@@ -32,10 +34,11 @@ class NotificationsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final notifsAsync = ref.watch(notificationsProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
         title: const Text('Notifikasi'),
         actions: [
@@ -45,7 +48,7 @@ class NotificationsScreen extends ConsumerWidget {
               'Tandai Semua Dibaca',
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
-                color: AppColors.primary,
+                color: RukuninColors.brandGreen,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -61,13 +64,13 @@ class NotificationsScreen extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.notifications_off_rounded, size: 64, color: AppColors.grey300),
+                  Icon(Icons.notifications_off_rounded, size: 64, color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
                   const SizedBox(height: 16),
                   Text(
                     'Belum ada notifikasi',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 16,
-                      color: AppColors.grey500,
+                      color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -80,12 +83,41 @@ class NotificationsScreen extends ConsumerWidget {
             itemCount: notifs.length,
             itemBuilder: (ctx, i) => _NotifCard(
               notif: notifs[i],
-              onTap: () => _markRead(ref, notifs[i].id),
+              onTap: () {
+                _markRead(ref, notifs[i].id);
+                _navigateFromNotif(context, notifs[i]);
+              },
             ),
           );
         },
       ),
     );
+  }
+
+  void _navigateFromNotif(BuildContext context, NotificationModel notif) {
+    String? path;
+    switch (notif.type) {
+      case 'payment':
+        path = '/resident/tagihan';
+        break;
+      case 'announcement':
+        path = '/resident/pengumuman';
+        break;
+      case 'letter_request':
+      case 'complaint':
+        path = '/resident/layanan';
+        break;
+      case 'join_request':
+        path = '/admin/warga';
+        break;
+      case 'join_approved':
+      case 'join_rejected':
+        path = '/resident';
+        break;
+    }
+    if (path != null) {
+      import_go_router.GoRouter.of(context).go(path);
+    }
   }
 }
 
@@ -96,6 +128,7 @@ class _NotifCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final timeAgo = DateFormat('d MMM, HH:mm', 'id_ID').format(notif.createdAt.toLocal());
     return GestureDetector(
       onTap: onTap,
@@ -103,12 +136,14 @@ class _NotifCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: notif.isRead ? Colors.white : AppColors.primary.withValues(alpha: 0.06),
+          color: notif.isRead
+              ? (isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface)
+              : RukuninColors.brandGreen.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: notif.isRead
-                ? AppColors.grey200
-                : AppColors.primary.withValues(alpha: 0.3),
+                ? (isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2)
+                : RukuninColors.brandGreen.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
@@ -117,10 +152,10 @@ class _NotifCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
+                color: RukuninColors.brandGreen.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(notif.icon, size: 20, color: AppColors.primary),
+              child: Icon(notif.icon, size: 20, color: RukuninColors.brandGreen),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -132,7 +167,7 @@ class _NotifCard extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       fontWeight: notif.isRead ? FontWeight.w500 : FontWeight.w700,
-                      color: AppColors.grey800,
+                      color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                     ),
                   ),
                   if (notif.body != null) ...[
@@ -141,7 +176,7 @@ class _NotifCard extends StatelessWidget {
                       notif.body!,
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 12,
-                        color: AppColors.grey500,
+                        color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                       ),
                     ),
                   ],
@@ -150,7 +185,7 @@ class _NotifCard extends StatelessWidget {
                     timeAgo,
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 11,
-                      color: AppColors.grey400,
+                      color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                     ),
                   ),
                 ],
@@ -162,7 +197,7 @@ class _NotifCard extends StatelessWidget {
                 height: 8,
                 margin: const EdgeInsets.only(top: 4),
                 decoration: const BoxDecoration(
-                  color: AppColors.primary,
+                  color: RukuninColors.brandGreen,
                   shape: BoxShape.circle,
                 ),
               ),

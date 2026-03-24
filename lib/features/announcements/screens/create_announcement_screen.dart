@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../../../core/supabase/supabase_client.dart';
 import '../providers/announcement_provider.dart';
 
@@ -55,7 +56,6 @@ class _CreateAnnouncementScreenState
         type: _type,
       );
 
-      // Broadcast WA jika toggle aktif
       if (_sendWa) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -75,7 +75,7 @@ class _CreateAnnouncementScreenState
                 'WA terkirim ke ${result['success']} warga'
                 '${(result['fail'] ?? 0) > 0 ? ', gagal: ${result['fail']}' : ''}.',
               ),
-              backgroundColor: AppColors.success,
+              backgroundColor: RukuninColors.success,
               duration: const Duration(seconds: 4),
             ),
           );
@@ -85,7 +85,7 @@ class _CreateAnnouncementScreenState
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Pengumuman berhasil dikirim!'),
-              backgroundColor: AppColors.success,
+              backgroundColor: RukuninColors.success,
             ),
           );
         }
@@ -97,7 +97,7 @@ class _CreateAnnouncementScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Gagal mengirim: $e'),
-            backgroundColor: AppColors.error,
+            backgroundColor: RukuninColors.error,
           ),
         );
       }
@@ -108,25 +108,23 @@ class _CreateAnnouncementScreenState
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         foregroundColor: Colors.white,
         title: Text(
           'Buat Pengumuman',
-          style: GoogleFonts.plusJakartaSans(
-              color: Colors.white, fontWeight: FontWeight.w700),
+          style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.w700),
         ),
         actions: [
           if (_loading)
             const Padding(
               padding: EdgeInsets.all(16),
               child: SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                    color: AppColors.primary, strokeWidth: 2),
+                width: 20, height: 20,
+                child: CircularProgressIndicator(color: RukuninColors.brandGreen, strokeWidth: 2),
               ),
             )
           else
@@ -135,10 +133,7 @@ class _CreateAnnouncementScreenState
               child: Text(
                 'Kirim',
                 style: GoogleFonts.plusJakartaSans(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15,
-                ),
+                    color: RukuninColors.brandGreen, fontWeight: FontWeight.w700, fontSize: 15),
               ),
             ),
         ],
@@ -152,125 +147,91 @@ class _CreateAnnouncementScreenState
             Text(
               'Jenis Pengumuman',
               style: GoogleFonts.plusJakartaSans(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.grey600),
+                  fontSize: 13, fontWeight: FontWeight.w600,
+                  color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
             ),
             const SizedBox(height: 10),
             Row(
               children: [
-                _TypeChip(
-                  label: 'Info',
-                  icon: Icons.info_rounded,
-                  color: const Color(0xFF3B82F6),
-                  selected: _type == 'info',
-                  onTap: () => setState(() => _type = 'info'),
-                ),
+                _TypeChip(label: 'Info', icon: Icons.info_rounded,
+                    color: const Color(0xFF3B82F6),
+                    selected: _type == 'info',
+                    onTap: () => setState(() => _type = 'info')),
                 const SizedBox(width: 8),
-                _TypeChip(
-                  label: 'Penting',
-                  icon: Icons.priority_high_rounded,
-                  color: AppColors.warning,
-                  selected: _type == 'penting',
-                  onTap: () => setState(() => _type = 'penting'),
-                ),
+                _TypeChip(label: 'Penting', icon: Icons.priority_high_rounded,
+                    color: RukuninColors.warning,
+                    selected: _type == 'penting',
+                    onTap: () => setState(() => _type = 'penting')),
                 const SizedBox(width: 8),
-                _TypeChip(
-                  label: 'Urgent',
-                  icon: Icons.warning_rounded,
-                  color: AppColors.error,
-                  selected: _type == 'urgent',
-                  onTap: () => setState(() => _type = 'urgent'),
-                ),
+                _TypeChip(label: 'Urgent', icon: Icons.warning_rounded,
+                    color: RukuninColors.error,
+                    selected: _type == 'urgent',
+                    onTap: () => setState(() => _type = 'urgent')),
               ],
             ),
             const SizedBox(height: 24),
             // Judul
-            Text(
-              'Judul',
-              style: GoogleFonts.plusJakartaSans(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.grey600),
-            ),
+            Text('Judul', style: GoogleFonts.plusJakartaSans(
+                fontSize: 13, fontWeight: FontWeight.w600,
+                color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
             const SizedBox(height: 8),
             TextFormField(
               controller: _titleCtrl,
               decoration: InputDecoration(
                 hintText: 'Contoh: Jadwal Kerja Bakti Minggu Ini',
                 filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               ),
-              style:
-                  GoogleFonts.plusJakartaSans(fontSize: 15, color: AppColors.grey800),
-              validator: (v) =>
-                  v == null || v.trim().isEmpty ? 'Judul wajib diisi' : null,
+              style: GoogleFonts.plusJakartaSans(fontSize: 15,
+                  color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
+              validator: (v) => v == null || v.trim().isEmpty ? 'Judul wajib diisi' : null,
             ),
             const SizedBox(height: 20),
             // Isi
-            Text(
-              'Isi Pengumuman',
-              style: GoogleFonts.plusJakartaSans(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.grey600),
-            ),
+            Text('Isi Pengumuman', style: GoogleFonts.plusJakartaSans(
+                fontSize: 13, fontWeight: FontWeight.w600,
+                color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
             const SizedBox(height: 8),
             TextFormField(
               controller: _bodyCtrl,
               maxLines: 8,
               decoration: InputDecoration(
-                hintText:
-                    'Tulis isi pengumuman secara lengkap di sini...',
+                hintText: 'Tulis isi pengumuman secara lengkap di sini...',
                 filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
+                fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                 contentPadding: const EdgeInsets.all(16),
                 alignLabelWithHint: true,
               ),
-              style:
-                  GoogleFonts.plusJakartaSans(fontSize: 14, color: AppColors.grey800),
-              validator: (v) =>
-                  v == null || v.trim().isEmpty ? 'Isi pengumuman wajib diisi' : null,
+              style: GoogleFonts.plusJakartaSans(fontSize: 14,
+                  color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
+              validator: (v) => v == null || v.trim().isEmpty ? 'Isi pengumuman wajib diisi' : null,
             ),
             const SizedBox(height: 20),
 
             // Toggle WA Blast
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.grey200),
-              ),
+                  color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder)),
               child: SwitchListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 title: Text(
                   'Kirim WA ke semua warga',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                    color: AppColors.grey800,
-                  ),
+                  style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 14,
+                      color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                 ),
                 subtitle: Text(
                   'Pengumuman akan di-broadcast ke nomor WA seluruh warga',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 12,
-                    color: AppColors.grey500,
-                  ),
+                  style: GoogleFonts.plusJakartaSans(fontSize: 12,
+                      color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                 ),
                 value: _sendWa,
                 onChanged: (val) => setState(() => _sendWa = val),
-                activeTrackColor: AppColors.primary,
+                activeTrackColor: RukuninColors.brandGreen,
               ),
             ),
 
@@ -278,17 +239,13 @@ class _CreateAnnouncementScreenState
             ElevatedButton.icon(
               onPressed: _loading ? null : _submit,
               icon: const Icon(Icons.send_rounded),
-              label: Text(
-                'Publikasikan Pengumuman',
-                style: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.w700, fontSize: 15),
-              ),
+              label: Text('Publikasikan Pengumuman',
+                  style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 15)),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: AppColors.onPrimary,
+                backgroundColor: RukuninColors.brandGreen,
+                foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 52),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
             ),
           ],
@@ -315,33 +272,30 @@ class _TypeChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? color.withValues(alpha: 0.15) : Colors.white,
+          color: selected ? color.withValues(alpha: 0.15) : (isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: selected ? color : AppColors.grey300,
+            color: selected ? color : (isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
             width: selected ? 2 : 1,
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 14, color: selected ? color : AppColors.grey500),
+            Icon(icon, size: 14, color: selected ? color : (isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
             const SizedBox(width: 5),
-            Text(
-              label,
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 13,
-                fontWeight:
-                    selected ? FontWeight.w700 : FontWeight.w500,
-                color: selected ? color : AppColors.grey600,
-              ),
-            ),
+            Text(label, style: GoogleFonts.plusJakartaSans(
+              fontSize: 13,
+              fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+              color: selected ? color : (isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
+            )),
           ],
         ),
       ),

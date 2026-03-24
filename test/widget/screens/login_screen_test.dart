@@ -21,6 +21,6 @@ void main() {
 
     expect(find.widgetWithText(TextFormField, 'Email'), findsOneWidget);
     expect(find.widgetWithText(TextFormField, 'Password'), findsOneWidget);
-    expect(find.text('Masuk ke akunmu'), findsOneWidget);
+    expect(find.text('Masuk ke akun komunitasmu.'), findsOneWidget);
   });
 }

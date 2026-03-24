@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../providers/letter_provider.dart';
 
 class LettersScreen extends ConsumerWidget {
@@ -32,10 +33,11 @@ class LettersScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final lettersAsync = ref.watch(lettersProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
         title: Text('Surat Keterangan', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
         actions: [
@@ -47,7 +49,7 @@ class LettersScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/admin/surat/buat'),
-        backgroundColor: AppColors.primary,
+        backgroundColor: RukuninColors.brandGreen,
         icon: const Icon(Icons.add, color: Colors.white),
         label: Text('Buat Surat', style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.w600)),
       ),
@@ -60,17 +62,17 @@ class LettersScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.description_outlined, size: 80, color: AppColors.grey400),
+                  Icon(Icons.description_outlined, size: 80, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                   const SizedBox(height: 16),
                   Text(
                     'Belum ada surat dibuat',
-                    style: GoogleFonts.plusJakartaSans(fontSize: 16, color: AppColors.grey600, fontWeight: FontWeight.w500),
+                    style: GoogleFonts.plusJakartaSans(fontSize: 16, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Tekan tombol "Buat Surat" untuk membuat\nsurat keterangan warga',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.plusJakartaSans(fontSize: 13, color: AppColors.grey500),
+                    style: GoogleFonts.plusJakartaSans(fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                   ),
                 ],
               ),
@@ -110,19 +112,24 @@ class _LetterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final residentName = letter.resident?['full_name'] ?? 'N/A';
     final unitNumber = letter.resident?['unit_number'] ?? '-';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 6, offset: const Offset(0, 2))],
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => context.push('/admin/surat/buat', extra: letter),
+        onTap: () => context.push('/admin/surat/buat', extra: {
+          'prefilledResidentId': letter.residentId,
+          'prefilledLetterType': letter.letterType,
+          'prefilledPurpose': letter.purpose,
+        }),
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Row(
@@ -131,10 +138,10 @@ class _LetterCard extends StatelessWidget {
                 width: 46,
                 height: 46,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: RukuninColors.brandGreen.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(Icons.description, color: AppColors.primary, size: 22),
+                child: Icon(Icons.description, color: RukuninColors.brandGreen, size: 22),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -143,17 +150,17 @@ class _LetterCard extends StatelessWidget {
                   children: [
                     Text(
                       residentName,
-                      style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.grey800),
+                      style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       typeLabel,
-                      style: GoogleFonts.plusJakartaSans(fontSize: 12, color: AppColors.primary, fontWeight: FontWeight.w600),
+                      style: GoogleFonts.plusJakartaSans(fontSize: 12, color: RukuninColors.brandGreen, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       '${letter.letterNumber} • Unit $unitNumber',
-                      style: GoogleFonts.plusJakartaSans(fontSize: 11, color: AppColors.grey500),
+                      style: GoogleFonts.plusJakartaSans(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                     ),
                   ],
                 ),
@@ -172,7 +179,7 @@ class _LetterCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     DateFormat('dd MMM yy', 'id_ID').format(letter.createdAt),
-                    style: GoogleFonts.plusJakartaSans(fontSize: 10, color: AppColors.grey400),
+                    style: GoogleFonts.plusJakartaSans(fontSize: 10, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                   ),
                 ],
               ),

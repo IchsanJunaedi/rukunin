@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../models/marketplace_listing_model.dart';
 import '../providers/marketplace_provider.dart';
 
@@ -11,6 +12,7 @@ class MarketplaceScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final listingsAsync = ref.watch(marketplaceListingsProvider);
     final selectedCategory = ref.watch(marketplaceCategoryFilterProvider);
 
@@ -23,18 +25,18 @@ class MarketplaceScreen extends ConsumerWidget {
     ];
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       body: SafeArea(
         child: Column(
           children: [
             // Header
             Container(
-              color: AppColors.surface,
+              color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
               child: Row(
                 children: [
-                  const Icon(Icons.storefront_rounded,
-                      color: AppColors.primary, size: 28),
+                  Icon(Icons.storefront_rounded,
+                      color: RukuninColors.brandGreen, size: 28),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -47,8 +49,8 @@ class MarketplaceScreen extends ConsumerWidget {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.add_rounded,
-                        color: AppColors.primary, size: 28),
+                    icon: Icon(Icons.add_rounded,
+                        color: RukuninColors.brandGreen, size: 28),
                     tooltip: 'Jual Barang',
                     onPressed: () =>
                         context.push('/resident/marketplace/tambah'),
@@ -58,7 +60,7 @@ class MarketplaceScreen extends ConsumerWidget {
             ),
             // Category filter chips
             Container(
-              color: AppColors.surface,
+              color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
               child: SizedBox(
                 height: 50,
                 child: ListView(
@@ -80,7 +82,7 @@ class MarketplaceScreen extends ConsumerWidget {
                               horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? AppColors.primary
+                                ? RukuninColors.brandGreen
                                 : Colors.white.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -89,7 +91,7 @@ class MarketplaceScreen extends ConsumerWidget {
                               Icon(icon,
                                   size: 14,
                                   color: isSelected
-                                      ? AppColors.onPrimary
+                                      ? Colors.white
                                       : Colors.white.withValues(alpha: 0.7)),
                               const SizedBox(width: 5),
                               Text(
@@ -100,7 +102,7 @@ class MarketplaceScreen extends ConsumerWidget {
                                       ? FontWeight.w700
                                       : FontWeight.w500,
                                   color: isSelected
-                                      ? AppColors.onPrimary
+                                      ? Colors.white
                                       : Colors.white.withValues(alpha: 0.8),
                                 ),
                               ),
@@ -116,19 +118,19 @@ class MarketplaceScreen extends ConsumerWidget {
             // Listings grid
             Expanded(
               child: listingsAsync.when(
-                loading: () => const Center(
+                loading: () => Center(
                     child:
-                        CircularProgressIndicator(color: AppColors.primary)),
+                        CircularProgressIndicator(color: RukuninColors.brandGreen)),
                 error: (e, _) => Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.error_outline_rounded,
-                          color: AppColors.error, size: 48),
+                      Icon(Icons.error_outline_rounded,
+                          color: RukuninColors.error, size: 48),
                       const SizedBox(height: 12),
                       Text('Gagal memuat listing',
                           style: GoogleFonts.plusJakartaSans(
-                              color: AppColors.grey600)),
+                              color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                       TextButton(
                         onPressed: () =>
                             ref.invalidate(marketplaceListingsProvider),
@@ -150,20 +152,20 @@ class MarketplaceScreen extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.storefront_outlined,
-                              size: 72, color: AppColors.grey400),
+                              size: 72, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                           const SizedBox(height: 16),
                           Text(
                             'Belum ada yang jualan nih!',
                             style: GoogleFonts.plusJakartaSans(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.grey600),
+                                color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
                           ),
                           const SizedBox(height: 6),
                           Text(
                             'Jadilah yang pertama jualan di sini 🎉',
                             style: GoogleFonts.plusJakartaSans(
-                                fontSize: 13, color: AppColors.grey500),
+                                fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                           ),
                         ],
                       ),
@@ -202,11 +204,12 @@ class _ListingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () => context.push('/resident/marketplace/detail', extra: item),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -245,7 +248,7 @@ class _ListingCard extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.grey800),
+                        color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -253,13 +256,13 @@ class _ListingCard extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.primary),
+                        color: RukuninColors.brandGreen),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     'Unit ${item.sellerUnit ?? '-'}',
                     style: GoogleFonts.plusJakartaSans(
-                        fontSize: 11, color: AppColors.grey500),
+                        fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                   ),
                 ],
               ),
@@ -274,10 +277,11 @@ class _ListingCard extends StatelessWidget {
 class _PlaceholderImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      color: AppColors.grey200,
-      child: const Center(
-        child: Icon(Icons.image_outlined, size: 40, color: AppColors.grey400),
+      color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
+      child: Center(
+        child: Icon(Icons.image_outlined, size: 40, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
       ),
     );
   }

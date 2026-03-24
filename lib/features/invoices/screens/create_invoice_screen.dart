@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../models/billing_type_model.dart';
 import '../providers/billing_type_provider.dart';
 import '../providers/invoice_list_provider.dart';
@@ -73,8 +74,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
           colorScheme: const ColorScheme.light(
-            primary: AppColors.primary,
-            onPrimary: AppColors.onPrimary,
+            primary: RukuninColors.brandGreen,
+            onPrimary: Colors.white,
           ),
         ),
         child: child!,
@@ -131,8 +132,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: AppColors.onPrimary,
+              backgroundColor: RukuninColors.brandGreen,
+              foregroundColor: Colors.white,
             ),
             child: Text('Ya, Terbitkan', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
           ),
@@ -179,11 +180,12 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final billingTypesAsync = ref.watch(billingTypesProvider);
     final currencyFormat = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
         title: Text(
           'Terbitkan Tagihan',
@@ -201,18 +203,18 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
+                      color: RukuninColors.brandGreen.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                      border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.info_outline, color: AppColors.primary),
+                        const Icon(Icons.info_outline, color: RukuninColors.brandGreen),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             'Tagihan akan diterbitkan ke seluruh warga (Resident) aktif yang terdaftar di komunitas ini.',
-                            style: GoogleFonts.plusJakartaSans(fontSize: 13, color: AppColors.primary),
+                            style: GoogleFonts.plusJakartaSans(fontSize: 13, color: RukuninColors.brandGreen),
                           ),
                         ),
                       ],
@@ -232,7 +234,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                       if (activeTypes.isEmpty) {
                         return Text(
                           'Belum ada Jenis Iuran aktif. Tambahkan pada Pengaturan Jenis Iuran.',
-                          style: GoogleFonts.plusJakartaSans(color: AppColors.error),
+                          style: GoogleFonts.plusJakartaSans(color: RukuninColors.error),
                         );
                       }
                       return ListView.separated(
@@ -248,10 +250,10 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                             child: Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: isSelected ? AppColors.primary.withValues(alpha: 0.05) : Colors.white,
+                                color: isSelected ? RukuninColors.brandGreen.withValues(alpha: 0.05) : (isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: isSelected ? AppColors.primary : AppColors.grey300,
+                                  color: isSelected ? RukuninColors.brandGreen : (isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
                                   width: isSelected ? 2 : 1,
                                 ),
                               ),
@@ -259,7 +261,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                                 children: [
                                   Icon(
                                     isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-                                    color: isSelected ? AppColors.primary : AppColors.grey400,
+                                    color: isSelected ? RukuninColors.brandGreen : (isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                                   ),
                                   const SizedBox(width: 16),
                                   Expanded(
@@ -271,14 +273,14 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                                           style: GoogleFonts.plusJakartaSans(
                                             fontSize: 15,
                                             fontWeight: FontWeight.w700,
-                                            color: AppColors.grey800,
+                                            color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                                           ),
                                         ),
                                         const SizedBox(height: 2),
                                         Text(
                                           'Nominal: ${currencyFormat.format(t.amount)}',
                                           style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 13, color: AppColors.grey600),
+                                              fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
                                         ),
                                       ],
                                     ),
@@ -359,10 +361,10 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: _selectedDueDate != null ? AppColors.primary : AppColors.grey300,
+                          color: _selectedDueDate != null ? RukuninColors.brandGreen : (isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
                           width: _selectedDueDate != null ? 1.5 : 1,
                         ),
                       ),
@@ -370,7 +372,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                         children: [
                           Icon(
                             Icons.event_rounded,
-                            color: _selectedDueDate != null ? AppColors.primary : AppColors.grey400,
+                            color: _selectedDueDate != null ? RukuninColors.brandGreen : (isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                             size: 22,
                           ),
                           const SizedBox(width: 12),
@@ -384,14 +386,14 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                                         style: GoogleFonts.plusJakartaSans(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w600,
-                                          color: AppColors.grey800,
+                                          color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                                         ),
                                       ),
                                       if (_selectedBillingType != null)
                                         Text(
                                           'Tanggal billing default: ${_selectedBillingType!.billingDay}',
                                           style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 11, color: AppColors.grey500),
+                                              fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                                         ),
                                     ],
                                   )
@@ -400,12 +402,12 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                                         ? 'Pilih jenis iuran dahulu'
                                         : 'Ketuk untuk memilih tanggal',
                                     style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 14, color: AppColors.grey400),
+                                        fontSize: 14, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                                   ),
                           ),
                           Icon(
                             Icons.chevron_right_rounded,
-                            color: AppColors.grey400,
+                            color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                           ),
                         ],
                       ),
@@ -416,7 +418,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                       padding: const EdgeInsets.only(top: 6, left: 4),
                       child: Text(
                         'Wajib pilih tanggal jatuh tempo',
-                        style: GoogleFonts.plusJakartaSans(fontSize: 12, color: AppColors.error),
+                        style: GoogleFonts.plusJakartaSans(fontSize: 12, color: RukuninColors.error),
                       ),
                     ),
 
@@ -426,16 +428,16 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.grey200),
+                        border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Ringkasan Tagihan',
                               style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.grey500)),
+                                  fontSize: 12, fontWeight: FontWeight.w600, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
                           const SizedBox(height: 12),
                           _summaryRow('Jenis Iuran', _selectedBillingType!.name),
                           const Divider(height: 20),
@@ -444,14 +446,14 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                           _summaryRow(
                             'Nominal',
                             currencyFormat.format(_selectedBillingType!.amount),
-                            valueColor: AppColors.primary,
+                            valueColor: RukuninColors.brandGreen,
                             valueBold: true,
                           ),
                           const Divider(height: 20),
                           _summaryRow(
                             'Jatuh Tempo',
                             DateFormat('d MMMM yyyy', 'id_ID').format(_selectedDueDate!),
-                            valueColor: AppColors.grey800,
+                            valueColor: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                           ),
                         ],
                       ),
@@ -467,9 +469,9 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                           ? null
                           : _generateInvoices,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: AppColors.onPrimary,
-                        disabledBackgroundColor: AppColors.grey300,
+                        backgroundColor: RukuninColors.brandGreen,
+                        foregroundColor: Colors.white,
+                        disabledBackgroundColor: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
                       ),
                       child: Text(
                         'Terbitkan ke Semua Warga',
@@ -486,16 +488,17 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
   }
 
   Widget _summaryRow(String label, String value, {Color? valueColor, bool valueBold = false}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: GoogleFonts.plusJakartaSans(fontSize: 13, color: AppColors.grey500)),
+        Text(label, style: GoogleFonts.plusJakartaSans(fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
         Text(
           value,
           style: GoogleFonts.plusJakartaSans(
             fontSize: 14,
             fontWeight: valueBold ? FontWeight.w700 : FontWeight.w600,
-            color: valueColor ?? AppColors.grey800,
+            color: valueColor ?? (isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
           ),
         ),
       ],

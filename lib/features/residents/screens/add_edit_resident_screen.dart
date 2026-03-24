@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../../../core/supabase/supabase_client.dart';
 import '../models/resident_model.dart';
 import '../models/family_member.dart';
@@ -72,7 +73,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
           .from('family_members')
           .select()
           .eq('resident_id', widget.resident!.id);
-      
+
       if (mounted) {
         setState(() {
           _familyMembers = (res as List).map((e) => FamilyMember.fromMap(e)).toList();
@@ -158,7 +159,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
     if (state.hasError && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Gagal: ${state.error}'),
-        backgroundColor: AppColors.error,
+        backgroundColor: RukuninColors.error,
         behavior: SnackBarBehavior.floating,
       ));
       return;
@@ -176,7 +177,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
               .eq('id', userId)
               .maybeSingle();
           final communityId = profileData?['community_id'] as String?;
-          
+
           // Cari billing_type untuk Ronda (case-insensitive)
           final billingTypes = await client
               .from('billing_types')
@@ -184,16 +185,16 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
               .ilike('name', '%ronda%')
               .eq('is_active', true)
               .limit(1);
-          
+
           final now = DateTime.now();
-          final residentId = isEdit ? widget.resident!.id 
+          final residentId = isEdit ? widget.resident!.id
               : (await client.from('profiles').select('id').eq('phone', _phoneCtrl.text.trim()).eq('role', 'resident').maybeSingle())?['id'];
-          
+
           if (communityId != null && billingTypes.isNotEmpty && residentId != null) {
             final bt = billingTypes.first;
             final billingDay = (bt['billing_day'] as int?) ?? 10;
             final dueDate = DateTime(now.year, now.month, billingDay);
-            
+
             // Upsert: kalau sudah ada invoice bulan ini, jangan insert duplikat
             await client.from('invoices').upsert(
               {
@@ -223,12 +224,13 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isLoading = ref.watch(residentNotifierProvider).isLoading;
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded,
               color: Colors.white, size: 20),
@@ -251,14 +253,14 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: RukuninColors.brandGreen,
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Center(
                   child: Text(
                     _getInitials(_nameCtrl.text),
                     style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.onPrimary,
+                      color: Colors.white,
                       fontSize: 28,
                       fontWeight: FontWeight.w800,
                     ),
@@ -322,7 +324,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                   style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.grey800),
+                      color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                   items: List.generate(
                     _maxRt,
                     (i) => DropdownMenuItem(
@@ -367,10 +369,10 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.1),
+                              color: RukuninColors.brandGreen.withValues(alpha: 0.1),
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(member.relationship == 'Anak' ? Icons.child_care : Icons.face, size: 18, color: AppColors.primary),
+                            child: Icon(member.relationship == 'Anak' ? Icons.child_care : Icons.face, size: 18, color: RukuninColors.brandGreen),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -379,12 +381,12 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                               children: [
                                 Text('${member.fullName} (${member.relationship})', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 13)),
                                 if (member.nik != null && member.nik!.isNotEmpty)
-                                  Text('NIK: ${member.nik}', style: GoogleFonts.plusJakartaSans(color: AppColors.grey600, fontSize: 12)),
+                                  Text('NIK: ${member.nik}', style: GoogleFonts.plusJakartaSans(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, fontSize: 12)),
                               ],
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.close, color: AppColors.error, size: 20),
+                            icon: const Icon(Icons.close, color: RukuninColors.error, size: 20),
                             onPressed: () => setState(() => _familyMembers.removeAt(idx)),
                           ),
                         ],
@@ -394,9 +396,9 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                   ],
                 );
               }),
-              
+
               if (_familyMembers.isNotEmpty) _divider(),
-              
+
               InkWell(
                 onTap: _addFamilyMemberDialog,
                 borderRadius: BorderRadius.circular(16),
@@ -405,9 +407,9 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.add, color: AppColors.primary, size: 20),
+                      const Icon(Icons.add, color: RukuninColors.brandGreen, size: 20),
                       const SizedBox(width: 8),
-                      Text('Tambah Anggota Keluarga', style: GoogleFonts.plusJakartaSans(color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 13)),
+                      Text('Tambah Anggota Keluarga', style: GoogleFonts.plusJakartaSans(color: RukuninColors.brandGreen, fontWeight: FontWeight.w600, fontSize: 13)),
                     ],
                   ),
                 ),
@@ -429,17 +431,17 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                       onPressed: _motorcycleCount > 0
                           ? () => setState(() => _motorcycleCount--)
                           : null,
-                      color: AppColors.primary,
+                      color: RukuninColors.brandGreen,
                     ),
                     Text(
                       '$_motorcycleCount',
                       style: GoogleFonts.plusJakartaSans(
-                          fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.grey800),
+                          fontSize: 16, fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                     ),
                     IconButton(
                       icon: const Icon(Icons.add_circle_outline, size: 20),
                       onPressed: () => setState(() => _motorcycleCount++),
-                      color: AppColors.primary,
+                      color: RukuninColors.brandGreen,
                     ),
                   ],
                 ),
@@ -455,17 +457,17 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                       onPressed: _carCount > 0
                           ? () => setState(() => _carCount--)
                           : null,
-                      color: AppColors.primary,
+                      color: RukuninColors.brandGreen,
                     ),
                     Text(
                       '$_carCount',
                       style: GoogleFonts.plusJakartaSans(
-                          fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.grey800),
+                          fontSize: 16, fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                     ),
                     IconButton(
                       icon: const Icon(Icons.add_circle_outline, size: 20),
                       onPressed: () => setState(() => _carCount++),
-                      color: AppColors.primary,
+                      color: RukuninColors.brandGreen,
                     ),
                   ],
                 ),
@@ -478,9 +480,9 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
             _sectionLabel('🛺 Kalkulator Tagihan Ronda'),
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.grey200),
+                border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
               ),
               child: Column(
                 children: [
@@ -517,21 +519,21 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.success.withValues(alpha: 0.08),
+                color: RukuninColors.success.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
+                border: Border.all(color: RukuninColors.success.withValues(alpha: 0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Rincian Tagihan Ronda Bulan Ini',
-                    style: GoogleFonts.plusJakartaSans(fontSize: 12, color: AppColors.grey600)),
+                    style: GoogleFonts.plusJakartaSans(fontSize: 12, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(Icons.security_outlined, size: 14, color: AppColors.grey500),
+                      Icon(Icons.security_outlined, size: 14, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                       const SizedBox(width: 6),
-                      Text('Biaya rata', style: GoogleFonts.plusJakartaSans(fontSize: 13, color: AppColors.grey600)),
+                      Text('Biaya rata', style: GoogleFonts.plusJakartaSans(fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                       const Spacer(),
                       Text('Rp ${(double.tryParse(_baseRondaCtrl.text) ?? 0).toStringAsFixed(0)}',
                           style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w600)),
@@ -540,10 +542,10 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.two_wheeler, size: 14, color: AppColors.grey500),
+                      Icon(Icons.two_wheeler, size: 14, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                       const SizedBox(width: 6),
                       Text('$_motorcycleCount motor × Rp ${(double.tryParse(_costPerMotorcycleCtrl.text) ?? 0).toStringAsFixed(0)}',
-                          style: GoogleFonts.plusJakartaSans(fontSize: 13, color: AppColors.grey600)),
+                          style: GoogleFonts.plusJakartaSans(fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                       const Spacer(),
                       Text('Rp ${(_motorcycleCount * (double.tryParse(_costPerMotorcycleCtrl.text) ?? 0)).toStringAsFixed(0)}',
                           style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w600)),
@@ -552,26 +554,26 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.directions_car_outlined, size: 14, color: AppColors.grey500),
+                      Icon(Icons.directions_car_outlined, size: 14, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                       const SizedBox(width: 6),
                       Text('$_carCount mobil × Rp ${(double.tryParse(_costPerCarCtrl.text) ?? 0).toStringAsFixed(0)}',
-                          style: GoogleFonts.plusJakartaSans(fontSize: 13, color: AppColors.grey600)),
+                          style: GoogleFonts.plusJakartaSans(fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                       const Spacer(),
                       Text('Rp ${(_carCount * (double.tryParse(_costPerCarCtrl.text) ?? 0)).toStringAsFixed(0)}',
                           style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w600)),
                     ],
                   ),
-                  Divider(color: AppColors.success.withValues(alpha: 0.3), height: 20),
+                  Divider(color: RukuninColors.success.withValues(alpha: 0.3), height: 20),
                   Row(
                     children: [
                       Text('Total Tagihan Ronda',
                           style: GoogleFonts.plusJakartaSans(
-                            fontWeight: FontWeight.w800, fontSize: 14, color: AppColors.success)),
+                            fontWeight: FontWeight.w800, fontSize: 14, color: RukuninColors.success)),
                       const Spacer(),
                       Text(
                         'Rp ${_totalRonda.toStringAsFixed(0)}',
                         style: GoogleFonts.plusJakartaSans(
-                          fontWeight: FontWeight.w800, fontSize: 18, color: AppColors.success),
+                          fontWeight: FontWeight.w800, fontSize: 18, color: RukuninColors.success),
                       ),
                     ],
                   ),
@@ -579,7 +581,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                     [const SizedBox(height: 6),
                     Text(
                       '📌 Invoice Ronda bulan ini akan otomatis dibuat/diperbarui saat simpan.',
-                      style: GoogleFonts.plusJakartaSans(fontSize: 11, color: AppColors.grey500),
+                      style: GoogleFonts.plusJakartaSans(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                     )],
                 ],
               ),
@@ -591,20 +593,20 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
+                color: RukuninColors.brandGreen.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
                   const Icon(Icons.home_work_outlined,
-                      size: 16, color: AppColors.primary),
+                      size: 16, color: RukuninColors.brandGreen),
                   const SizedBox(width: 8),
                   Text(
                     'Blok $_selectedBlock · No. ${_unitCtrl.text.isEmpty ? "?" : _unitCtrl.text} · RT $_selectedRt',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.primary,
+                      color: RukuninColors.brandGreen,
                     ),
                   ),
                 ],
@@ -621,8 +623,8 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                 height: 54,
                 decoration: BoxDecoration(
                   color: isLoading
-                      ? AppColors.surface.withValues(alpha: 0.6)
-                      : AppColors.surface,
+                      ? (isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface).withValues(alpha: 0.6)
+                      : (isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface),
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: Center(
@@ -632,13 +634,13 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                           height: 22,
                           child: CircularProgressIndicator(
                             strokeWidth: 2.5,
-                            color: AppColors.primary,
+                            color: RukuninColors.brandGreen,
                           ),
                         )
                       : Text(
                           isEdit ? 'Simpan Perubahan' : 'Tambah Warga',
                           style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.primary,
+                            color: RukuninColors.brandGreen,
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
                           ),
@@ -663,23 +665,33 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
 
   Widget _sectionLabel(String label) => Padding(
         padding: const EdgeInsets.only(bottom: 8),
-        child: Text(
-          label,
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: AppColors.grey600,
-            letterSpacing: 0.5,
-          ),
+        child: Builder(
+          builder: (context) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+            return Text(
+              label,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
+                letterSpacing: 0.5,
+              ),
+            );
+          },
         ),
       );
 
-  Widget _card(List<Widget> children) => Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(children: children),
+  Widget _card(List<Widget> children) => Builder(
+        builder: (context) {
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+          return Container(
+            decoration: BoxDecoration(
+              color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(children: children),
+          );
+        },
       );
 
   Widget _divider() => const Divider(height: 1, indent: 52);
@@ -752,7 +764,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                         Navigator.pop(ctx);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: RukuninColors.brandGreen,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
                       ),
                       child: Text('Tambah', style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.w700)),
@@ -777,32 +789,37 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
     void Function(String)? onChanged,
     int? maxLength,
   }) {
-    return TextFormField(
-      controller: ctrl,
-      keyboardType: keyboardType,
-      onChanged: onChanged,
-      validator: validator,
-      maxLength: maxLength,
-      style: GoogleFonts.plusJakartaSans(
-          fontSize: 14, color: AppColors.grey800),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: GoogleFonts.plusJakartaSans(
-            fontSize: 13, color: AppColors.grey600),
-        prefixIcon: Icon(icon, size: 18, color: AppColors.grey400),
-        filled: true,
-        fillColor: Colors.white,
-        border: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.error),
-        ),
-      ),
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return TextFormField(
+          controller: ctrl,
+          keyboardType: keyboardType,
+          onChanged: onChanged,
+          validator: validator,
+          maxLength: maxLength,
+          style: GoogleFonts.plusJakartaSans(
+              fontSize: 14, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: GoogleFonts.plusJakartaSans(
+                fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
+            prefixIcon: Icon(icon, size: 18, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+            filled: true,
+            fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: RukuninColors.brandGreen, width: 2),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: RukuninColors.error),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -811,57 +828,67 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
     required String label,
     required Widget child,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: AppColors.grey400),
-          const SizedBox(width: 16),
-          Text(label,
-              style: GoogleFonts.plusJakartaSans(
-                  fontSize: 13, color: AppColors.grey600)),
-          const Spacer(),
-          child,
-        ],
-      ),
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              Icon(icon, size: 18, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+              const SizedBox(width: 16),
+              Text(label,
+                  style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
+              const Spacer(),
+              child,
+            ],
+          ),
+        );
+      },
     );
   }
 
   Widget _statusToggle() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          Icon(Icons.circle,
-              size: 10,
-              color: _status == 'active' ? Colors.green : AppColors.grey400),
-          const SizedBox(width: 16),
-          Text('Status',
-              style: GoogleFonts.plusJakartaSans(
-                  fontSize: 13, color: AppColors.grey600)),
-          const Spacer(),
-          SegmentedButton<String>(
-            segments: [
-              ButtonSegment(
-                  value: 'active',
-                  label: Text('Aktif',
-                      style: GoogleFonts.plusJakartaSans(fontSize: 12))),
-              ButtonSegment(
-                  value: 'inactive',
-                  label: Text('Nonaktif',
-                      style: GoogleFonts.plusJakartaSans(fontSize: 12))),
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              Icon(Icons.circle,
+                  size: 10,
+                  color: _status == 'active' ? Colors.green : (isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
+              const SizedBox(width: 16),
+              Text('Status',
+                  style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
+              const Spacer(),
+              SegmentedButton<String>(
+                segments: [
+                  ButtonSegment(
+                      value: 'active',
+                      label: Text('Aktif',
+                          style: GoogleFonts.plusJakartaSans(fontSize: 12))),
+                  ButtonSegment(
+                      value: 'inactive',
+                      label: Text('Nonaktif',
+                          style: GoogleFonts.plusJakartaSans(fontSize: 12))),
+                ],
+                selected: {_status},
+                onSelectionChanged: (v) => setState(() => _status = v.first),
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith((s) {
+                    if (s.contains(WidgetState.selected)) return RukuninColors.brandGreen;
+                    return Colors.transparent;
+                  }),
+                ),
+              ),
             ],
-            selected: {_status},
-            onSelectionChanged: (v) => setState(() => _status = v.first),
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.resolveWith((s) {
-                if (s.contains(WidgetState.selected)) return AppColors.primary;
-                return Colors.transparent;
-              }),
-            ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

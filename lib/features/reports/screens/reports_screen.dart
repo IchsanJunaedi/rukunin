@@ -8,6 +8,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../../core/utils/pdf_generator.dart';
 import '../../../core/supabase/supabase_client.dart';
@@ -30,13 +31,14 @@ class ReportsScreen extends ConsumerStatefulWidget {
 class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final state = ref.watch(reportProvider);
     final notifier = ref.read(reportProvider.notifier);
 
     final String monthName = DateFormat('MMMM', 'id_ID').format(DateTime(state.selectedYear, state.selectedMonth)).capitalize();
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
         title: const Text('Laporan Keuangan'),
         actions: [
@@ -45,7 +47,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
             tooltip: 'Export PDF',
             onPressed: () async {
                if (state.isLoading) return;
-               
+
                // Tampilkan Bottom Sheet Pilihan
                showModalBottomSheet(
                  context: context,
@@ -59,7 +61,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                            child: Text('Pilih Aksi PDF', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                          ),
                          ListTile(
-                           leading: const Icon(Icons.share, color: AppColors.primary),
+                           leading: Icon(Icons.share, color: RukuninColors.brandGreen),
                            title: const Text('Kirim / Bagikan (Share)'),
                            subtitle: const Text('Kirim ke WhatsApp, Telegram, dll'),
                            onTap: () {
@@ -68,7 +70,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                            },
                          ),
                          ListTile(
-                           leading: const Icon(Icons.download, color: AppColors.primary),
+                           leading: Icon(Icons.download, color: RukuninColors.brandGreen),
                            title: const Text('Download (Simpan)'),
                            subtitle: const Text('Simpan file PDF ke dalam HP / Komputer'),
                            onTap: () {
@@ -89,19 +91,19 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         children: [
           // Filter Mode Chips
           Container(
-            color: Colors.white,
+            color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  _filterChip('Bulan Ini', ReportFilterMode.currentMonth, state.filterMode, notifier),
+                  _filterChip('Bulan Ini', ReportFilterMode.currentMonth, state.filterMode, notifier, isDark),
                   const SizedBox(width: 8),
-                  _filterChip('3 Bulan', ReportFilterMode.threeMonths, state.filterMode, notifier),
+                  _filterChip('3 Bulan', ReportFilterMode.threeMonths, state.filterMode, notifier, isDark),
                   const SizedBox(width: 8),
-                  _filterChip('6 Bulan', ReportFilterMode.sixMonths, state.filterMode, notifier),
+                  _filterChip('6 Bulan', ReportFilterMode.sixMonths, state.filterMode, notifier, isDark),
                   const SizedBox(width: 8),
-                  _filterChip('Pilih Bulan', ReportFilterMode.custom, state.filterMode, notifier),
+                  _filterChip('Pilih Bulan', ReportFilterMode.custom, state.filterMode, notifier, isDark),
                 ],
               ),
             ),
@@ -110,7 +112,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           // Month Selector (only shown in custom mode)
           if (state.filterMode == ReportFilterMode.custom)
             Container(
-              color: Colors.white,
+              color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -130,7 +132,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                     style: GoogleFonts.plusJakartaSans(
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
-                      color: AppColors.grey800,
+                      color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                     ),
                   ),
                   IconButton(
@@ -148,7 +150,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
             )
           else
             Container(
-              color: Colors.white,
+              color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Center(
                 child: Text(
@@ -156,15 +158,15 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                   style: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
-                    color: AppColors.grey800,
+                    color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                   ),
                 ),
               ),
             ),
-          
+
           Expanded(
             child: state.isLoading
-                ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+                ? Center(child: CircularProgressIndicator(color: RukuninColors.brandGreen))
                 : state.error != null
                     ? Center(child: Text('Gagal memuat laporan: ${state.error}', style: const TextStyle(color: Colors.red)))
                     : RefreshIndicator(
@@ -172,9 +174,9 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                         child: ListView(
                           padding: const EdgeInsets.all(16),
                           children: [
-                            _buildSummaryCards(state.currentMonthReport),
+                            _buildSummaryCards(state.currentMonthReport, isDark),
                             const SizedBox(height: 24),
-                            _buildChartSection(state.lastSixMonths, state.filterMode),
+                            _buildChartSection(state.lastSixMonths, state.filterMode, isDark),
                           ],
                         ),
                       ),
@@ -184,7 +186,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     );
   }
 
-  Widget _buildSummaryCards(dynamic report) {
+  Widget _buildSummaryCards(dynamic report, bool isDark) {
     return Column(
       children: [
         // Net Balance Card
@@ -192,7 +194,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           width: double.infinity,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: AppColors.primary,
+            color: RukuninColors.brandGreen,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Column(
@@ -213,7 +215,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                     children: [
                        Row(
                          children: [
-                           const Icon(Icons.arrow_downward, color: AppColors.success, size: 16),
+                           Icon(Icons.arrow_downward, color: RukuninColors.success, size: 16),
                            const SizedBox(width: 4),
                            Text('Pemasukan', style: GoogleFonts.plusJakartaSans(color: Colors.white70, fontSize: 12)),
                          ],
@@ -228,7 +230,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                          children: [
                            Text('Pengeluaran', style: GoogleFonts.plusJakartaSans(color: Colors.white70, fontSize: 12)),
                            const SizedBox(width: 4),
-                           const Icon(Icons.arrow_upward, color: AppColors.error, size: 16),
+                           Icon(Icons.arrow_upward, color: RukuninColors.error, size: 16),
                          ],
                        ),
                        Text(CurrencyFormatter.format(report.totalExpense), style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
@@ -239,13 +241,13 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
             ],
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Collection rate card
         Container(
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)]),
+          decoration: BoxDecoration(color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface, borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)]),
           child: Row(
             children: [
                Stack(
@@ -255,8 +257,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                      width: 60, height: 60,
                      child: CircularProgressIndicator(
                        value: report.totalExpected > 0 ? (report.totalIncome / report.totalExpected) : 0,
-                       backgroundColor: AppColors.grey200,
-                       color: AppColors.success,
+                       backgroundColor: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
+                       color: RukuninColors.success,
                        strokeWidth: 6,
                      )
                    ),
@@ -270,7 +272,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                    children: [
                      Text('Tingkat Kolektibilitas', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 14)),
                      const SizedBox(height: 4),
-                     Text('Rp ${NumberFormat('#,##0', 'id_ID').format(report.totalIncome)} terkumpul dari target Rp ${NumberFormat('#,##0', 'id_ID').format(report.totalExpected)}', style: GoogleFonts.plusJakartaSans(color: AppColors.grey600, fontSize: 12)),
+                     Text('Rp ${NumberFormat('#,##0', 'id_ID').format(report.totalIncome)} terkumpul dari target Rp ${NumberFormat('#,##0', 'id_ID').format(report.totalExpected)}', style: GoogleFonts.plusJakartaSans(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, fontSize: 12)),
                    ],
                  )
                )
@@ -281,7 +283,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     );
   }
 
-  Widget _filterChip(String label, ReportFilterMode mode, ReportFilterMode current, ReportNotifier notifier) {
+  Widget _filterChip(String label, ReportFilterMode mode, ReportFilterMode current, ReportNotifier notifier, bool isDark) {
     final isSelected = current == mode;
     return GestureDetector(
       onTap: () => notifier.setFilterMode(mode),
@@ -289,23 +291,23 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary : Colors.white,
+          color: isSelected ? RukuninColors.brandGreen : (isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isSelected ? AppColors.primary : AppColors.grey300),
+          border: Border.all(color: isSelected ? RukuninColors.brandGreen : (isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder)),
         ),
         child: Text(
           label,
           style: GoogleFonts.plusJakartaSans(
             fontSize: 13,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            color: isSelected ? AppColors.onPrimary : AppColors.grey600,
+            color: isSelected ? Colors.white : (isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildChartSection(List<dynamic> sixMonths, ReportFilterMode filterMode) {
+  Widget _buildChartSection(List<dynamic> sixMonths, ReportFilterMode filterMode, bool isDark) {
     if (sixMonths.isEmpty) return const SizedBox();
 
     // Slice based on filter mode
@@ -316,7 +318,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
 
     // Reverse array agar bulan paling lama di kiri
     final reversed = List.from(visibleMonths);
-    
+
     // Hitung maxY biar grafik proper
     double maxY = 100000;
     for(var rep in reversed) {
@@ -328,7 +330,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)]),
+      decoration: BoxDecoration(color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface, borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -353,7 +355,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                          if (value.toInt() >= reversed.length) return const Text('');
                          final report = reversed[value.toInt()];
                          final monthStr = DateFormat('MMM', 'id_ID').format(DateTime(report.year, report.month));
-                         return Padding(padding: const EdgeInsets.only(top: 8), child: Text(monthStr, style: const TextStyle(fontSize: 10, color: AppColors.grey600)));
+                         return Padding(padding: const EdgeInsets.only(top: 8), child: Text(monthStr, style: TextStyle(fontSize: 10, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)));
                        },
                        reservedSize: 28,
                      ),
@@ -365,10 +367,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                  ),
                  gridData: FlGridData(
-                   show: true, 
+                   show: true,
                    drawVerticalLine: false,
                    horizontalInterval: maxY / 4,
-                   getDrawingHorizontalLine: (value) => FlLine(color: AppColors.grey200, strokeWidth: 1),
+                   getDrawingHorizontalLine: (value) => FlLine(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2, strokeWidth: 1),
                  ),
                  borderData: FlBorderData(show: false),
                  barGroups: reversed.asMap().entries.map((e) {
@@ -379,13 +381,13 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                      barRods: [
                        BarChartRodData(
                          toY: rep.totalIncome,
-                         color: AppColors.success,
+                         color: RukuninColors.success,
                          width: 8,
                          borderRadius: const BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
                        ),
                        BarChartRodData(
                          toY: rep.totalExpense,
-                         color: AppColors.error,
+                         color: RukuninColors.error,
                          width: 8,
                          borderRadius: const BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
                        ),
@@ -399,44 +401,44 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
            Row(
              mainAxisAlignment: MainAxisAlignment.center,
              children: [
-               _buildLegend(AppColors.success, 'Pemasukan'),
+               _buildLegend(RukuninColors.success, 'Pemasukan', isDark),
                const SizedBox(width: 16),
-               _buildLegend(AppColors.error, 'Pengeluaran'),
+               _buildLegend(RukuninColors.error, 'Pengeluaran', isDark),
              ],
            )
         ],
       )
     );
   }
-  
-  Widget _buildLegend(Color color, String text) {
+
+  Widget _buildLegend(Color color, String text, bool isDark) {
     return Row(
       children: [
         Container(width: 12, height: 12, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
         const SizedBox(width: 4),
-        Text(text, style: GoogleFonts.plusJakartaSans(fontSize: 12, color: AppColors.grey600)),
+        Text(text, style: GoogleFonts.plusJakartaSans(fontSize: 12, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
       ],
     );
   }
 
   Future<void> _processPdf(BuildContext context, WidgetRef ref, ReportState state, String monthName, {required bool isShare}) async {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Menyiapkan laporan PDF...'), duration: Duration(seconds: 1)));
-    
+
     try {
       final client = ref.read(supabaseClientProvider);
       final profile = await client.from('profiles').select('community_id').eq('id', client.auth.currentUser!.id).single();
       final community = await client.from('communities').select('name').eq('id', profile['community_id']).single();
       final communityName = community['name'] ?? 'Warga';
-      
+
       final bytes = await PdfGenerator.generateReport(state.currentMonthReport, communityName);
       final fileName = 'Laporan_Keuangan_${monthName}_${state.selectedYear}';
-      
+
       if (isShare) {
-        // Tulis ke file sementara agar tombol Copy di dialog Share berfungsi 
+        // Tulis ke file sementara agar tombol Copy di dialog Share berfungsi
         final tempDir = Directory.systemTemp;
         final tempFile = File('${tempDir.path}/$fileName.pdf');
         await tempFile.writeAsBytes(bytes);
-        
+
         if (context.mounted) {
            final xFile = XFile(tempFile.path, mimeType: 'application/pdf', name: '$fileName.pdf');
            await SharePlus.instance.share(ShareParams(files: [xFile], text: 'Berikut adalah laporan keuangan $communityName untuk bulan $monthName ${state.selectedYear}'));
@@ -449,12 +451,12 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           mimeType: MimeType.pdf,
         );
         if (context.mounted && result.isNotEmpty) {
-           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('PDF berhasil diunduh'), backgroundColor: AppColors.success));
+           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('PDF berhasil diunduh'), backgroundColor: RukuninColors.success));
         }
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal membuat PDF: $e'), backgroundColor: AppColors.error));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal membuat PDF: $e'), backgroundColor: RukuninColors.error));
       }
     }
   }

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../models/marketplace_listing_model.dart';
 import '../providers/marketplace_provider.dart';
 import '../providers/rating_provider.dart';
@@ -18,12 +19,13 @@ class ListingDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final ratingAsync = ref.watch(sellerRatingProvider(listing.sellerId));
     final currentUserId = Supabase.instance.client.auth.currentUser?.id;
     final isSeller = currentUserId == listing.sellerId;
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       body: CustomScrollView(
         slivers: [
           _ImageHeroAppBar(
@@ -37,7 +39,7 @@ class ListingDetailScreen extends ConsumerWidget {
                 ),
               );
               if (updated == true && context.mounted) {
-                Navigator.of(context).pop(); // tutup detail, biar provider refresh
+                Navigator.of(context).pop();
               }
             },
             onDelete: () => _confirmDelete(context, ref),
@@ -61,8 +63,7 @@ class ListingDetailScreen extends ConsumerWidget {
                   ],
                   _ActionButtons(
                     listing: listing,
-                    onWhatsApp: () => _openWhatsApp(
-                        context, listing.sellerPhone!, listing.title),
+                    onWhatsApp: () => _openWhatsApp(context, listing.sellerPhone!, listing.title),
                     onRate: () => _showRatingDialog(context, ref),
                   ),
                   const SizedBox(height: 20),
@@ -75,8 +76,7 @@ class ListingDetailScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _openWhatsApp(
-      BuildContext context, String phone, String title) async {
+  Future<void> _openWhatsApp(BuildContext context, String phone, String title) async {
     String formatted = phone.replaceAll(RegExp(r'[^0-9]'), '');
     if (formatted.startsWith('0')) {
       formatted = '62${formatted.substring(1)}';
@@ -98,6 +98,7 @@ class ListingDetailScreen extends ConsumerWidget {
   }
 
   void _showRatingDialog(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     int score = 5;
     final commentCtrl = TextEditingController();
 
@@ -106,6 +107,7 @@ class ListingDetailScreen extends ConsumerWidget {
       builder: (ctx) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
           title: Text(
             'Beri Ulasan Penjual',
             style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
@@ -117,7 +119,7 @@ class ListingDetailScreen extends ConsumerWidget {
                 'Sudah beli barang ini?\nBeri rating untuk ${listing.sellerName ?? 'penjual'}!',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14, color: AppColors.grey600),
+                    fontSize: 14, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
               ),
               const SizedBox(height: 20),
               Row(
@@ -127,12 +129,8 @@ class ListingDetailScreen extends ConsumerWidget {
                     iconSize: 36,
                     padding: EdgeInsets.zero,
                     icon: Icon(
-                      index < score
-                          ? Icons.star_rounded
-                          : Icons.star_outline_rounded,
-                      color: index < score
-                          ? AppColors.primary
-                          : AppColors.grey300,
+                      index < score ? Icons.star_rounded : Icons.star_outline_rounded,
+                      color: index < score ? RukuninColors.warning : (isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
                     ),
                     onPressed: () => setState(() => score = index + 1),
                   );
@@ -146,7 +144,7 @@ class ListingDetailScreen extends ConsumerWidget {
                   hintText: 'Tulis komentar (opsional)...',
                   hintStyle: GoogleFonts.plusJakartaSans(fontSize: 13),
                   filled: true,
-                  fillColor: AppColors.grey100,
+                  fillColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
@@ -160,7 +158,7 @@ class ListingDetailScreen extends ConsumerWidget {
               onPressed: () => Navigator.pop(ctx),
               child: Text('Batal',
                   style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.grey600)),
+                      color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -176,7 +174,7 @@ class ListingDetailScreen extends ConsumerWidget {
                   if (ctx.mounted) {
                     ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
                         content: Text('Ulasan berhasil dikirim! ⭐'),
-                        backgroundColor: AppColors.success));
+                        backgroundColor: RukuninColors.success));
                   }
                 } catch (e) {
                   if (ctx.mounted) {
@@ -186,10 +184,9 @@ class ListingDetailScreen extends ConsumerWidget {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: AppColors.onPrimary,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                backgroundColor: RukuninColors.brandGreen,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
               child: const Text('Kirim'),
             ),
@@ -200,41 +197,30 @@ class ListingDetailScreen extends ConsumerWidget {
   }
 
   void _confirmDelete(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         title: Text('Hapus Iklan?',
             style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
         content: Text(
           'Iklan "${listing.title}" akan dihapus secara permanen.',
-          style: GoogleFonts.plusJakartaSans(fontSize: 14, color: AppColors.grey600),
+          style: GoogleFonts.plusJakartaSans(fontSize: 14, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text('Batal',
-                style: GoogleFonts.plusJakartaSans(color: AppColors.grey600)),
+                style: GoogleFonts.plusJakartaSans(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
           ),
           ElevatedButton(
             onPressed: () async {
-              // We need marketplaceServiceProvider here, so I actually NEED that import.
-              // Wait, I am removing it above! Let's NOT remove it and instead USE it here.
-              // Let me re-add the import since I need it for this method!
-              // For safety in this chunk, I'll just keep the method logic.
               final nav = Navigator.of(ctx);
               final rootNav = Navigator.of(context);
               try {
-                // IMPORTANT: since I removed the import above as "unused", I must rely on 
-                // something else, OR I should add the import back! Wait, the lint said 
-                // it was unused because _confirmDelete wasn't in the file yet! 
-                // Now it WILL be used. I should fix the previous chunk to NOT remove it.
-                // But the previous chunk is already submitted. I'll just re-add it in THIS chunk.
-                // Actually, let's just use ref.read(marketplaceServiceProvider) assuming I didn't remove it or I'll fix it if it complains.
-                
-                await ref
-                    .read(marketplaceServiceProvider)
-                    .deleteListing(listing.id);
+                await ref.read(marketplaceServiceProvider).deleteListing(listing.id);
                 nav.pop();
                 rootNav.pop();
               } catch (e) {
@@ -247,10 +233,9 @@ class ListingDetailScreen extends ConsumerWidget {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.error,
+              backgroundColor: RukuninColors.error,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
             child: const Text('Hapus'),
           ),
@@ -260,37 +245,37 @@ class ListingDetailScreen extends ConsumerWidget {
   }
 
   void _confirmSold(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         title: Text('Tandai Iklan Terjual?',
             style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
         content: Text(
           'Iklan "${listing.title}" akan ditandai sebagai terjual dan tidak akan muncul lagi di halaman Marketplace. Aksi ini tidak dapat dibatalkan.',
-          style: GoogleFonts.plusJakartaSans(fontSize: 14, color: AppColors.grey600),
+          style: GoogleFonts.plusJakartaSans(fontSize: 14, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text('Batal',
-                style: GoogleFonts.plusJakartaSans(color: AppColors.grey600)),
+                style: GoogleFonts.plusJakartaSans(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
           ),
           ElevatedButton(
             onPressed: () async {
               final nav = Navigator.of(ctx);
               final rootNav = Navigator.of(context);
               try {
-                await ref
-                    .read(marketplaceServiceProvider)
-                    .markAsSold(listing.id);
+                await ref.read(marketplaceServiceProvider).markAsSold(listing.id);
                 nav.pop();
                 rootNav.pop();
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                         content: Text('Iklan berhasil ditandai terjual! ✅'),
-                        backgroundColor: AppColors.success),
+                        backgroundColor: RukuninColors.success),
                   );
                 }
               } catch (e) {
@@ -303,10 +288,9 @@ class ListingDetailScreen extends ConsumerWidget {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.success,
+              backgroundColor: RukuninColors.success,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
             child: const Text('Tandai Terjual'),
           ),
@@ -317,7 +301,7 @@ class ListingDetailScreen extends ConsumerWidget {
 }
 
 // ============================================================
-// IMAGE HERO APP BAR — with dot indicator
+// IMAGE HERO APP BAR
 // ============================================================
 class _ImageHeroAppBar extends StatefulWidget {
   final MarketplaceListingModel listing;
@@ -348,7 +332,9 @@ class _ImageHeroAppBarState extends State<_ImageHeroAppBar> {
     return SliverAppBar(
       expandedHeight: 300,
       pinned: true,
-      backgroundColor: AppColors.surface,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? RukuninColors.darkSurface
+          : RukuninColors.lightSurface,
       foregroundColor: Colors.white,
       actions: [
         if (widget.isSeller)
@@ -365,11 +351,9 @@ class _ImageHeroAppBarState extends State<_ImageHeroAppBar> {
                 value: 'edit',
                 child: Row(
                   children: [
-                    const Icon(Icons.edit_rounded,
-                        size: 18, color: AppColors.grey800),
+                    Icon(Icons.edit_rounded, size: 18, color: Theme.of(context).brightness == Brightness.dark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                     const SizedBox(width: 10),
-                    Text('Edit Iklan',
-                        style: GoogleFonts.plusJakartaSans(fontSize: 14)),
+                    Text('Edit Iklan', style: GoogleFonts.plusJakartaSans(fontSize: 14)),
                   ],
                 ),
               ),
@@ -377,12 +361,10 @@ class _ImageHeroAppBarState extends State<_ImageHeroAppBar> {
                 value: 'sold',
                 child: Row(
                   children: [
-                    const Icon(Icons.check_circle_outline_rounded,
-                        size: 18, color: AppColors.success),
+                    const Icon(Icons.check_circle_outline_rounded, size: 18, color: RukuninColors.success),
                     const SizedBox(width: 10),
                     Text('Tandai Terjual',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontSize: 14, color: AppColors.success)),
+                        style: GoogleFonts.plusJakartaSans(fontSize: 14, color: RukuninColors.success)),
                   ],
                 ),
               ),
@@ -390,12 +372,10 @@ class _ImageHeroAppBarState extends State<_ImageHeroAppBar> {
                 value: 'delete',
                 child: Row(
                   children: [
-                    const Icon(Icons.delete_outline_rounded,
-                        size: 18, color: AppColors.error),
+                    const Icon(Icons.delete_outline_rounded, size: 18, color: RukuninColors.error),
                     const SizedBox(width: 10),
                     Text('Hapus Iklan',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontSize: 14, color: AppColors.error)),
+                        style: GoogleFonts.plusJakartaSans(fontSize: 14, color: RukuninColors.error)),
                   ],
                 ),
               ),
@@ -416,7 +396,6 @@ class _ImageHeroAppBarState extends State<_ImageHeroAppBar> {
                       errorBuilder: (_, _, _) => _EmptyImagePlaceholder(),
                     ),
                   ),
-                  // Dot indicator (only shown if multiple images)
                   if (images.length > 1)
                     Positioned(
                       bottom: 12,
@@ -433,7 +412,7 @@ class _ImageHeroAppBarState extends State<_ImageHeroAppBar> {
                             height: 7,
                             decoration: BoxDecoration(
                               color: i == _currentPage
-                                  ? AppColors.primary
+                                  ? RukuninColors.brandGreen
                                   : Colors.white.withValues(alpha: 0.6),
                               borderRadius: BorderRadius.circular(100),
                             ),
@@ -451,14 +430,17 @@ class _ImageHeroAppBarState extends State<_ImageHeroAppBar> {
 
 class _EmptyImagePlaceholder extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Container(
-        color: AppColors.grey200,
-        child: const Icon(Icons.image_outlined, size: 80, color: AppColors.grey400),
-      );
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
+      child: Icon(Icons.image_outlined, size: 80, color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
+    );
+  }
 }
 
 // ============================================================
-// LISTING HEADER — Price, Title, Category Badge
+// LISTING HEADER
 // ============================================================
 class _ListingHeader extends StatelessWidget {
   final MarketplaceListingModel listing;
@@ -466,6 +448,7 @@ class _ListingHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -474,7 +457,7 @@ class _ListingHeader extends StatelessWidget {
           style: GoogleFonts.plusJakartaSans(
             fontSize: 26,
             fontWeight: FontWeight.w900,
-            color: AppColors.primary,
+            color: RukuninColors.brandGreen,
             letterSpacing: -0.5,
           ),
         ),
@@ -484,7 +467,7 @@ class _ListingHeader extends StatelessWidget {
           style: GoogleFonts.plusJakartaSans(
             fontSize: 20,
             fontWeight: FontWeight.w700,
-            color: AppColors.grey800,
+            color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
           ),
         ),
         const SizedBox(height: 10),
@@ -493,7 +476,7 @@ class _ListingHeader extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.12),
+                color: RukuninColors.brandGreen.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -501,7 +484,7 @@ class _ListingHeader extends StatelessWidget {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.primary,
+                  color: RukuninColors.brandGreen,
                 ),
               ),
             ),
@@ -510,8 +493,8 @@ class _ListingHeader extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 color: listing.isAvailable
-                    ? AppColors.success.withValues(alpha: 0.1)
-                    : AppColors.error.withValues(alpha: 0.1),
+                    ? RukuninColors.success.withValues(alpha: 0.1)
+                    : RukuninColors.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -519,7 +502,7 @@ class _ListingHeader extends StatelessWidget {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: listing.isAvailable ? AppColors.success : AppColors.error,
+                  color: listing.isAvailable ? RukuninColors.success : RukuninColors.error,
                 ),
               ),
             ),
@@ -531,7 +514,7 @@ class _ListingHeader extends StatelessWidget {
 }
 
 // ============================================================
-// METADATA ROW — Date posted + image count
+// METADATA ROW
 // ============================================================
 class _MetadataRow extends StatelessWidget {
   final MarketplaceListingModel listing;
@@ -541,26 +524,15 @@ class _MetadataRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final imageCount = listing.images.length;
     final days = DateTime.now().difference(listing.createdAt).inDays;
-    final dateLabel = days == 0
-        ? 'Hari ini'
-        : days == 1
-            ? 'Kemarin'
-            : '$days hari lalu';
+    final dateLabel = days == 0 ? 'Hari ini' : days == 1 ? 'Kemarin' : '$days hari lalu';
 
     return Row(
       children: [
         _StatusChip(status: listing.status),
         const SizedBox(width: 8),
-        _MetaChip(
-          icon: Icons.access_time_rounded,
-          label: dateLabel,
-        ),
+        _MetaChip(icon: Icons.access_time_rounded, label: dateLabel),
         const SizedBox(width: 8),
-        if (imageCount > 0)
-          _MetaChip(
-            icon: Icons.photo_library_outlined,
-            label: '$imageCount Foto',
-          ),
+        if (imageCount > 0) _MetaChip(icon: Icons.photo_library_outlined, label: '$imageCount Foto'),
       ],
     );
   }
@@ -573,26 +545,23 @@ class _MetaChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12, color: AppColors.grey500),
+          Icon(icon, size: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
           const SizedBox(width: 4),
-          Text(
-            label,
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: AppColors.grey600,
-            ),
-          ),
+          Text(label, style: GoogleFonts.plusJakartaSans(
+            fontSize: 11, fontWeight: FontWeight.w500,
+            color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
+          )),
         ],
       ),
     );
@@ -607,11 +576,10 @@ class _StatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final isAvailable = status == 'active';
     final bgColor = isAvailable
-        ? AppColors.success.withValues(alpha: 0.1)
-        : AppColors.error.withValues(alpha: 0.1);
-    final textColor = isAvailable ? AppColors.success : AppColors.error;
-    final icon =
-        isAvailable ? Icons.check_circle_outline_rounded : Icons.cancel_outlined;
+        ? RukuninColors.success.withValues(alpha: 0.1)
+        : RukuninColors.error.withValues(alpha: 0.1);
+    final textColor = isAvailable ? RukuninColors.success : RukuninColors.error;
+    final icon = isAvailable ? Icons.check_circle_outline_rounded : Icons.cancel_outlined;
     final label = isAvailable ? 'Tersedia' : 'Terjual';
 
     return Container(
@@ -626,14 +594,7 @@ class _StatusChip extends StatelessWidget {
         children: [
           Icon(icon, size: 12, color: textColor),
           const SizedBox(width: 4),
-          Text(
-            label,
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: textColor,
-            ),
-          ),
+          Text(label, style: GoogleFonts.plusJakartaSans(fontSize: 11, fontWeight: FontWeight.w700, color: textColor)),
         ],
       ),
     );
@@ -641,7 +602,7 @@ class _StatusChip extends StatelessWidget {
 }
 
 // ============================================================
-// SELLER CARD — Avatar, name, unit, rating badge
+// SELLER CARD
 // ============================================================
 class _SellerCard extends StatelessWidget {
   final MarketplaceListingModel listing;
@@ -650,25 +611,19 @@ class _SellerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Row(
         children: [
-          // Avatar dengan initial atau photo_url
           CircleAvatar(
             radius: 22,
-            backgroundColor: AppColors.primary.withValues(alpha: 0.15),
+            backgroundColor: RukuninColors.brandGreen.withValues(alpha: 0.15),
             backgroundImage: listing.sellerPhotoUrl != null && listing.sellerPhotoUrl!.isNotEmpty
                 ? NetworkImage(listing.sellerPhotoUrl!)
                 : null,
@@ -678,7 +633,7 @@ class _SellerCard extends StatelessWidget {
                         ? listing.sellerName![0].toUpperCase()
                         : '?',
                     style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.primary,
+                      color: RukuninColors.brandGreen,
                       fontWeight: FontWeight.w700,
                       fontSize: 18,
                     ),
@@ -695,13 +650,13 @@ class _SellerCard extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
-                    color: AppColors.grey800,
+                    color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                   ),
                 ),
                 Text(
                   'Unit ${listing.sellerUnit ?? '-'}',
                   style: GoogleFonts.plusJakartaSans(
-                      fontSize: 12, color: AppColors.grey500),
+                      fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                 ),
               ],
             ),
@@ -714,7 +669,7 @@ class _SellerCard extends StatelessWidget {
 }
 
 // ============================================================
-// RATING BADGE — Inline star rating display
+// RATING BADGE
 // ============================================================
 class _RatingBadge extends StatelessWidget {
   final AsyncValue<SellerRating?> ratingAsync;
@@ -722,42 +677,42 @@ class _RatingBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return ratingAsync.when(
-      loading: () => const SizedBox(
+      loading: () => SizedBox(
           width: 20,
           height: 20,
-          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.grey400)),
+          child: CircularProgressIndicator(strokeWidth: 2, color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder)),
       error: (_, _) => const SizedBox.shrink(),
       data: (val) {
         if (val == null) {
           return Row(
             children: [
-              const Icon(Icons.star_rounded, color: AppColors.grey300, size: 16),
+              Icon(Icons.star_rounded, color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder, size: 16),
               const SizedBox(width: 4),
               Text('Baru',
                   style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.grey500)),
+                      color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
             ],
           );
         }
         return Row(
           children: [
-            const Icon(Icons.star_rounded,
-                color: AppColors.primary, size: 16),
+            const Icon(Icons.star_rounded, color: RukuninColors.warning, size: 16),
             const SizedBox(width: 4),
             Text(
               val.averageScore.toStringAsFixed(1),
               style: GoogleFonts.plusJakartaSans(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.grey800),
+                  color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
             ),
             Text(
               ' (${val.totalReviews})',
               style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12, color: AppColors.grey500),
+                  fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
             ),
           ],
         );
@@ -775,6 +730,7 @@ class _DescriptionSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -783,7 +739,7 @@ class _DescriptionSection extends StatelessWidget {
           style: GoogleFonts.plusJakartaSans(
             fontSize: 15,
             fontWeight: FontWeight.w700,
-            color: AppColors.grey800,
+            color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
           ),
         ),
         const SizedBox(height: 10),
@@ -791,14 +747,14 @@ class _DescriptionSection extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
             borderRadius: BorderRadius.circular(14),
           ),
           child: Text(
             description,
             style: GoogleFonts.plusJakartaSans(
               fontSize: 14,
-              color: AppColors.grey600,
+              color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
               height: 1.7,
             ),
           ),
@@ -809,7 +765,7 @@ class _DescriptionSection extends StatelessWidget {
 }
 
 // ============================================================
-// ACTION BUTTONS — WhatsApp + Rating
+// ACTION BUTTONS
 // ============================================================
 class _ActionButtons extends StatelessWidget {
   final MarketplaceListingModel listing;
@@ -824,6 +780,7 @@ class _ActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
         if (listing.isAvailable)
@@ -832,16 +789,14 @@ class _ActionButtons extends StatelessWidget {
           icon: const Icon(Icons.chat_rounded),
           label: Text(
             'Hubungi via WhatsApp',
-            style: GoogleFonts.plusJakartaSans(
-                fontWeight: FontWeight.w700, fontSize: 15),
+            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 15),
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF25D366),
             foregroundColor: Colors.white,
-            disabledBackgroundColor: AppColors.grey300,
+            disabledBackgroundColor: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
             minimumSize: const Size(double.infinity, 52),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           ),
         ),
         if (listing.isAvailable) const SizedBox(height: 10),
@@ -850,15 +805,13 @@ class _ActionButtons extends StatelessWidget {
           icon: const Icon(Icons.star_outline_rounded, size: 18),
           label: Text(
             'Beri Ulasan Penjual',
-            style: GoogleFonts.plusJakartaSans(
-                fontWeight: FontWeight.w600, fontSize: 13),
+            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 13),
           ),
           style: OutlinedButton.styleFrom(
-            foregroundColor: AppColors.grey600,
-            side: const BorderSide(color: AppColors.grey300),
+            foregroundColor: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
+            side: BorderSide(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
             minimumSize: const Size(double.infinity, 44),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
         ),
       ],

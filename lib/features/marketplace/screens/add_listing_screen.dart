@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:io';
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../../../core/supabase/supabase_client.dart';
 import '../models/marketplace_listing_model.dart';
 import '../providers/marketplace_provider.dart';
@@ -155,9 +156,9 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Iklan berhasil diperbarui! ✅'),
-              backgroundColor: AppColors.success,
+            SnackBar(
+              content: const Text('Iklan berhasil diperbarui! ✅'),
+              backgroundColor: RukuninColors.success,
             ),
           );
           Navigator.of(context).pop(true); // return true → tanda berhasil edit
@@ -191,9 +192,9 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Listing berhasil dipasang! 🎉'),
-              backgroundColor: AppColors.success,
+            SnackBar(
+              content: const Text('Listing berhasil dipasang! 🎉'),
+              backgroundColor: RukuninColors.success,
             ),
           );
           Navigator.of(context).pop();
@@ -204,7 +205,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Gagal: $e'),
-            backgroundColor: AppColors.error,
+            backgroundColor: RukuninColors.error,
           ),
         );
       }
@@ -215,13 +216,14 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isEdit = _isEditMode;
     final totalImages = _existingImageUrls.length + _pickedImages.length;
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         foregroundColor: Colors.white,
         title: Text(
           isEdit ? 'Edit Iklan' : 'Pasang Iklan',
@@ -236,7 +238,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    color: AppColors.primary, strokeWidth: 2),
+                    color: RukuninColors.brandGreen, strokeWidth: 2),
               ),
             )
           else
@@ -245,7 +247,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
               child: Text(
                 isEdit ? 'Simpan' : 'Pasang',
                 style: GoogleFonts.plusJakartaSans(
-                    color: AppColors.primary,
+                    color: RukuninColors.brandGreen,
                     fontWeight: FontWeight.w700,
                     fontSize: 15),
               ),
@@ -263,7 +265,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
               style: GoogleFonts.plusJakartaSans(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.grey600),
+                  color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
             ),
             const SizedBox(height: 10),
             SizedBox(
@@ -353,22 +355,22 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
                         width: 100,
                         height: 100,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                              color: AppColors.grey300,
+                              color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
                               style: BorderStyle.solid),
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.add_photo_alternate_rounded,
-                                size: 32, color: AppColors.grey400),
+                            Icon(Icons.add_photo_alternate_rounded,
+                                size: 32, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                             const SizedBox(height: 4),
                             Text(
                               'Tambah Foto',
                               style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 11, color: AppColors.grey500),
+                                  fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                             ),
                           ],
                         ),
@@ -379,9 +381,10 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
             ),
             const SizedBox(height: 20),
             // ── Judul ──
-            _label('Judul Iklan'),
+            _label(isDark, 'Judul Iklan'),
             const SizedBox(height: 8),
             _textField(
+              isDark: isDark,
               controller: _titleCtrl,
               hint: 'Contoh: Nasi Goreng Bu Siti, Jasa Cuci Motor',
               validator: (v) =>
@@ -389,7 +392,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
             ),
             const SizedBox(height: 18),
             // ── Kategori ──
-            _label('Kategori'),
+            _label(isDark, 'Kategori'),
             const SizedBox(height: 10),
             Wrap(
               spacing: 8,
@@ -404,12 +407,12 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 14, vertical: 8),
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.primary : Colors.white,
+                      color: isSelected ? RukuninColors.brandGreen : (isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: isSelected
-                            ? AppColors.primary
-                            : AppColors.grey300,
+                            ? RukuninColors.brandGreen
+                            : (isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
                       ),
                     ),
                     child: Text(
@@ -419,8 +422,8 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
                         fontWeight:
                             isSelected ? FontWeight.w700 : FontWeight.w500,
                         color: isSelected
-                            ? AppColors.onPrimary
-                            : AppColors.grey800,
+                            ? Colors.white
+                            : (isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                       ),
                     ),
                   ),
@@ -429,9 +432,10 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
             ),
             const SizedBox(height: 18),
             // ── Harga ──
-            _label('Harga (kosongkan jika Gratis/Nego)'),
+            _label(isDark, 'Harga (kosongkan jika Gratis/Nego)'),
             const SizedBox(height: 8),
             _textField(
+              isDark: isDark,
               controller: _priceCtrl,
               hint: 'Contoh: 25000',
               keyboardType: TextInputType.number,
@@ -439,9 +443,10 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
             ),
             const SizedBox(height: 18),
             // ── Stok ──
-            _label('Stok'),
+            _label(isDark, 'Stok'),
             const SizedBox(height: 8),
             _textField(
+              isDark: isDark,
               controller: _stockCtrl,
               hint: 'Jumlah stok tersedia',
               keyboardType: TextInputType.number,
@@ -455,7 +460,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
             ),
             const SizedBox(height: 18),
             // ── Deskripsi ──
-            _label('Deskripsi (opsional)'),
+            _label(isDark, 'Deskripsi (opsional)'),
             const SizedBox(height: 8),
             TextFormField(
               controller: _descCtrl,
@@ -463,9 +468,9 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
               decoration: InputDecoration(
                 hintText: 'Ceritakan detail produk/jasa kamu...',
                 hintStyle: GoogleFonts.plusJakartaSans(
-                    color: AppColors.grey400, fontSize: 14),
+                    color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary, fontSize: 14),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -473,7 +478,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
                 contentPadding: const EdgeInsets.all(16),
               ),
               style: GoogleFonts.plusJakartaSans(
-                  fontSize: 14, color: AppColors.grey800),
+                  fontSize: 14, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
             ),
             const SizedBox(height: 32),
             ElevatedButton.icon(
@@ -486,8 +491,8 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
                     fontWeight: FontWeight.w700, fontSize: 15),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: AppColors.onPrimary,
+                backgroundColor: RukuninColors.brandGreen,
+                foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 52),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14)),
@@ -499,15 +504,16 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
     );
   }
 
-  Widget _label(String text) => Text(
+  Widget _label(bool isDark, String text) => Text(
         text,
         style: GoogleFonts.plusJakartaSans(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: AppColors.grey600),
+            color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
       );
 
   Widget _textField({
+    required bool isDark,
     required TextEditingController controller,
     required String hint,
     String? Function(String?)? validator,
@@ -521,9 +527,9 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: GoogleFonts.plusJakartaSans(
-            color: AppColors.grey400, fontSize: 14),
+            color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary, fontSize: 14),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -532,7 +538,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       style:
-          GoogleFonts.plusJakartaSans(fontSize: 15, color: AppColors.grey800),
+          GoogleFonts.plusJakartaSans(fontSize: 15, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
       validator: validator,
     );
   }
