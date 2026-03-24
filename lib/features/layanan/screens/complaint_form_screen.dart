@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../../../core/supabase/supabase_client.dart';
 import '../models/complaint_model.dart';
 import '../providers/layanan_provider.dart';
@@ -52,7 +53,7 @@ class _ComplaintFormScreenState extends ConsumerState<ComplaintFormScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Pengaduan berhasil dikirim!'),
-            backgroundColor: AppColors.success,
+            backgroundColor: RukuninColors.success,
           ),
         );
       }
@@ -60,7 +61,7 @@ class _ComplaintFormScreenState extends ConsumerState<ComplaintFormScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('Gagal: $e'), backgroundColor: AppColors.error),
+              content: Text('Gagal: $e'), backgroundColor: RukuninColors.error),
         );
       }
     } finally {
@@ -130,8 +131,8 @@ class _ComplaintFormScreenState extends ConsumerState<ComplaintFormScreen> {
               const SizedBox(height: 32),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.onPrimary,
+                  backgroundColor: RukuninColors.brandGreen,
+                  foregroundColor: Colors.white,
                   minimumSize: const Size.fromHeight(48),
                 ),
                 onPressed: _loading ? null : _submit,
@@ -141,7 +142,7 @@ class _ComplaintFormScreenState extends ConsumerState<ComplaintFormScreen> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: AppColors.onPrimary,
+                          color: Colors.white,
                         ),
                       )
                     : const Text('Kirim Pengaduan'),

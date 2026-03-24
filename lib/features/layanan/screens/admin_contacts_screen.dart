@@ -11,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../../../core/supabase/supabase_client.dart';
 import '../models/community_contact_model.dart';
 import '../providers/layanan_provider.dart';
@@ -20,10 +21,11 @@ class AdminContactsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final contactsAsync = ref.watch(adminContactsProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
         title: const Text('Kelola Kontak'),
       ),
@@ -34,12 +36,12 @@ class AdminContactsScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
           child: Text('Error: $e',
-              style: GoogleFonts.plusJakartaSans(color: AppColors.error)),
+              style: GoogleFonts.plusJakartaSans(color: RukuninColors.error)),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.onPrimary,
+        backgroundColor: RukuninColors.brandGreen,
+        foregroundColor: Colors.white,
         onPressed: () => _showForm(context, ref, null, []),
         child: const Icon(Icons.add),
       ),
@@ -47,18 +49,19 @@ class AdminContactsScreen extends ConsumerWidget {
   }
 
   Widget _buildEmpty(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.people_outline, size: 56, color: AppColors.grey300),
+          Icon(Icons.people_outline, size: 56, color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
           const SizedBox(height: 12),
           Text(
             'Belum ada kontak',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: AppColors.grey500,
+              color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
             ),
           ),
           const SizedBox(height: 4),
@@ -66,7 +69,7 @@ class AdminContactsScreen extends ConsumerWidget {
             'Tap + untuk tambah kontak pengurus',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 13,
-              color: AppColors.grey400,
+              color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
             ),
           ),
         ],
@@ -112,10 +115,11 @@ class AdminContactsScreen extends ConsumerWidget {
     CommunityContactModel? existing,
     List<CommunityContactModel> allContacts,
   ) async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -190,7 +194,7 @@ class AdminContactsScreen extends ConsumerWidget {
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.error),
+                            backgroundColor: RukuninColors.error),
                         onPressed: () => Navigator.pop(d, true),
                         child: const Text('Hapus',
                             style: TextStyle(color: Colors.white)),
@@ -230,10 +234,11 @@ class _ContactAdminCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -256,21 +261,21 @@ class _ContactAdminCard extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.grey800,
+                    color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                   ),
                 ),
                 Text(
                   contact.jabatan,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 12,
-                    color: AppColors.grey500,
+                    color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                   ),
                 ),
                 Text(
                   contact.phone,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 12,
-                    color: AppColors.grey400,
+                    color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                   ),
                 ),
               ],
@@ -281,7 +286,9 @@ class _ContactAdminCard extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.arrow_upward, size: 18),
                 onPressed: canMoveUp ? onMoveUp : null,
-                color: canMoveUp ? AppColors.grey600 : AppColors.grey300,
+                color: canMoveUp
+                    ? (isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)
+                    : (isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
               ),
@@ -289,7 +296,9 @@ class _ContactAdminCard extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.arrow_downward, size: 18),
                 onPressed: canMoveDown ? onMoveDown : null,
-                color: canMoveDown ? AppColors.grey600 : AppColors.grey300,
+                color: canMoveDown
+                    ? (isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)
+                    : (isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
               ),
@@ -299,7 +308,7 @@ class _ContactAdminCard extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.edit_outlined, size: 20),
             onPressed: onEdit,
-            color: AppColors.grey600,
+            color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
           ),
         ],
       ),
@@ -316,22 +325,23 @@ class _Avatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     if (contact.photoUrl != null) {
       return CircleAvatar(
         radius: radius,
-        backgroundColor: AppColors.grey200,
+        backgroundColor: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
         backgroundImage: CachedNetworkImageProvider(contact.photoUrl!),
       );
     }
     return CircleAvatar(
       radius: radius,
-      backgroundColor: AppColors.primary.withValues(alpha: 0.15),
+      backgroundColor: RukuninColors.brandGreen.withValues(alpha: 0.15),
       child: Text(
         contact.initials,
         style: GoogleFonts.plusJakartaSans(
           fontSize: radius * 0.6,
           fontWeight: FontWeight.w700,
-          color: AppColors.primary,
+          color: RukuninColors.brandGreen,
         ),
       ),
     );
@@ -422,6 +432,7 @@ class _ContactFormSheetState extends ConsumerState<_ContactFormSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isEdit = widget.existing != null;
     return Padding(
       padding: EdgeInsets.only(
@@ -441,7 +452,7 @@ class _ContactFormSheetState extends ConsumerState<_ContactFormSheet> {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 17,
                 fontWeight: FontWeight.w700,
-                color: AppColors.grey800,
+                color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
               ),
             ),
             const SizedBox(height: 20),
@@ -454,7 +465,7 @@ class _ContactFormSheetState extends ConsumerState<_ContactFormSheet> {
                   children: [
                     CircleAvatar(
                       radius: 36,
-                      backgroundColor: AppColors.grey200,
+                      backgroundColor: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
                       backgroundImage: _photoBytes != null
                           ? MemoryImage(Uint8List.fromList(_photoBytes!))
                           : (widget.existing?.photoUrl != null
@@ -464,7 +475,7 @@ class _ContactFormSheetState extends ConsumerState<_ContactFormSheet> {
                       child: (_photoBytes == null &&
                               widget.existing?.photoUrl == null)
                           ? Icon(Icons.camera_alt_outlined,
-                              color: AppColors.grey500, size: 28)
+                              color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary, size: 28)
                           : null,
                     ),
                     Positioned(
@@ -472,11 +483,11 @@ class _ContactFormSheetState extends ConsumerState<_ContactFormSheet> {
                       right: 0,
                       child: Container(
                         padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
+                        decoration: const BoxDecoration(
+                          color: RukuninColors.brandGreen,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.edit, size: 12, color: Colors.black),
+                        child: const Icon(Icons.edit, size: 12, color: Colors.white),
                       ),
                     ),
                   ],
@@ -532,8 +543,8 @@ class _ContactFormSheetState extends ConsumerState<_ContactFormSheet> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.onPrimary,
+                  backgroundColor: RukuninColors.brandGreen,
+                  foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 52),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(100)),
@@ -549,7 +560,7 @@ class _ContactFormSheetState extends ConsumerState<_ContactFormSheet> {
                         height: 20,
                         width: 20,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.black),
+                            strokeWidth: 2, color: Colors.white),
                       )
                     : const Text('Simpan'),
               ),
@@ -562,7 +573,7 @@ class _ContactFormSheetState extends ConsumerState<_ContactFormSheet> {
                 width: double.infinity,
                 child: TextButton(
                   style: TextButton.styleFrom(
-                    foregroundColor: AppColors.error,
+                    foregroundColor: RukuninColors.error,
                     textStyle: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,

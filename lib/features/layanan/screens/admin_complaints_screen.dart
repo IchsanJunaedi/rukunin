@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../models/complaint_model.dart';
 import '../providers/layanan_provider.dart';
 
@@ -29,16 +30,19 @@ class _AdminComplaintsScreenState
 
   Color _statusColor(String status) {
     return switch (status) {
-      'pending'     => AppColors.warning,
-      'in_progress' => AppColors.primary,
-      'resolved'    => AppColors.success,
-      'rejected'    => AppColors.error,
-      _             => AppColors.grey400,
+      'pending'     => RukuninColors.warning,
+      'in_progress' => RukuninColors.brandGreen,
+      'resolved'    => RukuninColors.success,
+      'rejected'    => RukuninColors.error,
+      _             => Theme.of(context).brightness == Brightness.dark
+            ? RukuninColors.darkTextTertiary
+            : RukuninColors.lightTextTertiary,
     };
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final complaintsAsync = ref.watch(adminComplaintsProvider);
 
     return Scaffold(
@@ -63,12 +67,12 @@ class _AdminComplaintsScreenState
                   label: Text(_filterLabels[option] ?? option),
                   selected: selected,
                   onSelected: (_) => setState(() => _filter = option),
-                  backgroundColor: AppColors.grey200,
-                  selectedColor: AppColors.primary,
+                  backgroundColor: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
+                  selectedColor: RukuninColors.brandGreen,
                   labelStyle: GoogleFonts.plusJakartaSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: selected ? AppColors.onPrimary : AppColors.grey800,
+                    color: selected ? Colors.white : (isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                   ),
                   showCheckmark: false,
                   side: BorderSide.none,
@@ -83,8 +87,8 @@ class _AdminComplaintsScreenState
           // List
           Expanded(
             child: complaintsAsync.when(
-              loading: () => const Center(
-                child: CircularProgressIndicator(color: AppColors.primary),
+              loading: () => Center(
+                child: CircularProgressIndicator(color: RukuninColors.brandGreen),
               ),
               error: (e, _) => Center(
                 child: Padding(
@@ -92,12 +96,12 @@ class _AdminComplaintsScreenState
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.error_outline_rounded,
-                          color: AppColors.error, size: 48),
+                      Icon(Icons.error_outline_rounded,
+                          color: RukuninColors.error, size: 48),
                       const SizedBox(height: 12),
                       Text('Gagal memuat data',
                           style: GoogleFonts.plusJakartaSans(
-                              color: AppColors.grey800)),
+                              color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary)),
                       const SizedBox(height: 8),
                       TextButton(
                         onPressed: () =>
@@ -120,15 +124,15 @@ class _AdminComplaintsScreenState
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.report_problem_outlined,
-                            color: AppColors.grey400, size: 56),
+                        Icon(Icons.report_problem_outlined,
+                            color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary, size: 56),
                         const SizedBox(height: 12),
                         Text(
                           'Belum ada pengaduan',
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.grey600,
+                            color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                           ),
                         ),
                       ],
@@ -137,7 +141,7 @@ class _AdminComplaintsScreenState
                 }
 
                 return RefreshIndicator(
-                  color: AppColors.primary,
+                  color: RukuninColors.brandGreen,
                   onRefresh: () async =>
                       ref.invalidate(adminComplaintsProvider),
                   child: ListView.separated(
@@ -191,12 +195,13 @@ class _ComplaintCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final dateStr = DateFormat('d MMM y', 'id').format(complaint.createdAt);
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -219,7 +224,7 @@ class _ComplaintCard extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.grey800,
+                    color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                   ),
                 ),
               ),
@@ -248,7 +253,7 @@ class _ComplaintCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppColors.grey200,
+              color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
               borderRadius: BorderRadius.circular(100),
             ),
             child: Text(
@@ -256,7 +261,7 @@ class _ComplaintCard extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: AppColors.grey600,
+                color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
               ),
             ),
           ),
@@ -268,7 +273,7 @@ class _ComplaintCard extends StatelessWidget {
             style: GoogleFonts.plusJakartaSans(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: AppColors.grey800,
+              color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
             ),
           ),
           if (complaint.residentUnit != null) ...[
@@ -277,7 +282,7 @@ class _ComplaintCard extends StatelessWidget {
               'Unit ${complaint.residentUnit}',
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
-                color: AppColors.grey500,
+                color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
               ),
             ),
           ],
@@ -288,7 +293,7 @@ class _ComplaintCard extends StatelessWidget {
             dateStr,
             style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
-              color: AppColors.grey400,
+              color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
             ),
           ),
 
@@ -303,9 +308,9 @@ class _ComplaintCard extends StatelessWidget {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Container(
                   height: 80,
-                  color: AppColors.grey200,
-                  child: const Icon(Icons.broken_image_outlined,
-                      color: AppColors.grey400),
+                  color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
+                  child: Icon(Icons.broken_image_outlined,
+                      color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                 ),
               ),
             ),
@@ -320,7 +325,7 @@ class _ComplaintCard extends StatelessWidget {
                 minimumSize: const Size(0, 40),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
-                side: const BorderSide(color: AppColors.grey300),
+                side: BorderSide(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
                 textStyle: GoogleFonts.plusJakartaSans(
                     fontSize: 13, fontWeight: FontWeight.w600),
               ),
@@ -365,6 +370,7 @@ class _UpdateStatusSheetState extends ConsumerState<_UpdateStatusSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: EdgeInsets.only(
         left: 20,
@@ -381,7 +387,7 @@ class _UpdateStatusSheetState extends ConsumerState<_UpdateStatusSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: AppColors.grey300,
+                color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
                 borderRadius: BorderRadius.circular(100),
               ),
             ),
@@ -392,7 +398,7 @@ class _UpdateStatusSheetState extends ConsumerState<_UpdateStatusSheet> {
             style: GoogleFonts.plusJakartaSans(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: AppColors.grey800,
+              color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -434,8 +440,8 @@ class _UpdateStatusSheetState extends ConsumerState<_UpdateStatusSheet> {
             width: double.infinity,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: AppColors.onPrimary,
+                backgroundColor: RukuninColors.brandGreen,
+                foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 48),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
@@ -449,7 +455,7 @@ class _UpdateStatusSheetState extends ConsumerState<_UpdateStatusSheet> {
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                          color: AppColors.onPrimary, strokeWidth: 2),
+                          color: Colors.white, strokeWidth: 2),
                     )
                   : const Text('Simpan'),
             ),
@@ -477,7 +483,7 @@ class _UpdateStatusSheetState extends ConsumerState<_UpdateStatusSheet> {
           SnackBar(
             content: Text('Gagal update status: $e',
                 style: GoogleFonts.plusJakartaSans()),
-            backgroundColor: AppColors.error,
+            backgroundColor: RukuninColors.error,
           ),
         );
       }

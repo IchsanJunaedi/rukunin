@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/theme.dart';
+import '../../../app/tokens.dart';
 import '../../../core/supabase/supabase_client.dart';
 import '../models/community_contact_model.dart';
 import '../models/letter_request_model.dart';
@@ -35,11 +36,11 @@ final _adminPhoneProvider = FutureProvider.autoDispose<String?>((ref) async {
 
 // ── Helper ────────────────────────────────────────────────────
 Color _statusColor(String status) => switch (status) {
-      'pending' => AppColors.warning,
+      'pending' => RukuninColors.warning,
       'in_progress' => const Color(0xFF3B82F6),
-      'ready' || 'completed' || 'resolved' => AppColors.success,
-      'rejected' => AppColors.error,
-      _ => AppColors.grey500,
+      'ready' || 'completed' || 'resolved' => RukuninColors.success,
+      'rejected' => RukuninColors.error,
+      _ => RukuninColors.darkTextTertiary,
     };
 
 Future<void> _launchWhatsApp(String phone) async {
@@ -75,15 +76,16 @@ class _LayananScreenState extends ConsumerState<LayananScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
         title: const Text('Layanan & Pengaduan'),
         bottom: TabBar(
           controller: _tabController,
-          labelColor: AppColors.onPrimary,
-          unselectedLabelColor: AppColors.grey500,
-          indicatorColor: AppColors.primary,
+          labelColor: Colors.white,
+          unselectedLabelColor: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
+          indicatorColor: RukuninColors.brandGreen,
           labelStyle: GoogleFonts.plusJakartaSans(
             fontSize: 14,
             fontWeight: FontWeight.w700,
@@ -117,6 +119,7 @@ class _SuratTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final requestsAsync = ref.watch(myLetterRequestsProvider);
     final adminPhoneAsync = ref.watch(_adminPhoneProvider);
 
@@ -131,7 +134,7 @@ class _SuratTab extends ConsumerWidget {
             style: GoogleFonts.plusJakartaSans(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: AppColors.grey800,
+              color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
             ),
           ),
           const SizedBox(height: 12),
@@ -146,7 +149,7 @@ class _SuratTab extends ConsumerWidget {
                       'Belum ada permohonan aktif',
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 14,
-                        color: AppColors.grey500,
+                        color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                       ),
                     ),
                   ),
@@ -169,7 +172,7 @@ class _SuratTab extends ConsumerWidget {
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (e, _) => Text(
               'Error: $e',
-              style: GoogleFonts.plusJakartaSans(color: AppColors.error),
+              style: GoogleFonts.plusJakartaSans(color: RukuninColors.error),
             ),
           ),
 
@@ -181,7 +184,7 @@ class _SuratTab extends ConsumerWidget {
             style: GoogleFonts.plusJakartaSans(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: AppColors.grey800,
+              color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
             ),
           ),
           const SizedBox(height: 12),
@@ -209,6 +212,7 @@ class _PengaduanTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final complaintsAsync = ref.watch(myComplaintsProvider);
 
     return RefreshIndicator(
@@ -218,8 +222,8 @@ class _PengaduanTab extends ConsumerWidget {
         children: [
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: AppColors.onPrimary,
+              backgroundColor: RukuninColors.brandGreen,
+              foregroundColor: Colors.white,
               minimumSize: const Size(double.infinity, 52),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(100)),
@@ -243,13 +247,13 @@ class _PengaduanTab extends ConsumerWidget {
                     child: Column(
                       children: [
                         Icon(Icons.inbox_outlined,
-                            size: 48, color: AppColors.grey300),
+                            size: 48, color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
                         const SizedBox(height: 12),
                         Text(
                           'Belum ada pengaduan',
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 14,
-                            color: AppColors.grey500,
+                            color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                           ),
                         ),
                       ],
@@ -269,7 +273,7 @@ class _PengaduanTab extends ConsumerWidget {
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (e, _) => Text(
               'Error: $e',
-              style: GoogleFonts.plusJakartaSans(color: AppColors.error),
+              style: GoogleFonts.plusJakartaSans(color: RukuninColors.error),
             ),
           ),
         ],
@@ -287,6 +291,7 @@ class _RequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final number = 'SRT-${(index + 1).toString().padLeft(3, '0')}';
     final dateStr =
         DateFormat('d MMM y', 'id').format(request.createdAt);
@@ -295,7 +300,7 @@ class _RequestCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -316,7 +321,7 @@ class _RequestCard extends StatelessWidget {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.grey500,
+                  color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                 ),
               ),
               _StatusBadge(status: request.status),
@@ -328,7 +333,7 @@ class _RequestCard extends StatelessWidget {
             style: GoogleFonts.plusJakartaSans(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: AppColors.grey800,
+              color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
             ),
           ),
           const SizedBox(height: 4),
@@ -336,7 +341,7 @@ class _RequestCard extends StatelessWidget {
             dateStr,
             style: GoogleFonts.plusJakartaSans(
               fontSize: 12,
-              color: AppColors.grey500,
+              color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
             ),
           ),
           const SizedBox(height: 12),
@@ -344,7 +349,7 @@ class _RequestCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: request.progressPercent,
-              backgroundColor: AppColors.grey200,
+              backgroundColor: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
               color: color,
               minHeight: 6,
             ),
@@ -363,13 +368,14 @@ class _ComplaintCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final dateStr =
         DateFormat('d MMM y', 'id').format(complaint.createdAt);
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -391,7 +397,7 @@ class _ComplaintCard extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.grey800,
+                    color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -408,7 +414,7 @@ class _ComplaintCard extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppColors.grey200,
+                  color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: Text(
@@ -416,7 +422,7 @@ class _ComplaintCard extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.grey600,
+                    color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                   ),
                 ),
               ),
@@ -425,7 +431,7 @@ class _ComplaintCard extends StatelessWidget {
                 dateStr,
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 12,
-                  color: AppColors.grey500,
+                  color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                 ),
               ),
             ],
@@ -533,12 +539,13 @@ class _GridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () =>
           context.push('/resident/layanan/permohonan?type=$type'),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -554,10 +561,10 @@ class _GridItem extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
+                color: RukuninColors.brandGreen.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: AppColors.primary, size: 24),
+              child: Icon(icon, color: RukuninColors.brandGreen, size: 24),
             ),
             const SizedBox(height: 8),
             Text(
@@ -565,7 +572,7 @@ class _GridItem extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: AppColors.grey800,
+                color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
               ),
             ),
           ],
@@ -581,26 +588,27 @@ class _KontakTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final contactsAsync = ref.watch(communityContactsProvider);
 
     return RefreshIndicator(
       onRefresh: () async => ref.invalidate(communityContactsProvider),
       child: contactsAsync.when(
         data: (contacts) => contacts.isEmpty
-            ? _buildEmpty()
-            : _buildList(contacts),
+            ? _buildEmpty(isDark)
+            : _buildList(contacts, isDark),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
           child: Text(
             'Error: $e',
-            style: GoogleFonts.plusJakartaSans(color: AppColors.error),
+            style: GoogleFonts.plusJakartaSans(color: RukuninColors.error),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildEmpty() {
+  Widget _buildEmpty(bool isDark) {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
@@ -608,13 +616,13 @@ class _KontakTab extends ConsumerWidget {
         Center(
           child: Column(
             children: [
-              Icon(Icons.people_outline, size: 48, color: AppColors.grey300),
+              Icon(Icons.people_outline, size: 48, color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
               const SizedBox(height: 12),
               Text(
                 'Belum ada informasi kontak',
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
-                  color: AppColors.grey500,
+                  color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                 ),
               ),
             ],
@@ -624,7 +632,7 @@ class _KontakTab extends ConsumerWidget {
     );
   }
 
-  Widget _buildList(List<CommunityContactModel> contacts) {
+  Widget _buildList(List<CommunityContactModel> contacts, bool isDark) {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
@@ -633,7 +641,7 @@ class _KontakTab extends ConsumerWidget {
           style: GoogleFonts.plusJakartaSans(
             fontSize: 16,
             fontWeight: FontWeight.w700,
-            color: AppColors.grey800,
+            color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
           ),
         ),
         const SizedBox(height: 12),
@@ -654,10 +662,11 @@ class _KontakCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -669,7 +678,7 @@ class _KontakCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _buildAvatar(),
+          _buildAvatar(isDark),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
@@ -680,7 +689,7 @@ class _KontakCard extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.grey800,
+                    color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -688,7 +697,7 @@ class _KontakCard extends StatelessWidget {
                   contact.jabatan,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 12,
-                    color: AppColors.grey500,
+                    color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                   ),
                 ),
               ],
@@ -717,23 +726,23 @@ class _KontakCard extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar() {
+  Widget _buildAvatar(bool isDark) {
     if (contact.photoUrl != null) {
       return CircleAvatar(
         radius: 26,
-        backgroundColor: AppColors.grey200,
+        backgroundColor: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
         backgroundImage: CachedNetworkImageProvider(contact.photoUrl!),
       );
     }
     return CircleAvatar(
       radius: 26,
-      backgroundColor: AppColors.primary.withValues(alpha: 0.15),
+      backgroundColor: RukuninColors.brandGreen.withValues(alpha: 0.15),
       child: Text(
         contact.initials,
         style: GoogleFonts.plusJakartaSans(
           fontSize: 14,
           fontWeight: FontWeight.w700,
-          color: AppColors.primary,
+          color: RukuninColors.brandGreen,
         ),
       ),
     );
@@ -751,7 +760,7 @@ class _HelpBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        color: AppColors.primary,
+        color: RukuninColors.brandGreen,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -765,7 +774,7 @@ class _HelpBanner extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.onPrimary,
+                    color: Colors.white,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -773,7 +782,7 @@ class _HelpBanner extends StatelessWidget {
                   'Hubungi admin via WhatsApp',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 12,
-                    color: AppColors.onPrimary.withValues(alpha: 0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -782,8 +791,8 @@ class _HelpBanner extends StatelessWidget {
           const SizedBox(width: 12),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.onPrimary,
-              foregroundColor: AppColors.primary,
+              backgroundColor: Colors.white,
+              foregroundColor: RukuninColors.brandGreen,
               padding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               minimumSize: Size.zero,
