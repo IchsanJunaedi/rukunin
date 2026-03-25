@@ -326,7 +326,16 @@ rtk git commit -m "feat(layanan): update status colors and labels for verified s
 **Files:**
 - Modify: `lib/features/layanan/providers/layanan_provider.dart`
 
-- [ ] **Step 1: Update `createLetterRequest()` untuk terima `formData` dan `applicantName`**
+- [ ] **Step 1: Hapus branch `'ready'` dari `updateLetterRequestStatus()`**
+
+Setelah migration, status `'ready'` tidak lagi valid di DB. Hapus branch if-block untuk `newStatus == 'ready'` (sekitar line 204-222) dari method `updateLetterRequestStatus`. Ganti notif body dengan satu baris generic saja:
+
+```dart
+// Ganti blok if (newStatus == 'ready') { ... } dengan:
+String notifBody = 'Status permohonan surat kamu diperbarui: ${letterRequestStatusLabels[newStatus] ?? newStatus}';
+```
+
+- [ ] **Step 2: Update `createLetterRequest()` untuk terima `formData` dan `applicantName`**
 
 Ganti method `createLetterRequest` yang ada:
 
@@ -352,7 +361,7 @@ Future<void> createLetterRequest({
 }
 ```
 
-- [ ] **Step 2: Tambah helper `_computeAge()` sebagai static method di class `LayananService`**
+- [ ] **Step 3: Tambah helper `_computeAge()` sebagai static method di class `LayananService`**
 
 ```dart
 static String _computeAge(String? ttl) {
@@ -375,7 +384,7 @@ static String _computeAge(String? ttl) {
 }
 ```
 
-- [ ] **Step 3: Tambah helper `_extractPurpose()` sebagai static method**
+- [ ] **Step 4: Tambah helper `_extractPurpose()` sebagai static method**
 
 ```dart
 static String? _extractPurpose(String letterType, Map<String, dynamic> formData) {
@@ -385,7 +394,7 @@ static String? _extractPurpose(String letterType, Map<String, dynamic> formData)
 }
 ```
 
-- [ ] **Step 4: Tambah method `rejectRequest()`**
+- [ ] **Step 5: Tambah method `rejectRequest()`**
 
 ```dart
 Future<void> rejectRequest({
@@ -418,7 +427,7 @@ Future<void> rejectRequest({
 }
 ```
 
-- [ ] **Step 5: Tambah method `verifyAndGenerateLetter()`**
+- [ ] **Step 6: Tambah method `verifyAndGenerateLetter()`**
 
 Tambahkan import di atas file:
 ```dart
@@ -536,10 +545,11 @@ Future<void> verifyAndGenerateLetter({
 
   ref.invalidate(adminLetterRequestsProvider);
   ref.invalidate(myLetterRequestsProvider);
+  ref.invalidate(myLettersProvider); // resident document list di ResidentLettersScreen
 }
 ```
 
-- [ ] **Step 6: Pastikan tidak ada compile error**
+- [ ] **Step 7: Pastikan tidak ada compile error**
 
 ```bash
 flutter analyze lib/features/layanan/providers/layanan_provider.dart
@@ -547,7 +557,7 @@ flutter analyze lib/features/layanan/providers/layanan_provider.dart
 
 Expected: No issues found.
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 8: Commit**
 
 ```bash
 rtk git add lib/features/layanan/providers/layanan_provider.dart
@@ -669,7 +679,7 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
     'KK baru', 'Perbaikan data KK',
   ];
   static const _alasanSktmOptions = ['Pendidikan', 'Kesehatan / Pengobatan', 'Lainnya'];
-  static const _hubunganPelapor = ['Anak', 'Istri', 'Suami', 'Orang Tua', 'Saudara', 'Lainnya'];
+  static const _hubunganPelaporOptions = ['Anak', 'Istri', 'Suami', 'Orang Tua', 'Saudara', 'Lainnya'];
 
   @override
   void initState() {
@@ -921,7 +931,7 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
           _textField(_ttlAlmarhumCtrl, 'TTL Almarhum *', hint: 'Contoh: Solo, 12-12-1950'),
           _datePickerField('Tanggal Meninggal *'),
           _textField(_penyebabCtrl, 'Penyebab Kematian *', hint: 'Contoh: Sakit, Kecelakaan'),
-          _dropdownField('Hubungan Pelapor dengan Almarhum *', _RequestLetterScreenState._hubunganPelapor, _hubunganPelapor, (v) => setState(() => _hubunganPelapor = v)),
+          _dropdownField('Hubungan Pelapor dengan Almarhum *', _RequestLetterScreenState._hubunganPelaporOptions, _hubunganPelapor, (v) => setState(() => _hubunganPelapor = v)),
         ];
       case 'custom':
       default:
@@ -1064,14 +1074,7 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
   Widget _datePickerField(String label) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: TextFormField(
-        readOnly: true,
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-          suffixIcon: const Icon(Icons.calendar_today_outlined, size: 18),
-        ),
-        controller: TextEditingController(text: _tanggalMeninggal ?? ''),
+      child: InkWell(
         onTap: () async {
           final picked = await showDatePicker(
             context: context,
@@ -1085,6 +1088,17 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
             });
           }
         },
+        child: InputDecorator(
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+            suffixIcon: const Icon(Icons.calendar_today_outlined, size: 18),
+          ),
+          child: Text(
+            _tanggalMeninggal ?? 'Pilih tanggal',
+            style: GoogleFonts.plusJakartaSans(fontSize: 14, color: _tanggalMeninggal == null ? Colors.grey : null),
+          ),
+        ),
       ),
     );
   }
@@ -1235,15 +1249,11 @@ rtk git commit -m "feat(layanan): update AdminRequestsScreen - Verifikasi button
 - [ ] **Step 1: Buat file baru**
 
 ```dart
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:file_saver/file_saver.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../../app/tokens.dart';
-import '../../../core/utils/letter_pdf_generator.dart';
 import '../models/letter_request_model.dart';
 import '../providers/layanan_provider.dart';
 
@@ -1697,16 +1707,22 @@ import '../features/layanan/models/letter_request_model.dart';
 
 - [ ] **Step 5: Tambah shortcut ke ResidentLettersScreen dari layanan_screen.dart**
 
-Di `layanan_screen.dart`, cari bagian di mana status `verified` ditampilkan di card permohonan surat (di `_buildLetterRequestCard` atau sejenisnya). Tambahkan tombol shortcut jika status adalah `verified`:
+Di `layanan_screen.dart`, cari class `_RequestCard` (atau widget yang merender tiap permohonan surat di tab surat warga). Tambahkan tombol shortcut **setelah `LinearProgressIndicator`** dan sebelum penutup `Column`:
 
 ```dart
-// Di dalam card permohonan jika status == 'verified'
-if (request.status == 'verified' && request.letterId != null)
-  TextButton.icon(
-    onPressed: () => context.push('/resident/dokumen-saya'),
-    icon: const Icon(Icons.download_outlined, size: 16),
-    label: Text('Lihat Dokumen', style: GoogleFonts.plusJakartaSans(fontSize: 12)),
+// Tambahkan setelah blok LinearProgressIndicator yang sudah ada
+if (request.status == 'verified' && request.letterId != null) ...[
+  const SizedBox(height: 8),
+  Align(
+    alignment: Alignment.centerLeft,
+    child: TextButton.icon(
+      onPressed: () => context.push('/resident/dokumen-saya'),
+      icon: const Icon(Icons.download_outlined, size: 16),
+      label: Text('Lihat Dokumen', style: GoogleFonts.plusJakartaSans(fontSize: 12)),
+      style: TextButton.styleFrom(foregroundColor: RukuninColors.brandGreen, padding: EdgeInsets.zero),
+    ),
   ),
+],
 ```
 
 - [ ] **Step 6: Pastikan tidak ada compile error di seluruh proyek**
