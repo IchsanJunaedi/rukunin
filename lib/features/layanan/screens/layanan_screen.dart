@@ -352,6 +352,18 @@ class _RequestCard extends StatelessWidget {
               minHeight: 6,
             ),
           ),
+          if (request.status == 'verified' && request.letterId != null) ...[
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: () => context.push('/resident/dokumen-saya'),
+                icon: const Icon(Icons.download_outlined, size: 16),
+                label: Text('Lihat Dokumen', style: GoogleFonts.plusJakartaSans(fontSize: 12)),
+                style: TextButton.styleFrom(foregroundColor: RukuninColors.brandGreen, padding: EdgeInsets.zero),
+              ),
+            ),
+          ],
         ],
       ),
     );

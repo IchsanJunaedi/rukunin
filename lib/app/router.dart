@@ -46,6 +46,9 @@ import '../features/layanan/screens/complaint_form_screen.dart';
 import '../features/layanan/screens/admin_requests_screen.dart';
 import '../features/layanan/screens/admin_complaints_screen.dart';
 import '../features/layanan/screens/admin_contacts_screen.dart';
+import '../features/layanan/screens/verify_request_screen.dart';
+import '../features/layanan/models/letter_request_model.dart';
+import '../features/letters/screens/resident_letters_screen.dart';
 import '../shell/admin_shell.dart';
 import '../shell/resident_shell.dart';
 
@@ -338,6 +341,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const AdminRequestsScreen(),
       ),
       GoRoute(
+        path: '/admin/layanan-verifikasi/:id',
+        builder: (context, state) {
+          final request = state.extra as LetterRequestModel;
+          return VerifyRequestScreen(request: request);
+        },
+      ),
+      GoRoute(
         path: '/admin/pengaduan',
         builder: (context, state) => const AdminComplaintsScreen(),
       ),
@@ -347,6 +357,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
 
       // Layanan full-screen routes (no bottom nav)
+      GoRoute(
+        path: '/resident/dokumen-saya',
+        builder: (context, state) => const ResidentLettersScreen(),
+      ),
       GoRoute(
         path: '/resident/layanan/permohonan',
         builder: (context, state) {
