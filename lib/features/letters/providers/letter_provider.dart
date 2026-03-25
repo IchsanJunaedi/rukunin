@@ -150,3 +150,18 @@ class GenerateLetterNotifier extends Notifier<GenerateLetterState> {
 final generateLetterProvider = NotifierProvider<GenerateLetterNotifier, GenerateLetterState>(
   GenerateLetterNotifier.new,
 );
+
+// Resident: surat saya yang sudah selesai (diisi di Task 5)
+final myLettersProvider = FutureProvider.autoDispose<List<LetterModel>>((ref) async {
+  final client = ref.watch(supabaseClientProvider);
+  final userId = client.auth.currentUser?.id;
+  if (userId == null) return [];
+
+  final response = await client
+      .from('letters')
+      .select('*, profiles:resident_id(full_name, unit_number)')
+      .eq('resident_id', userId)
+      .order('created_at', ascending: false);
+
+  return (response as List).map((e) => LetterModel.fromMap(e)).toList();
+});

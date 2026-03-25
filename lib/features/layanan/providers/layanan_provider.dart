@@ -2,10 +2,12 @@ import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/supabase/supabase_client.dart';
+import '../../../core/utils/letter_pdf_generator.dart';
 import '../models/letter_request_model.dart';
 import '../models/complaint_model.dart';
 import '../models/community_contact_model.dart';
 import '../../notifications/providers/notifications_provider.dart';
+import '../../letters/providers/letter_provider.dart';
 
 // ── Resident: permohonan surat saya ──────────────────────────
 final myLetterRequestsProvider =
@@ -147,16 +149,18 @@ class LayananService {
     required String communityId,
     required String residentId,
     required String letterType,
+    required String applicantName,
+    required Map<String, dynamic> formData,
     String? purpose,
-    String? notes,
   }) async {
     final client = ref.read(supabaseClientProvider);
     await client.from('letter_requests').insert({
       'community_id': communityId,
       'resident_id': residentId,
       'letter_type': letterType,
-      'purpose': purpose,
-      'notes': notes,
+      'applicant_name': applicantName,
+      'form_data': formData,
+      if (purpose != null) 'purpose': purpose,
     });
     ref.invalidate(myLetterRequestsProvider);
   }
@@ -200,26 +204,6 @@ class LayananService {
     }).eq('id', requestId);
 
     String notifBody = 'Status permohonan surat kamu diperbarui: ${letterRequestStatusLabels[newStatus] ?? newStatus}';
-
-    if (newStatus == 'ready') {
-      try {
-        final adminData = await client
-            .from('profiles')
-            .select('phone')
-            .eq('community_id', communityId)
-            .eq('role', 'admin')
-            .limit(1)
-            .maybeSingle();
-        final adminPhone = adminData?['phone'];
-        if (adminPhone != null && adminPhone.toString().isNotEmpty) {
-          notifBody = 'Surat Anda sudah siap diambil. Silakan kontak admin di nomor: $adminPhone';
-        } else {
-          notifBody = 'Surat Anda sudah siap diambil. Silakan temui admin/pengurus RW.';
-        }
-      } catch (_) {
-        notifBody = 'Surat Anda sudah siap diambil. Silakan temui admin/pengurus RW.';
-      }
-    }
 
     // Gunakan helper yang sudah ada di notifications_provider.dart
     await insertNotification(
@@ -353,5 +337,171 @@ class LayananService {
           fileOptions: FileOptions(upsert: true),
         );
     return client.storage.from('contact_photos').getPublicUrl(path);
+  }
+
+  // ── Helpers ────────────────────────────────────────────────────
+
+  static String _computeAge(String? ttl) {
+    if (ttl == null || ttl.isEmpty) return '-';
+    final parts = ttl.split(',');
+    if (parts.length < 2) return '-';
+    try {
+      final dateParts = parts.last.trim().split('-');
+      if (dateParts.length != 3) return '-';
+      final dob = DateTime(
+        int.parse(dateParts[2]),
+        int.parse(dateParts[1]),
+        int.parse(dateParts[0]),
+      );
+      final age = DateTime.now().difference(dob).inDays ~/ 365;
+      return '$age tahun';
+    } catch (_) {
+      return '-';
+    }
+  }
+
+  static String? _extractPurpose(String letterType, Map<String, dynamic> formData) {
+    if (letterType == 'kematian') return null;
+    if (letterType == 'sktm') return formData['alasan'] as String?;
+    return formData['keperluan'] as String?;
+  }
+
+  // ── Mutations: Admin verifikasi & tolak ────────────────────────
+
+  Future<void> rejectRequest({
+    required String requestId,
+    required String residentId,
+    required String communityId,
+    required String alasan,
+  }) async {
+    final client = ref.read(supabaseClientProvider);
+    await client
+        .from('letter_requests')
+        .update({
+          'status': 'rejected',
+          'admin_notes': alasan,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', requestId)
+        .eq('community_id', communityId);
+
+    await insertNotification(
+      client: client,
+      userId: residentId,
+      communityId: communityId,
+      type: 'letter_request',
+      title: 'Permohonan Surat Ditolak',
+      body: 'Permohonan surat kamu ditolak. Alasan: $alasan',
+    );
+    ref.invalidate(adminLetterRequestsProvider);
+    ref.invalidate(myLetterRequestsProvider);
+  }
+
+  Future<void> verifyAndGenerateLetter({
+    required LetterRequestModel request,
+  }) async {
+    final client = ref.read(supabaseClientProvider);
+
+    // 1. Fetch profil admin untuk community_id
+    final adminProfile = await client
+        .from('profiles')
+        .select('community_id')
+        .eq('id', client.auth.currentUser!.id)
+        .single();
+    final communityId = adminProfile['community_id'] as String;
+
+    // 2. Fetch data komunitas (termasuk rt_number dan leader_name)
+    final communityData = await client
+        .from('communities')
+        .select('name, rt_number, rw_number, kelurahan, kecamatan, kabupaten, province, leader_name')
+        .eq('id', communityId)
+        .single();
+
+    final fd = request.formData ?? {};
+    final letterType = request.letterType;
+
+    // 3. Mapping form_data → getTemplate() parameters
+    final isKematian = letterType == 'kematian';
+
+    final residentNik = isKematian
+        ? (fd['nik_almarhum'] as String? ?? '-')
+        : (fd['nik'] as String? ?? '-');
+
+    final ttlRaw = isKematian
+        ? fd['ttl_almarhum'] as String?
+        : fd['ttl'] as String?;
+    final residentAge = _computeAge(ttlRaw);
+
+    final noGenderTypes = {'ktp_kk', 'sktm', 'kematian', 'custom'};
+    final residentGender = noGenderTypes.contains(letterType)
+        ? '-'
+        : (fd['gender'] as String? ?? '-');
+
+    final rw = communityData['rw_number']?.toString() ?? '01';
+    final rt = communityData['rt_number']?.toString() ?? '01';
+    final kelurahan = communityData['kelurahan'] as String? ?? '';
+    final kecamatan = communityData['kecamatan'] as String? ?? '';
+    final kabupaten = communityData['kabupaten'] as String? ?? '';
+
+    final residentAddress = 'RT $rt/RW $rw, Kel. $kelurahan, Kec. $kecamatan, $kabupaten';
+    final purpose = _extractPurpose(letterType, fd);
+
+    final generatedContent = LetterPdfGenerator.getTemplate(
+      letterType: letterType,
+      residentName: request.applicantName ?? '-',
+      residentNik: residentNik,
+      residentAge: residentAge,
+      residentGender: residentGender,
+      residentAddress: residentAddress,
+      rtNumber: rt,
+      rwNumber: rw,
+      village: kelurahan,
+      district: kecamatan,
+      city: kabupaten,
+      purpose: purpose,
+    );
+
+    // 4. Generate nomor surat
+    final now = DateTime.now();
+    final roman = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+    final letterNumber = '${now.millisecondsSinceEpoch % 1000}/RW-$rw/${roman[now.month - 1]}/${now.year}';
+
+    // 5. Insert ke tabel letters
+    final inserted = await client.from('letters').insert({
+      'community_id': communityId,
+      'resident_id': request.residentId,
+      'letter_type': letterType,
+      'letter_number': letterNumber,
+      'purpose': purpose,
+      'generated_content': generatedContent,
+      'status': 'done',
+    }).select('id').single();
+
+    final letterId = inserted['id'] as String;
+
+    // 6. Update status request ke verified
+    await client
+        .from('letter_requests')
+        .update({
+          'status': 'verified',
+          'letter_id': letterId,
+          'updated_at': now.toIso8601String(),
+        })
+        .eq('id', request.id)
+        .eq('community_id', communityId);
+
+    // 7. Notifikasi warga
+    await insertNotification(
+      client: client,
+      userId: request.residentId,
+      communityId: communityId,
+      type: 'letter_request',
+      title: 'Surat Kamu Sudah Siap',
+      body: 'Surat ${request.typeLabel} kamu sudah diverifikasi dan siap diunduh.',
+    );
+
+    ref.invalidate(adminLetterRequestsProvider);
+    ref.invalidate(myLetterRequestsProvider);
+    ref.invalidate(myLettersProvider); // resident document list di ResidentLettersScreen
   }
 }
