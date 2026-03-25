@@ -1,7 +1,6 @@
 const letterRequestStatusLabels = {
-  'pending': 'Menunggu',
-  'in_progress': 'Diproses',
-  'ready': 'Siap Diambil',
+  'pending': 'Menunggu Verifikasi',
+  'verified': 'Surat Siap',
   'completed': 'Selesai',
   'rejected': 'Ditolak',
 };
@@ -31,6 +30,8 @@ class LetterRequestModel {
   final DateTime updatedAt;
   final String? residentName;
   final String? residentUnit;
+  final Map<String, dynamic>? formData;
+  final String? applicantName;
 
   const LetterRequestModel({
     required this.id,
@@ -46,6 +47,8 @@ class LetterRequestModel {
     required this.updatedAt,
     this.residentName,
     this.residentUnit,
+    this.formData,
+    this.applicantName,
   });
 
   factory LetterRequestModel.fromMap(Map<String, dynamic> map) {
@@ -64,6 +67,8 @@ class LetterRequestModel {
       updatedAt: DateTime.parse(map['updated_at'] as String),
       residentName: profile?['full_name'] as String?,
       residentUnit: profile?['unit_number'] as String?,
+      formData: map['form_data'] as Map<String, dynamic>?,
+      applicantName: map['applicant_name'] as String?,
     );
   }
 
@@ -72,10 +77,9 @@ class LetterRequestModel {
   bool get isActive => status != 'completed' && status != 'rejected';
 
   double get progressPercent => switch (status) {
-    'pending'     => 0.25,
-    'in_progress' => 0.60,
-    'ready'       => 0.85,
-    'completed'   => 1.0,
-    _             => 0.0,
+    'pending'   => 0.25,
+    'verified'  => 0.9,
+    'completed' => 1.0,
+    _           => 0.0,
   };
 }

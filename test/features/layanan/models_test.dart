@@ -5,7 +5,7 @@ import 'package:rukunin/features/layanan/models/community_contact_model.dart';
 
 void main() {
   group('LetterRequestModel', () {
-    final map = {
+    final baseMap = {
       'id': 'req-1',
       'community_id': 'com-1',
       'resident_id': 'res-1',
@@ -15,31 +15,44 @@ void main() {
       'status': 'pending',
       'admin_notes': null,
       'letter_id': null,
-      'created_at': '2026-03-19T10:00:00.000Z',
-      'updated_at': '2026-03-19T10:00:00.000Z',
+      'form_data': {'nik': '3201xxx', 'ttl': 'Jakarta, 01-01-1990', 'gender': 'Laki-laki', 'agama': 'Islam', 'keperluan': 'Melamar kerja'},
+      'applicant_name': 'Budi Santoso',
+      'created_at': '2026-03-25T10:00:00.000Z',
+      'updated_at': '2026-03-25T10:00:00.000Z',
       'profiles': {'full_name': 'Budi Santoso', 'unit_number': '12'},
     };
 
-    test('fromMap parses correctly', () {
-      final model = LetterRequestModel.fromMap(map);
+    test('fromMap parses new fields correctly', () {
+      final model = LetterRequestModel.fromMap(baseMap);
       expect(model.id, 'req-1');
-      expect(model.letterType, 'domisili');
-      expect(model.status, 'pending');
-      expect(model.residentName, 'Budi Santoso');
+      expect(model.applicantName, 'Budi Santoso');
+      expect(model.formData, isNotNull);
+      expect(model.formData!['nik'], '3201xxx');
     });
 
-    test('progressPercent returns correct value', () {
-      expect(LetterRequestModel.fromMap({...map, 'status': 'pending'}).progressPercent, 0.25);
-      expect(LetterRequestModel.fromMap({...map, 'status': 'in_progress'}).progressPercent, 0.60);
-      expect(LetterRequestModel.fromMap({...map, 'status': 'ready'}).progressPercent, 0.85);
-      expect(LetterRequestModel.fromMap({...map, 'status': 'completed'}).progressPercent, 1.0);
-      expect(LetterRequestModel.fromMap({...map, 'status': 'rejected'}).progressPercent, 0.0);
+    test('fromMap handles null form_data and applicant_name', () {
+      final map = {...baseMap, 'form_data': null, 'applicant_name': null};
+      final model = LetterRequestModel.fromMap(map);
+      expect(model.formData, isNull);
+      expect(model.applicantName, isNull);
     });
 
-    test('isActive returns true only for non-terminal statuses', () {
-      expect(LetterRequestModel.fromMap({...map, 'status': 'pending'}).isActive, true);
-      expect(LetterRequestModel.fromMap({...map, 'status': 'completed'}).isActive, false);
-      expect(LetterRequestModel.fromMap({...map, 'status': 'rejected'}).isActive, false);
+    test('progressPercent reflects new status flow', () {
+      expect(LetterRequestModel.fromMap({...baseMap, 'status': 'pending'}).progressPercent, 0.25);
+      expect(LetterRequestModel.fromMap({...baseMap, 'status': 'verified'}).progressPercent, 0.9);
+      expect(LetterRequestModel.fromMap({...baseMap, 'status': 'completed'}).progressPercent, 1.0);
+      expect(LetterRequestModel.fromMap({...baseMap, 'status': 'rejected'}).progressPercent, 0.0);
+    });
+
+    test('isActive returns true for pending and verified', () {
+      expect(LetterRequestModel.fromMap({...baseMap, 'status': 'pending'}).isActive, true);
+      expect(LetterRequestModel.fromMap({...baseMap, 'status': 'verified'}).isActive, true);
+      expect(LetterRequestModel.fromMap({...baseMap, 'status': 'completed'}).isActive, false);
+      expect(LetterRequestModel.fromMap({...baseMap, 'status': 'rejected'}).isActive, false);
+    });
+
+    test('typeLabel returns correct label', () {
+      expect(LetterRequestModel.fromMap(baseMap).typeLabel, 'Keterangan Domisili');
     });
   });
 
