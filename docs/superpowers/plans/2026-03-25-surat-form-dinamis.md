@@ -1481,12 +1481,10 @@ rtk git commit -m "feat(layanan): create VerifyRequestScreen with ACC and reject
 - [ ] **Step 1: Buat file baru**
 
 ```dart
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:file_saver/file_saver.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/tokens.dart';
