@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import '../../../app/theme.dart';
 import '../../../app/tokens.dart';
 import '../models/letter_request_model.dart';
 import '../providers/layanan_provider.dart';
@@ -19,23 +18,22 @@ class AdminRequestsScreen extends ConsumerStatefulWidget {
 class _AdminRequestsScreenState extends ConsumerState<AdminRequestsScreen> {
   String _filter = 'semua';
 
-  static const _filterOptions = ['semua', 'pending', 'in_progress', 'ready', 'completed'];
+  static const _filterOptions = ['semua', 'pending', 'verified', 'completed', 'rejected'];
   static const _filterLabels = {
     'semua': 'Semua',
     'pending': 'Menunggu',
-    'in_progress': 'Diproses',
-    'ready': 'Siap',
+    'verified': 'Surat Siap',
     'completed': 'Selesai',
+    'rejected': 'Ditolak',
   };
 
   Color _statusColor(String status) {
     return switch (status) {
-      'pending'     => RukuninColors.warning,
-      'in_progress' => RukuninColors.brandGreen,
-      'ready'       => RukuninColors.success,
-      'completed'   => RukuninColors.darkTextTertiary,
-      'rejected'    => RukuninColors.error,
-      _             => RukuninColors.darkTextTertiary,
+      'pending'   => RukuninColors.warning,
+      'verified'  => RukuninColors.success,
+      'completed' => RukuninColors.darkTextTertiary,
+      'rejected'  => RukuninColors.error,
+      _           => RukuninColors.darkTextTertiary,
     };
   }
 
@@ -206,8 +204,6 @@ class _AdminRequestsScreenState extends ConsumerState<AdminRequestsScreen> {
                         request: request,
                         index: index,
                         statusColor: _statusColor(request.status),
-                        onUpdateStatus: () =>
-                            _showUpdateStatusSheet(context, request),
                       );
                     },
                   ),
@@ -220,17 +216,6 @@ class _AdminRequestsScreenState extends ConsumerState<AdminRequestsScreen> {
     );
   }
 
-  void _showUpdateStatusSheet(
-      BuildContext context, LetterRequestModel request) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => _UpdateStatusSheet(request: request),
-    );
-  }
 }
 
 // ─────────────────────────────────────────────────────
@@ -240,13 +225,11 @@ class _RequestCard extends StatelessWidget {
   final LetterRequestModel request;
   final int index;
   final Color statusColor;
-  final VoidCallback onUpdateStatus;
 
   const _RequestCard({
     required this.request,
     required this.index,
     required this.statusColor,
-    required this.onUpdateStatus,
   });
 
   @override
@@ -382,36 +365,12 @@ class _RequestCard extends StatelessWidget {
                     backgroundColor: RukuninColors.brandGreen,
                     foregroundColor: Colors.white,
                     minimumSize: const Size(0, 40),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     elevation: 0,
-                    textStyle: GoogleFonts.plusJakartaSans(
-                        fontSize: 13, fontWeight: FontWeight.w700),
+                    textStyle: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w700),
                   ),
-                  onPressed: () {
-                    context.push('/admin/surat/buat', extra: {
-                      'prefilledResidentId': request.residentId,
-                      'prefilledLetterType': request.letterType,
-                      'prefilledPurpose': request.purpose,
-                      'fromRequestId': request.id,
-                    });
-                  },
-                  child: const Text('Buat Surat'),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(0, 40),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    side: BorderSide(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
-                    textStyle: GoogleFonts.plusJakartaSans(
-                        fontSize: 13, fontWeight: FontWeight.w600),
-                  ),
-                  onPressed: onUpdateStatus,
-                  child: const Text('Update Status'),
+                  onPressed: () => context.push('/admin/layanan-verifikasi/${request.id}', extra: request),
+                  child: const Text('Verifikasi'),
                 ),
               ),
             ],
@@ -422,157 +381,3 @@ class _RequestCard extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────
-//  UPDATE STATUS SHEET
-// ─────────────────────────────────────────────────────
-class _UpdateStatusSheet extends ConsumerStatefulWidget {
-  final LetterRequestModel request;
-  const _UpdateStatusSheet({required this.request});
-
-  @override
-  ConsumerState<_UpdateStatusSheet> createState() =>
-      _UpdateStatusSheetState();
-}
-
-class _UpdateStatusSheetState extends ConsumerState<_UpdateStatusSheet> {
-  String _selectedStatus = 'in_progress';
-  final _notesCtrl = TextEditingController();
-  bool _saving = false;
-
-  static const _statusOptions = [
-    ('in_progress', 'Diproses'),
-    ('ready', 'Siap Diambil'),
-    ('completed', 'Selesai'),
-    ('rejected', 'Ditolak'),
-  ];
-
-  @override
-  void dispose() {
-    _notesCtrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 20,
-        right: 20,
-        top: 20,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
-                borderRadius: BorderRadius.circular(100),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Update Status Permohonan',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Status dropdown
-          DropdownButtonFormField<String>(
-            initialValue: _selectedStatus,
-            decoration: InputDecoration(
-              labelText: 'Status Baru',
-              labelStyle: GoogleFonts.plusJakartaSans(fontSize: 13),
-            ),
-            items: _statusOptions
-                .map((s) => DropdownMenuItem(
-                      value: s.$1,
-                      child: Text(s.$2,
-                          style: GoogleFonts.plusJakartaSans(fontSize: 14)),
-                    ))
-                .toList(),
-            onChanged: (v) {
-              if (v != null) setState(() => _selectedStatus = v);
-            },
-          ),
-          const SizedBox(height: 12),
-
-          // Admin notes
-          TextField(
-            controller: _notesCtrl,
-            maxLines: 3,
-            decoration: InputDecoration(
-              labelText: 'Catatan Admin (opsional)',
-              labelStyle: GoogleFonts.plusJakartaSans(fontSize: 13),
-              alignLabelWithHint: true,
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // Simpan button
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: RukuninColors.brandGreen,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 48),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                elevation: 0,
-                textStyle: GoogleFonts.plusJakartaSans(
-                    fontSize: 15, fontWeight: FontWeight.w700),
-              ),
-              onPressed: _saving ? null : _save,
-              child: _saving
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                          color: Colors.white, strokeWidth: 2),
-                    )
-                  : const Text('Simpan'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _save() async {
-    setState(() => _saving = true);
-    try {
-      await ref.read(layananServiceProvider).updateLetterRequestStatus(
-            requestId: widget.request.id,
-            residentId: widget.request.residentId,
-            communityId: widget.request.communityId,
-            newStatus: _selectedStatus,
-            adminNotes:
-                _notesCtrl.text.trim().isEmpty ? null : _notesCtrl.text.trim(),
-          );
-      if (mounted) Navigator.pop(context);
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal update status: $e',
-                style: GoogleFonts.plusJakartaSans()),
-            backgroundColor: RukuninColors.error,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _saving = false);
-    }
-  }
-}
