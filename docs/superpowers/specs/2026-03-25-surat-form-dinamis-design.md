@@ -42,7 +42,7 @@ Menyimpan semua field dinamis per jenis surat dalam satu kolom JSONB. Fleksibel 
 ### Migration baru
 
 ```sql
--- Tambah kolom baru
+-- Tambah kolom baru di letter_requests
 ALTER TABLE letter_requests
   ADD COLUMN form_data JSONB,
   ADD COLUMN applicant_name TEXT;
@@ -54,6 +54,12 @@ ALTER TABLE letter_requests
 ALTER TABLE letter_requests
   ADD CONSTRAINT letter_requests_status_check
   CHECK (status IN ('pending', 'verified', 'completed', 'rejected'));
+
+-- Tambah leader_name di communities (kolom ini dipakai oleh Edge Function
+-- tapi belum ada di migration files — kemungkinan ditambah manual di Supabase dashboard.
+-- Tambahkan agar konsisten dan aman untuk query di client)
+ALTER TABLE communities
+  ADD COLUMN IF NOT EXISTS leader_name TEXT;
 ```
 
 - `form_data` — menyimpan semua field yang warga isi, format JSON per jenis surat
@@ -311,9 +317,9 @@ Update:
 | `lib/features/layanan/models/letter_request_model.dart` | Tambah `formData`, `applicantName`; update status labels; update `progressPercent` |
 | `lib/features/layanan/screens/request_letter_screen.dart` | Redesign total: multi-step form dinamis per jenis surat |
 | `lib/features/layanan/screens/admin_requests_screen.dart` | Ganti tombol "Buat Surat" jadi "Verifikasi"; update filter chips ke status baru; hapus `_UpdateStatusSheet` |
-| `lib/features/layanan/screens/layanan_screen.dart` | Update `_statusColor()` dan `_StatusBadge._label` untuk handle status `verified` |
+| `lib/features/layanan/screens/layanan_screen.dart` | Update `_statusColor()`: hapus case `in_progress` dan `ready`, tambah `verified` → `RukuninColors.success`. Update `_StatusBadge._label`: hapus case `in_progress`/`ready`, tambah `verified` → `'Surat Siap'` |
 | `lib/features/layanan/screens/verify_request_screen.dart` | Buat baru: tampil data warga + aksi ACC/Tolak + auto-generate |
-| `lib/features/layanan/providers/layanan_provider.dart` | Tambah method `verifyAndGenerateLetter`, `rejectRequest`; invalidate kedua provider setelah mutasi |
+| `lib/features/layanan/providers/layanan_provider.dart` | Tambah method `verifyAndGenerateLetter`, `rejectRequest`; invalidate kedua provider setelah mutasi. Method `updateLetterRequestStatus` **tetap ada** — masih dipakai oleh `CreateLetterScreen` saat admin buat surat mandiri |
 | `lib/features/letters/providers/letter_provider.dart` | Tambah `myLettersProvider` yang filter by `resident_id` |
 | `lib/features/letters/screens/resident_letters_screen.dart` | Buat baru: halaman "Dokumen Saya" untuk resident |
 | `lib/app/router.dart` | Tambah route `/admin/layanan-verifikasi/:id` (di luar ShellRoute, pattern sama dengan `/admin/layanan-requests`); tambah route `/resident/dokumen-saya` (di luar ResidentShell) |
