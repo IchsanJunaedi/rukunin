@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../app/theme.dart';
 import '../../../app/tokens.dart';
 import '../../../core/supabase/supabase_client.dart';
 import '../models/community_contact_model.dart';
@@ -36,12 +35,11 @@ final _adminPhoneProvider = FutureProvider.autoDispose<String?>((ref) async {
 
 // ── Helper ────────────────────────────────────────────────────
 Color _statusColor(String status) => switch (status) {
-      'pending' => RukuninColors.warning,
-      'in_progress' => const Color(0xFF3B82F6),
-      'ready' || 'completed' || 'resolved' => RukuninColors.success,
-      'rejected' => RukuninColors.error,
-      _ => RukuninColors.darkTextTertiary,
-    };
+  'pending'                     => RukuninColors.warning,
+  'verified' || 'completed' || 'resolved' => RukuninColors.success,
+  'rejected'                    => RukuninColors.error,
+  _                             => RukuninColors.darkTextTertiary,
+};
 
 Future<void> _launchWhatsApp(String phone) async {
   final uri = Uri.parse('https://wa.me/$phone');
@@ -449,14 +447,13 @@ class _StatusBadge extends StatelessWidget {
   const _StatusBadge({required this.status});
 
   String get _label => switch (status) {
-        'pending' => 'Menunggu',
-        'in_progress' => 'Diproses',
-        'ready' => 'Siap Diambil',
-        'completed' => 'Selesai',
-        'resolved' => 'Selesai',
-        'rejected' => 'Ditolak',
-        _ => status,
-      };
+    'pending'   => 'Menunggu',
+    'verified'  => 'Surat Siap',
+    'completed' => 'Selesai',
+    'rejected'  => 'Ditolak',
+    'resolved'  => 'Selesai',
+    _           => status,
+  };
 
   @override
   Widget build(BuildContext context) {
