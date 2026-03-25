@@ -8,7 +8,7 @@ void main() {
       final model = LetterRequestModel.fromMap(letterRequestMap);
       expect(model.id, 'req-1');
       expect(model.letterType, 'domisili');
-      expect(model.status, 'in_progress');
+      expect(model.status, 'pending');
       expect(model.residentName, 'Budi Santoso');
     });
 
@@ -25,10 +25,10 @@ void main() {
 
     test('statusLabel returns Indonesian label', () {
       final model = LetterRequestModel.fromMap(letterRequestMap);
-      expect(model.statusLabel, 'Diproses');
+      expect(model.statusLabel, 'Menunggu Verifikasi');
     });
 
-    test('isActive is true for in_progress', () {
+    test('isActive is true for pending', () {
       final model = LetterRequestModel.fromMap(letterRequestMap);
       expect(model.isActive, isTrue);
     });
@@ -38,9 +38,9 @@ void main() {
       expect(model.isActive, isFalse);
     });
 
-    test('progressPercent is 0.60 for in_progress', () {
+    test('progressPercent is 0.25 for pending', () {
       final model = LetterRequestModel.fromMap(letterRequestMap);
-      expect(model.progressPercent, 0.60);
+      expect(model.progressPercent, 0.25);
     });
 
     test('progressPercent is 1.0 for completed', () {

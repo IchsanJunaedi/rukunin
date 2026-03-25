@@ -91,7 +91,7 @@ const letterRequestMap = {
   'letter_type': 'domisili',
   'purpose': 'Melamar kerja',
   'notes': null,
-  'status': 'in_progress',
+  'status': 'pending',
   'admin_notes': null,
   'letter_id': null,
   'created_at': '2026-03-19T10:00:00.000Z',
