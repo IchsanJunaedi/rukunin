@@ -574,6 +574,7 @@ class _QuickActions extends StatelessWidget {
     (Icons.receipt_long_outlined,             'Buat Tagihan',  '/admin/tagihan/buat'),
     (Icons.account_balance_wallet_outlined,   'Pengeluaran',   '/admin/pengeluaran'),
     (Icons.campaign_outlined,                 'Pengumuman',    '/admin/pengumuman'),
+    (Icons.how_to_vote_outlined,              'Polling',       '/admin/polling'),
     (Icons.contacts_outlined,                 'Info Kontak',   '/admin/layanan/kontak'),
     (Icons.account_balance_outlined,          'Rekening',      '/admin/pengaturan-rek'),
     (Icons.settings_outlined,                 'Profil RW',     '/admin/pengaturan'),

@@ -49,6 +49,10 @@ import '../features/layanan/screens/admin_contacts_screen.dart';
 import '../features/layanan/screens/verify_request_screen.dart';
 import '../features/layanan/models/letter_request_model.dart';
 import '../features/letters/screens/resident_letters_screen.dart';
+import '../features/polling/screens/polls_admin_screen.dart';
+import '../features/polling/screens/create_poll_screen.dart';
+import '../features/polling/screens/poll_detail_admin_screen.dart';
+import '../features/polling/screens/poll_vote_screen.dart';
 import '../shell/admin_shell.dart';
 import '../shell/resident_shell.dart';
 
@@ -371,6 +375,26 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/resident/layanan/pengaduan-baru',
         builder: (context, state) => const ComplaintFormScreen(),
+      ),
+
+      // Polling full-screen routes (no bottom nav)
+      GoRoute(
+        path: '/admin/polling',
+        builder: (context, state) => const PollsAdminScreen(),
+      ),
+      GoRoute(
+        path: '/admin/polling/buat',
+        builder: (context, state) => const CreatePollScreen(),
+      ),
+      GoRoute(
+        path: '/admin/polling/:id',
+        builder: (context, state) =>
+            PollDetailAdminScreen(pollId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/resident/polling/:id',
+        builder: (context, state) =>
+            PollVoteScreen(pollId: state.pathParameters['id']!),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

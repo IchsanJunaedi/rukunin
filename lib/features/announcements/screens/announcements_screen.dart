@@ -7,6 +7,8 @@ import '../../../app/theme.dart';
 import '../../../app/tokens.dart';
 import '../providers/announcement_provider.dart';
 import '../models/announcement_model.dart';
+import '../../polling/providers/poll_provider.dart';
+import '../../polling/models/poll_model.dart';
 
 class AnnouncementsScreen extends ConsumerWidget {
   final bool isAdmin;
@@ -16,6 +18,7 @@ class AnnouncementsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final announcementsAsync = ref.watch(announcementsProvider);
+    final pollsAsync = isAdmin ? null : ref.watch(pollsActiveProvider);
 
     return Scaffold(
       backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
@@ -29,7 +32,6 @@ class AnnouncementsScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
             Container(
               color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
@@ -73,69 +75,205 @@ class AnnouncementsScreen extends ConsumerWidget {
                   ),
                 ),
                 data: (list) {
-                  if (list.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.campaign_outlined,
-                              size: 72, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Belum ada pengumuman',
-                            style: GoogleFonts.plusJakartaSans(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
+                  Widget pollSection = const SizedBox.shrink();
+                  if (!isAdmin && pollsAsync != null) {
+                    pollSection = pollsAsync.when(
+                      loading: () => const SizedBox.shrink(),
+                      error: (e, st) => const SizedBox.shrink(),
+                      data: (polls) {
+                        if (polls.isEmpty) return const SizedBox.shrink();
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.how_to_vote_rounded,
+                                      size: 16, color: RukuninColors.brandGreen),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'POLLING AKTIF',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 0.8,
+                                      color: RukuninColors.brandGreen,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              ...polls.map((p) => _ActivePollCard(poll: p, isDark: isDark)),
+                              const SizedBox(height: 8),
+                              const Divider(),
+                            ],
                           ),
-                          const SizedBox(height: 6),
-                          Text(
-                            'Pengumuman dari pengurus RT\nakan muncul di sini.',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.plusJakartaSans(
-                                fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     );
                   }
+
+                  if (list.isEmpty) {
+                    return Column(
+                      children: [
+                        pollSection,
+                        Expanded(
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.campaign_outlined,
+                                    size: 72, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Belum ada pengumuman',
+                                  style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  'Pengumuman dari pengurus RT\nakan muncul di sini.',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+
                   return RefreshIndicator(
-                    onRefresh: () async =>
-                        ref.invalidate(announcementsProvider),
+                    onRefresh: () async {
+                      ref.invalidate(announcementsProvider);
+                      if (!isAdmin) ref.invalidate(pollsActiveProvider);
+                    },
                     child: ListView.separated(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: list.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 10),
-                      itemBuilder: (_, i) => _AnnouncementCard(
-                        item: list[i],
-                        isAdmin: isAdmin,
-                        onDelete: isAdmin
-                            ? () async {
-                                final confirm = await showDialog<bool>(
-                                  context: context,
-                                  builder: (ctx) => AlertDialog(
-                                    title: Text('Hapus Pengumuman?',
-                                        style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
-                                    content: Text('Pengumuman "${list[i].title}" akan dihapus permanen.',
-                                        style: GoogleFonts.plusJakartaSans()),
-                                    actions: [
-                                      TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Batal')),
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(ctx, true),
-                                        child: Text('Hapus', style: GoogleFonts.plusJakartaSans(color: RukuninColors.error)),
+                      padding: EdgeInsets.zero,
+                      itemCount: list.length + 1,
+                      separatorBuilder: (_, i) => i == 0 ? const SizedBox.shrink() : const SizedBox(height: 10),
+                      itemBuilder: (_, i) {
+                        if (i == 0) return pollSection;
+                        final item = list[i - 1];
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            top: i == 1 ? 16 : 0,
+                            bottom: i == list.length ? 16 : 0,
+                          ),
+                          child: _AnnouncementCard(
+                            item: item,
+                            isAdmin: isAdmin,
+                            onDelete: isAdmin
+                                ? () async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        title: Text('Hapus Pengumuman?',
+                                            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
+                                        content: Text('Pengumuman "${item.title}" akan dihapus permanen.',
+                                            style: GoogleFonts.plusJakartaSans()),
+                                        actions: [
+                                          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Batal')),
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(ctx, true),
+                                            child: Text('Hapus', style: GoogleFonts.plusJakartaSans(color: RukuninColors.error)),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                );
-                                if (confirm == true) {
-                                  await ref.read(createAnnouncementProvider).delete(list[i].id);
-                                }
-                              }
-                            : null,
-                      ),
+                                    );
+                                    if (confirm == true) {
+                                      await ref.read(createAnnouncementProvider).delete(item.id);
+                                    }
+                                  }
+                                : null,
+                          ),
+                        );
+                      },
                     ),
                   );
                 },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ActivePollCard extends StatelessWidget {
+  final PollModel poll;
+  final bool isDark;
+  const _ActivePollCard({required this.poll, required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => context.push('/resident/polling/${poll.id}'),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              RukuninColors.brandGreen.withValues(alpha: 0.08),
+              RukuninColors.brandTeal.withValues(alpha: 0.05),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.25)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: RukuninColors.brandGreen.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.how_to_vote_rounded,
+                  color: RukuninColors.brandGreen, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    poll.title,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Berakhir ${DateFormat('dd MMM yyyy', 'id').format(poll.endsAt)}',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 11,
+                      color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Vote →',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: RukuninColors.brandGreen,
               ),
             ),
           ],
