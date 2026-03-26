@@ -169,4 +169,23 @@ Status pengerjaan berdasarkan roadmap di `roadmap.md`.
 
 ---
 
-*Last updated: Self-service onboarding selesai — siap masuk Phase 5 (Polish & Play Store)*
+## Fitur Polling & Voting ✅
+
+> Di luar phase roadmap — ditambahkan sebagai fitur musyawarah warga.
+
+### Selesai
+- [x] Migration `20260326_polling.sql`: tabel `polls` + `poll_votes` + RLS
+- [x] `PollModel` + `PollVoteModel` + unit tests (semua pass)
+- [x] `pollsAdminProvider`, `pollsActiveProvider`, `pollDetailProvider`
+- [x] `pollVotesProvider`, `myVoteProvider`, `VoteNotifier`
+- [x] `PollsAdminScreen` — list polling admin (aktif/selesai)
+- [x] `CreatePollScreen` — form buat polling baru
+- [x] `PollDetailAdminScreen` — hasil real-time + tutup polling
+- [x] `PollVoteScreen` — vote Ya/Tidak + lihat hasil (resident)
+- [x] `AnnouncementsScreen` — section polling aktif untuk warga
+- [x] Dashboard — "Polling" di aksi cepat admin
+- [x] Router — 4 routes baru polling
+
+---
+
+*Last updated: Polling & Voting feature selesai — Phase 2, 3, 4 sedang berjalan, Phase 5 siap dimulai*
