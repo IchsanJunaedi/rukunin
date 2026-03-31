@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 abstract class RukuninText {
 
   // ── Display ───────────────────────────────────────────────────────────────
-  static TextStyle displayLg({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle displayLg({Color? color}) => GoogleFonts.poppins(
     fontSize: 40,
     fontWeight: FontWeight.w800,
     letterSpacing: -1.5,
@@ -16,7 +16,7 @@ abstract class RukuninText {
     color: color,
   );
 
-  static TextStyle displayMd({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle displayMd({Color? color}) => GoogleFonts.poppins(
     fontSize: 32,
     fontWeight: FontWeight.w800,
     letterSpacing: -1.0,
@@ -25,7 +25,7 @@ abstract class RukuninText {
   );
 
   // ── Heading ───────────────────────────────────────────────────────────────
-  static TextStyle h1({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle h1({Color? color}) => GoogleFonts.poppins(
     fontSize: 24,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.5,
@@ -33,7 +33,7 @@ abstract class RukuninText {
     color: color,
   );
 
-  static TextStyle h2({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle h2({Color? color}) => GoogleFonts.poppins(
     fontSize: 20,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.3,
@@ -41,7 +41,7 @@ abstract class RukuninText {
     color: color,
   );
 
-  static TextStyle h3({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle h3({Color? color}) => GoogleFonts.poppins(
     fontSize: 17,
     fontWeight: FontWeight.w600,
     letterSpacing: -0.2,
@@ -49,7 +49,7 @@ abstract class RukuninText {
     color: color,
   );
 
-  static TextStyle h4({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle h4({Color? color}) => GoogleFonts.poppins(
     fontSize: 15,
     fontWeight: FontWeight.w600,
     letterSpacing: -0.1,
@@ -58,55 +58,55 @@ abstract class RukuninText {
   );
 
   // ── Body ──────────────────────────────────────────────────────────────────
-  static TextStyle bodyLg({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle bodyLg({Color? color}) => GoogleFonts.poppins(
     fontSize: 16,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w600,
     height: 1.6,
     color: color,
   );
 
-  static TextStyle body({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle body({Color? color}) => GoogleFonts.poppins(
     fontSize: 14,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w600,
     height: 1.55,
     color: color,
   );
 
-  static TextStyle bodySm({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle bodySm({Color? color}) => GoogleFonts.poppins(
     fontSize: 13,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w600,
     height: 1.5,
     color: color,
   );
 
   // ── Label / UI ────────────────────────────────────────────────────────────
-  static TextStyle labelLg({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle labelLg({Color? color}) => GoogleFonts.poppins(
     fontSize: 15,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w700,
     color: color,
   );
 
-  static TextStyle label({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle label({Color? color}) => GoogleFonts.poppins(
     fontSize: 14,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w700,
     color: color,
   );
 
-  static TextStyle labelSm({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle labelSm({Color? color}) => GoogleFonts.poppins(
     fontSize: 13,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
     color: color,
   );
 
   // ── Caption ───────────────────────────────────────────────────────────────
-  static TextStyle caption({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle caption({Color? color}) => GoogleFonts.poppins(
     fontSize: 12,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w600,
     height: 1.45,
     color: color,
   );
 
-  static TextStyle captionBold({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle captionBold({Color? color}) => GoogleFonts.poppins(
     fontSize: 12,
     fontWeight: FontWeight.w600,
     letterSpacing: 0.1,
@@ -114,7 +114,7 @@ abstract class RukuninText {
   );
 
   // ── Overline ──────────────────────────────────────────────────────────────
-  static TextStyle overline({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle overline({Color? color}) => GoogleFonts.poppins(
     fontSize: 11,
     fontWeight: FontWeight.w600,
     letterSpacing: 0.8,
@@ -122,7 +122,7 @@ abstract class RukuninText {
   );
 
   // ── Numeric ───────────────────────────────────────────────────────────────
-  static TextStyle numericHero({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle numericHero({Color? color}) => GoogleFonts.poppins(
     fontSize: 36,
     fontWeight: FontWeight.w800,
     letterSpacing: -1.5,
@@ -130,14 +130,14 @@ abstract class RukuninText {
     color: color,
   );
 
-  static TextStyle numericLg({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle numericLg({Color? color}) => GoogleFonts.poppins(
     fontSize: 24,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.5,
     color: color,
   );
 
-  static TextStyle numericMd({Color? color}) => GoogleFonts.plusJakartaSans(
+  static TextStyle numericMd({Color? color}) => GoogleFonts.poppins(
     fontSize: 18,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.3,

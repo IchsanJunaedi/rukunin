@@ -65,7 +65,7 @@ class GradientButton extends StatelessWidget {
                       ],
                       Text(
                         label,
-                        style: GoogleFonts.plusJakartaSans(
+                        style: GoogleFonts.poppins(
                           color: Colors.white,
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
@@ -191,7 +191,7 @@ class StatusBadge extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: GoogleFonts.plusJakartaSans(
+        style: GoogleFonts.poppins(
           fontSize: small ? 11 : 12,
           fontWeight: FontWeight.w600,
           color: text,
@@ -396,7 +396,7 @@ class EmptyState extends StatelessWidget {
             const SizedBox(height: 20),
             Text(
               title,
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                 fontSize: 17,
                 fontWeight: FontWeight.w700,
                 color: isDark
@@ -410,7 +410,7 @@ class EmptyState extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 description!,
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                   fontSize: 14,
                   color: textSec,
                   height: 1.55,
@@ -490,7 +490,7 @@ void showToast(BuildContext context, String message, {
               Expanded(
                 child: Text(
                   message,
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     color: textColor,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -528,11 +528,11 @@ class SectionHeader extends StatelessWidget {
       children: [
         Text(
           title,
-          style: GoogleFonts.plusJakartaSans(
+          style: GoogleFonts.poppins(
             fontSize: 16,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
             color: textPri,
-            letterSpacing: -0.2,
+            letterSpacing: -0.3,
           ),
         ),
         if (actionLabel != null && onAction != null)
@@ -540,7 +540,7 @@ class SectionHeader extends StatelessWidget {
             onTap: onAction,
             child: Text(
               actionLabel!,
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: RukuninColors.brandGreen,
@@ -598,7 +598,7 @@ class GradientAvatar extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         initials,
-        style: GoogleFonts.plusJakartaSans(
+        style: GoogleFonts.poppins(
           color: Colors.white,
           fontSize: size * 0.33,
           fontWeight: FontWeight.w700,
@@ -650,7 +650,7 @@ class StatCard extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             value,
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               fontSize: 22,
               fontWeight: FontWeight.w800,
               color: textPri,
@@ -661,7 +661,7 @@ class StatCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             label,
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               fontSize: 12,
               color: textSec,
               fontWeight: FontWeight.w500,
@@ -742,7 +742,7 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
                   children: [
                     Text(
                       title,
-                      style: GoogleFonts.plusJakartaSans(
+                      style: GoogleFonts.poppins(
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -752,7 +752,7 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
                     if (subtitle != null)
                       Text(
                         subtitle!,
-                        style: GoogleFonts.plusJakartaSans(
+                        style: GoogleFonts.poppins(
                           color: Colors.white.withValues(alpha: 0.75),
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -821,14 +821,14 @@ class MenuTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(title,
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: textPri,
                           )),
                       if (subtitle != null)
                         Text(subtitle!,
-                            style: GoogleFonts.plusJakartaSans(
+                            style: GoogleFonts.poppins(
                               fontSize: 12,
                               color: textSec,
                             )),
