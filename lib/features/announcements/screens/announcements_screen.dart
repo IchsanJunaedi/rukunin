@@ -42,7 +42,7 @@ class AnnouncementsScreen extends ConsumerWidget {
                   const SizedBox(width: 12),
                   Text(
                     'Pengumuman RT',
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
@@ -64,7 +64,7 @@ class AnnouncementsScreen extends ConsumerWidget {
                           color: RukuninColors.error, size: 48),
                       const SizedBox(height: 12),
                       Text('Gagal memuat pengumuman',
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                               color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                       const SizedBox(height: 8),
                       TextButton(
@@ -94,7 +94,7 @@ class AnnouncementsScreen extends ConsumerWidget {
                                   const SizedBox(width: 6),
                                   Text(
                                     'POLLING AKTIF',
-                                    style: GoogleFonts.plusJakartaSans(
+                                    style: GoogleFonts.poppins(
                                       fontSize: 11,
                                       fontWeight: FontWeight.w700,
                                       letterSpacing: 0.8,
@@ -128,7 +128,7 @@ class AnnouncementsScreen extends ConsumerWidget {
                                 const SizedBox(height: 16),
                                 Text(
                                   'Belum ada pengumuman',
-                                  style: GoogleFonts.plusJakartaSans(
+                                  style: GoogleFonts.poppins(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                       color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
@@ -137,7 +137,7 @@ class AnnouncementsScreen extends ConsumerWidget {
                                 Text(
                                   'Pengumuman dari pengurus RT\nakan muncul di sini.',
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.plusJakartaSans(
+                                  style: GoogleFonts.poppins(
                                       fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                                 ),
                               ],
@@ -176,14 +176,14 @@ class AnnouncementsScreen extends ConsumerWidget {
                                       context: context,
                                       builder: (ctx) => AlertDialog(
                                         title: Text('Hapus Pengumuman?',
-                                            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
+                                            style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
                                         content: Text('Pengumuman "${item.title}" akan dihapus permanen.',
-                                            style: GoogleFonts.plusJakartaSans()),
+                                            style: GoogleFonts.poppins()),
                                         actions: [
                                           TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Batal')),
                                           TextButton(
                                             onPressed: () => Navigator.pop(ctx, true),
-                                            child: Text('Hapus', style: GoogleFonts.plusJakartaSans(color: RukuninColors.error)),
+                                            child: Text('Hapus', style: GoogleFonts.poppins(color: RukuninColors.error)),
                                           ),
                                         ],
                                       ),
@@ -248,7 +248,7 @@ class _ActivePollCard extends StatelessWidget {
                 children: [
                   Text(
                     poll.title,
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -259,7 +259,7 @@ class _ActivePollCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     'Berakhir ${DateFormat('dd MMM yyyy', 'id').format(poll.endsAt)}',
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontSize: 11,
                       color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                     ),
@@ -270,7 +270,7 @@ class _ActivePollCard extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               'Vote →',
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: RukuninColors.brandGreen,
@@ -344,7 +344,7 @@ class _AnnouncementCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         typeLabel,
-                        style: GoogleFonts.plusJakartaSans(
+                        style: GoogleFonts.poppins(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                           color: typeColor,
@@ -356,7 +356,7 @@ class _AnnouncementCard extends StatelessWidget {
                 const Spacer(),
                 Text(
                   DateFormat('dd MMM yyyy', 'id').format(item.createdAt),
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                       fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                 ),
                 if (isAdmin && onDelete != null) ...[
@@ -372,7 +372,7 @@ class _AnnouncementCard extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               item.title,
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
@@ -382,7 +382,7 @@ class _AnnouncementCard extends StatelessWidget {
               item.body,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                   fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, height: 1.5),
             ),
           ],
@@ -423,7 +423,7 @@ class _AnnouncementCard extends StatelessWidget {
               const SizedBox(height: 20),
               Text(
                 item.title,
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
                     color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
@@ -431,7 +431,7 @@ class _AnnouncementCard extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 DateFormat('EEEE, dd MMMM yyyy', 'id').format(item.createdAt),
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                     fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
               ),
               const SizedBox(height: 16),
@@ -439,7 +439,7 @@ class _AnnouncementCard extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 item.body,
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                     fontSize: 14, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary, height: 1.7),
               ),
             ],

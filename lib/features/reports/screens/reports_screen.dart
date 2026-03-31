@@ -56,9 +56,9 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                      child: Column(
                        mainAxisSize: MainAxisSize.min,
                        children: [
-                         const Padding(
-                           padding: EdgeInsets.all(16.0),
-                           child: Text('Pilih Aksi PDF', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                         Padding(
+                           padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                           child: Text('Pilih Aksi PDF', style: GoogleFonts.poppins(fontWeight: FontWeight.w800, fontSize: 18)),
                          ),
                          ListTile(
                            leading: Icon(Icons.share, color: RukuninColors.brandGreen),
@@ -129,7 +129,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                   ),
                   Text(
                     '$monthName ${state.selectedYear}',
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
                       color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -155,7 +155,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
               child: Center(
                 child: Text(
                   '$monthName ${state.selectedYear}',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
                     color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -189,96 +189,194 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   Widget _buildSummaryCards(dynamic report, bool isDark) {
     return Column(
       children: [
-        // Net Balance Card
+        // ── Saldo Bersih Card ─────────────────────────────────────────────────
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(22),
           decoration: BoxDecoration(
-            color: RukuninColors.brandGreen,
-            borderRadius: BorderRadius.circular(16),
+            gradient: RukuninColors.brandGradient,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: RukuninShadow.brand,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Saldo Bersih Bulan Ini', style: GoogleFonts.plusJakartaSans(color: Colors.white70, fontSize: 13)),
-              const SizedBox(height: 8),
-              Text(
-                CurrencyFormatter.format(report.netBalance),
-                style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                       Row(
-                         children: [
-                           Icon(Icons.arrow_downward, color: RukuninColors.success, size: 16),
-                           const SizedBox(width: 4),
-                           Text('Pemasukan', style: GoogleFonts.plusJakartaSans(color: Colors.white70, fontSize: 12)),
-                         ],
-                       ),
-                       Text(CurrencyFormatter.format(report.totalIncome), style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-                    ],
+                  Container(
+                    padding: const EdgeInsets.all(7),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.20),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 16),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                       Row(
-                         children: [
-                           Text('Pengeluaran', style: GoogleFonts.plusJakartaSans(color: Colors.white70, fontSize: 12)),
-                           const SizedBox(width: 4),
-                           Icon(Icons.arrow_upward, color: RukuninColors.error, size: 16),
-                         ],
-                       ),
-                       Text(CurrencyFormatter.format(report.totalExpense), style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-                    ],
+                  const SizedBox(width: 10),
+                  Text(
+                    'Saldo Bersih Bulan Ini',
+                    style: GoogleFonts.poppins(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
                   ),
                 ],
-              )
+              ),
+              const SizedBox(height: 12),
+              Text(
+                CurrencyFormatter.format(report.netBalance),
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.5,
+                  height: 1.1,
+                ),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.20),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: const Icon(Icons.south_rounded, color: Colors.white, size: 11),
+                              ),
+                              const SizedBox(width: 6),
+                              Text('Pemasukan', style: GoogleFonts.poppins(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
+                            ],
+                          ),
+                          const SizedBox(height: 7),
+                          Text(
+                            CurrencyFormatter.format(report.totalIncome),
+                            style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14, letterSpacing: -0.3),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.20),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: const Icon(Icons.north_rounded, color: Colors.white, size: 11),
+                              ),
+                              const SizedBox(width: 6),
+                              Text('Pengeluaran', style: GoogleFonts.poppins(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
+                            ],
+                          ),
+                          const SizedBox(height: 7),
+                          Text(
+                            CurrencyFormatter.format(report.totalExpense),
+                            style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14, letterSpacing: -0.3),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
 
-        // Collection rate card
+        // ── Kolektibilitas Card ───────────────────────────────────────────────
         Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface, borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)]),
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: RukuninColors.brandGreen.withValues(alpha: isDark ? 0.22 : 0.14),
+              width: 1.0,
+            ),
+            boxShadow: isDark
+                ? []
+                : [BoxShadow(color: RukuninColors.brandGreen.withValues(alpha: 0.07), blurRadius: 14, offset: const Offset(0, 4))],
+          ),
           child: Row(
             children: [
-               Stack(
-                 alignment: Alignment.center,
-                 children: [
-                   SizedBox(
-                     width: 60, height: 60,
-                     child: CircularProgressIndicator(
-                       value: report.totalExpected > 0 ? (report.totalIncome / report.totalExpected) : 0,
-                       backgroundColor: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
-                       color: RukuninColors.success,
-                       strokeWidth: 6,
-                     )
-                   ),
-                   Text('${report.collectionRate.toStringAsFixed(0)}%', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold)),
-                 ],
-               ),
-               const SizedBox(width: 16),
-               Expanded(
-                 child: Column(
-                   crossAxisAlignment: CrossAxisAlignment.start,
-                   children: [
-                     Text('Tingkat Kolektibilitas', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 14)),
-                     const SizedBox(height: 4),
-                     Text('Rp ${NumberFormat('#,##0', 'id_ID').format(report.totalIncome)} terkumpul dari target Rp ${NumberFormat('#,##0', 'id_ID').format(report.totalExpected)}', style: GoogleFonts.plusJakartaSans(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, fontSize: 12)),
-                   ],
-                 )
-               )
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: 64, height: 64,
+                    child: CircularProgressIndicator(
+                      value: report.totalExpected > 0
+                          ? (report.totalIncome / report.totalExpected).clamp(0.0, 1.0)
+                          : 0,
+                      backgroundColor: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
+                      valueColor: const AlwaysStoppedAnimation<Color>(RukuninColors.brandGreen),
+                      strokeWidth: 6,
+                    ),
+                  ),
+                  Text(
+                    '${report.collectionRate.toStringAsFixed(0)}%',
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 13,
+                      color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Tingkat Kolektibilitas',
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 14,
+                        color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${CurrencyFormatter.format(report.totalIncome)} terkumpul dari target ${CurrencyFormatter.format(report.totalExpected)}',
+                      style: GoogleFonts.poppins(
+                        color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
-          )
-        )
+          ),
+        ),
       ],
     );
   }
@@ -297,10 +395,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         ),
         child: Text(
           label,
-          style: GoogleFonts.plusJakartaSans(
+          style: GoogleFonts.poppins(
             fontSize: 13,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            color: isSelected ? Colors.white : (isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
+            fontWeight: FontWeight.w700,
+            color: isSelected ? Colors.white : (isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
           ),
         ),
       ),
@@ -329,14 +427,27 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     maxY = maxY * 1.2;
 
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface, borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)]),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
+          width: 0.5,
+        ),
+        boxShadow: RukuninShadow.sm,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
            Text(
              filterMode == ReportFilterMode.threeMonths ? 'Kas 3 Bulan Terakhir' : 'Kas 6 Bulan Terakhir',
-             style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 16),
+             style: GoogleFonts.poppins(
+               fontWeight: FontWeight.w800,
+               fontSize: 16,
+               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
+               letterSpacing: -0.3,
+             ),
            ),
            const SizedBox(height: 24),
            SizedBox(
@@ -355,7 +466,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                          if (value.toInt() >= reversed.length) return const Text('');
                          final report = reversed[value.toInt()];
                          final monthStr = DateFormat('MMM', 'id_ID').format(DateTime(report.year, report.month));
-                         return Padding(padding: const EdgeInsets.only(top: 8), child: Text(monthStr, style: TextStyle(fontSize: 10, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)));
+                         return Padding(padding: const EdgeInsets.only(top: 8), child: Text(monthStr, style: GoogleFonts.poppins(fontSize: 10, fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary)));
                        },
                        reservedSize: 28,
                      ),
@@ -414,9 +525,19 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   Widget _buildLegend(Color color, String text, bool isDark) {
     return Row(
       children: [
-        Container(width: 12, height: 12, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
-        const SizedBox(width: 4),
-        Text(text, style: GoogleFonts.plusJakartaSans(fontSize: 12, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
+        Container(
+          width: 10, height: 10,
+          decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(3)),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          text,
+          style: GoogleFonts.poppins(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
+          ),
+        ),
       ],
     );
   }

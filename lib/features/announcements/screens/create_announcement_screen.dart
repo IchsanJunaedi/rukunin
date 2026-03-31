@@ -116,7 +116,7 @@ class _CreateAnnouncementScreenState
         foregroundColor: Colors.white,
         title: Text(
           'Buat Pengumuman',
-          style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.w700),
+          style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w700),
         ),
         actions: [
           if (_loading)
@@ -132,7 +132,7 @@ class _CreateAnnouncementScreenState
               onPressed: _submit,
               child: Text(
                 'Kirim',
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                     color: RukuninColors.brandGreen, fontWeight: FontWeight.w700, fontSize: 15),
               ),
             ),
@@ -146,7 +146,7 @@ class _CreateAnnouncementScreenState
             // Jenis Pengumuman
             Text(
               'Jenis Pengumuman',
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                   fontSize: 13, fontWeight: FontWeight.w600,
                   color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
             ),
@@ -171,7 +171,7 @@ class _CreateAnnouncementScreenState
             ),
             const SizedBox(height: 24),
             // Judul
-            Text('Judul', style: GoogleFonts.plusJakartaSans(
+            Text('Judul', style: GoogleFonts.poppins(
                 fontSize: 13, fontWeight: FontWeight.w600,
                 color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
             const SizedBox(height: 8),
@@ -184,13 +184,13 @@ class _CreateAnnouncementScreenState
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               ),
-              style: GoogleFonts.plusJakartaSans(fontSize: 15,
+              style: GoogleFonts.poppins(fontSize: 15,
                   color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
               validator: (v) => v == null || v.trim().isEmpty ? 'Judul wajib diisi' : null,
             ),
             const SizedBox(height: 20),
             // Isi
-            Text('Isi Pengumuman', style: GoogleFonts.plusJakartaSans(
+            Text('Isi Pengumuman', style: GoogleFonts.poppins(
                 fontSize: 13, fontWeight: FontWeight.w600,
                 color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
             const SizedBox(height: 8),
@@ -205,7 +205,7 @@ class _CreateAnnouncementScreenState
                 contentPadding: const EdgeInsets.all(16),
                 alignLabelWithHint: true,
               ),
-              style: GoogleFonts.plusJakartaSans(fontSize: 14,
+              style: GoogleFonts.poppins(fontSize: 14,
                   color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
               validator: (v) => v == null || v.trim().isEmpty ? 'Isi pengumuman wajib diisi' : null,
             ),
@@ -221,12 +221,12 @@ class _CreateAnnouncementScreenState
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 title: Text(
                   'Kirim WA ke semua warga',
-                  style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 14,
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14,
                       color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                 ),
                 subtitle: Text(
                   'Pengumuman akan di-broadcast ke nomor WA seluruh warga',
-                  style: GoogleFonts.plusJakartaSans(fontSize: 12,
+                  style: GoogleFonts.poppins(fontSize: 12,
                       color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                 ),
                 value: _sendWa,
@@ -240,7 +240,7 @@ class _CreateAnnouncementScreenState
               onPressed: _loading ? null : _submit,
               icon: const Icon(Icons.send_rounded),
               label: Text('Publikasikan Pengumuman',
-                  style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 15)),
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 15)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: RukuninColors.brandGreen,
                 foregroundColor: Colors.white,
@@ -291,7 +291,7 @@ class _TypeChip extends StatelessWidget {
           children: [
             Icon(icon, size: 14, color: selected ? color : (isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
             const SizedBox(width: 5),
-            Text(label, style: GoogleFonts.plusJakartaSans(
+            Text(label, style: GoogleFonts.poppins(
               fontSize: 13,
               fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
               color: selected ? color : (isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
