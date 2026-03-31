@@ -4,12 +4,12 @@ import 'float_nav.dart';
 
 // ─── Tab definitions ──────────────────────────────────────────────────────────
 const _tabs = [
-  NavTabDef(Icons.home_outlined,         Icons.home_rounded),
-  NavTabDef(Icons.campaign_outlined,     Icons.campaign_rounded),
-  NavTabDef(Icons.article_outlined,      Icons.article_rounded),
-  NavTabDef(Icons.storefront_outlined,   Icons.storefront_rounded),
-  NavTabDef(Icons.receipt_long_outlined, Icons.receipt_long_rounded),
-  NavTabDef(Icons.person_outline,        Icons.person_rounded),
+  NavTabDef(Icons.dashboard_outlined,          Icons.dashboard_rounded),
+  NavTabDef(Icons.notifications_outlined,      Icons.notifications_rounded),
+  NavTabDef(Icons.apps_outlined,               Icons.apps_rounded),
+  NavTabDef(Icons.shopping_bag_outlined,       Icons.shopping_bag_rounded),
+  NavTabDef(Icons.payments_outlined,           Icons.payments_rounded),
+  NavTabDef(Icons.manage_accounts_outlined,    Icons.manage_accounts_rounded),
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
