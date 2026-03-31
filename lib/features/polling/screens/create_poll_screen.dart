@@ -20,6 +20,7 @@ class _CreatePollScreenState extends ConsumerState<CreatePollScreen> {
   DateTime _startsAt = DateTime.now();
   DateTime _endsAt = DateTime.now().add(const Duration(days: 7));
   bool _loading = false;
+  String? _errorMessage;
 
   @override
   void dispose() {
@@ -59,7 +60,10 @@ class _CreatePollScreenState extends ConsumerState<CreatePollScreen> {
       return;
     }
 
-    setState(() => _loading = true);
+    setState(() {
+      _loading = true;
+      _errorMessage = null;
+    });
     try {
       await ref.read(pollNotifierProvider.notifier).createPoll(
             title: _titleCtrl.text.trim(),
@@ -70,9 +74,7 @@ class _CreatePollScreenState extends ConsumerState<CreatePollScreen> {
       if (mounted) context.pop();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal membuat polling: $e')),
-        );
+        setState(() => _errorMessage = e.toString());
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -96,7 +98,7 @@ class _CreatePollScreenState extends ConsumerState<CreatePollScreen> {
         ),
         title: Text(
           'Buat Polling Baru',
-          style: GoogleFonts.plusJakartaSans(
+          style: GoogleFonts.poppins(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -109,18 +111,18 @@ class _CreatePollScreenState extends ConsumerState<CreatePollScreen> {
           padding: const EdgeInsets.all(20),
           children: [
             Text('Pertanyaan Polling *',
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
             const SizedBox(height: 6),
             TextFormField(
               controller: _titleCtrl,
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                   color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
               decoration: InputDecoration(
                 hintText: 'Contoh: Setuju naikkan iuran kebersihan?',
-                hintStyle: GoogleFonts.plusJakartaSans(
+                hintStyle: GoogleFonts.poppins(
                     color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                 filled: true,
                 fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
@@ -144,18 +146,18 @@ class _CreatePollScreenState extends ConsumerState<CreatePollScreen> {
             ),
             const SizedBox(height: 16),
             Text('Keterangan (opsional)',
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
             const SizedBox(height: 6),
             TextFormField(
               controller: _descCtrl,
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                   color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
               decoration: InputDecoration(
                 hintText: 'Tambahkan konteks atau penjelasan...',
-                hintStyle: GoogleFonts.plusJakartaSans(
+                hintStyle: GoogleFonts.poppins(
                     color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                 filled: true,
                 fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
@@ -177,8 +179,87 @@ class _CreatePollScreenState extends ConsumerState<CreatePollScreen> {
               maxLines: 3,
             ),
             const SizedBox(height: 16),
+            Text('Pilihan Jawaban',
+                style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                    color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Polling ini menggunakan format Ya / Tidak',
+                    style: GoogleFonts.poppins(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          decoration: BoxDecoration(
+                            color: RukuninColors.brandGreen.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.3)),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.thumb_up_rounded, size: 16, color: RukuninColors.brandGreen),
+                              const SizedBox(width: 6),
+                              Text('Ya',
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      color: RukuninColors.brandGreen)),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          decoration: BoxDecoration(
+                            color: RukuninColors.error.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: RukuninColors.error.withValues(alpha: 0.3)),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.thumb_down_rounded, size: 16, color: RukuninColors.error),
+                              const SizedBox(width: 6),
+                              Text('Tidak',
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      color: RukuninColors.error)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
             Text('Tanggal Mulai *',
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
@@ -190,7 +271,7 @@ class _CreatePollScreenState extends ConsumerState<CreatePollScreen> {
             ),
             const SizedBox(height: 16),
             Text('Tanggal Berakhir *',
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
@@ -201,6 +282,33 @@ class _CreatePollScreenState extends ConsumerState<CreatePollScreen> {
               onTap: () => _pickDate(isEnd: true),
             ),
             const SizedBox(height: 32),
+            if (_errorMessage != null) ...[
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: RukuninColors.error.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: RukuninColors.error.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.error_outline_rounded, color: RukuninColors.error, size: 18),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _errorMessage!,
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          color: RukuninColors.error,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
             SizedBox(
               width: double.infinity,
               height: 52,
@@ -219,7 +327,7 @@ class _CreatePollScreenState extends ConsumerState<CreatePollScreen> {
                       )
                     : Text(
                         'Buat Polling',
-                        style: GoogleFonts.plusJakartaSans(
+                        style: GoogleFonts.poppins(
                             fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white),
                       ),
               ),
@@ -256,7 +364,7 @@ class _DateTile extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               label,
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
