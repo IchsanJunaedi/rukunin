@@ -53,7 +53,7 @@ class PendingApprovalScreen extends ConsumerWidget {
               Text(
                 'Akun kamu sudah terdaftar dan sedang menunggu persetujuan dari admin RT/RW.\n\nSetelah disetujui, kamu bisa login kembali dan menggunakan semua fitur Rukunin.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                   fontSize: 14,
                   color: Colors.white.withValues(alpha: 0.55),
                   height: 1.6,
@@ -83,7 +83,7 @@ class PendingApprovalScreen extends ConsumerWidget {
                   child: Center(
                     child: Text(
                       'Keluar',
-                      style: GoogleFonts.plusJakartaSans(
+                      style: GoogleFonts.poppins(
                         color: Colors.white.withValues(alpha: 0.5),
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -134,7 +134,7 @@ class _CheckStatusButtonState extends ConsumerState<_CheckStatusButton> {
           SnackBar(
             content: Text(
               'Akunmu belum disetujui. Hubungi admin RT/RW-mu.',
-              style: GoogleFonts.plusJakartaSans(fontSize: 13),
+              style: GoogleFonts.poppins(fontSize: 13),
             ),
             backgroundColor: const Color(0xFF1E1E1E),
             behavior: SnackBarBehavior.floating,
@@ -177,7 +177,7 @@ class _CheckStatusButtonState extends ConsumerState<_CheckStatusButton> {
                 )
               : Text(
                   'Cek Status & Masuk →',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     color: const Color(0xFF0D0D0D),
                     fontSize: 15,
                     fontWeight: FontWeight.w800,

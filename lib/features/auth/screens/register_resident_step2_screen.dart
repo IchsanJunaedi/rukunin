@@ -124,7 +124,7 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                       const SizedBox(height: 8),
                       Text(
                         'Blok dan No. RT wajib diisi.',
-                        style: GoogleFonts.plusJakartaSans(
+                        style: GoogleFonts.poppins(
                           fontSize: 13,
                           color: _kBlack.withValues(alpha: 0.5),
                           fontWeight: FontWeight.w500,
@@ -153,7 +153,7 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                     children: [
                       Text(
                         'Data ini membantu admin mengenal kamu.',
-                        style: GoogleFonts.plusJakartaSans(
+                        style: GoogleFonts.poppins(
                           color: _kWhite.withValues(alpha: 0.5),
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
@@ -197,11 +197,11 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                       DropdownButtonFormField<int>(
                         value: _selectedRt,
                         dropdownColor: const Color(0xFF1A1A1A),
-                        style: GoogleFonts.plusJakartaSans(
+                        style: GoogleFonts.poppins(
                             color: _kWhite, fontSize: 15, fontWeight: FontWeight.w500),
                         decoration: InputDecoration(
                           hintText: 'Pilih No. RT',
-                          hintStyle: GoogleFonts.plusJakartaSans(
+                          hintStyle: GoogleFonts.poppins(
                             color: _kWhite.withValues(alpha: 0.3),
                             fontSize: 14,
                           ),
@@ -264,7 +264,7 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                                   )
                                 : Text(
                                     'Daftar →',
-                                    style: GoogleFonts.plusJakartaSans(
+                                    style: GoogleFonts.poppins(
                                       color: _kBlack,
                                       fontSize: 16,
                                       fontWeight: FontWeight.w800,
@@ -312,11 +312,11 @@ class _DarkTextField extends StatelessWidget {
       textInputAction: textInputAction,
       inputFormatters: inputFormatters,
       validator: validator,
-      style: GoogleFonts.plusJakartaSans(
+      style: GoogleFonts.poppins(
           color: _kWhite, fontSize: 15, fontWeight: FontWeight.w500),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.plusJakartaSans(
+        hintStyle: GoogleFonts.poppins(
           color: _kWhite.withValues(alpha: 0.3),
           fontSize: 14,
         ),

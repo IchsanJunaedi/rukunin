@@ -113,7 +113,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen>
                             const SizedBox(width: 6),
                             Text(
                               'Rukunin',
-                              style: GoogleFonts.plusJakartaSans(
+                              style: GoogleFonts.poppins(
                                 color: _kYellow,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
@@ -170,7 +170,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen>
         children: [
           Text(
             'Masukkan password baru untuk akunmu.',
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               color: _kWhite.withValues(alpha: 0.5),
               fontSize: 13,
               fontWeight: FontWeight.w500,
@@ -256,7 +256,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen>
                       )
                     : Text(
                         'Simpan Password →',
-                        style: GoogleFonts.plusJakartaSans(
+                        style: GoogleFonts.poppins(
                           color: _kBlack,
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
@@ -289,7 +289,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen>
 
         Text(
           'Password kamu sudah diperbarui. Silakan login dengan password barumu.',
-          style: GoogleFonts.plusJakartaSans(
+          style: GoogleFonts.poppins(
             color: _kWhite.withValues(alpha: 0.5),
             fontSize: 13,
             height: 1.6,
@@ -309,7 +309,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen>
             child: Center(
               child: Text(
                 'Masuk Sekarang →',
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                   color: _kBlack,
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
@@ -352,14 +352,14 @@ class _DarkTextField extends StatelessWidget {
       textInputAction: textInputAction,
       validator: validator,
       onFieldSubmitted: onFieldSubmitted,
-      style: GoogleFonts.plusJakartaSans(
+      style: GoogleFonts.poppins(
         color: _kWhite,
         fontSize: 15,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.plusJakartaSans(
+        hintStyle: GoogleFonts.poppins(
           color: _kWhite.withValues(alpha: 0.3),
           fontSize: 14,
         ),

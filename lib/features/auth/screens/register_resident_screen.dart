@@ -111,7 +111,7 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                     const SizedBox(height: 12),
                     Text(
                       'Minta kode komunitas dari admin RT/RW-mu, lalu daftar di sini.',
-                      style: GoogleFonts.plusJakartaSans(
+                      style: GoogleFonts.poppins(
                         fontSize: 13,
                         color: _kBlack.withValues(alpha: 0.6),
                       ),
@@ -144,7 +144,7 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                         controller: _codeCtrl,
                         textCapitalization: TextCapitalization.characters,
                         inputFormatters: [LengthLimitingTextInputFormatter(6)],
-                        style: GoogleFonts.plusJakartaSans(
+                        style: GoogleFonts.poppins(
                           color: _kYellow,
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
@@ -152,14 +152,14 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                         ),
                         decoration: InputDecoration(
                           hintText: 'KODE',
-                          hintStyle: GoogleFonts.plusJakartaSans(
+                          hintStyle: GoogleFonts.poppins(
                             color: _kYellow.withValues(alpha: 0.3),
                             fontSize: 22,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 6,
                           ),
                           labelText: 'Kode Komunitas (6 huruf)',
-                          labelStyle: GoogleFonts.plusJakartaSans(
+                          labelStyle: GoogleFonts.poppins(
                             color: _kWhite.withValues(alpha: 0.5),
                             fontSize: 12,
                           ),
@@ -268,7 +268,7 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                                   )
                                 : Text(
                                     'Lanjut →',
-                                    style: GoogleFonts.plusJakartaSans(
+                                    style: GoogleFonts.poppins(
                                       color: _kBlack,
                                       fontSize: 15,
                                       fontWeight: FontWeight.w800,
@@ -319,10 +319,10 @@ class _DarkTextField extends StatelessWidget {
       keyboardType: keyboardType,
       validator: validator,
       inputFormatters: inputFormatters,
-      style: GoogleFonts.plusJakartaSans(color: _kWhite, fontSize: 14),
+      style: GoogleFonts.poppins(color: _kWhite, fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.plusJakartaSans(
+        hintStyle: GoogleFonts.poppins(
           color: _kWhite.withValues(alpha: 0.3),
           fontSize: 13,
         ),
