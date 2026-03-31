@@ -108,7 +108,7 @@ class _AdminProfileScreenState extends ConsumerState<AdminProfileScreen> {
                 const SizedBox(height: 16),
                 Text(
                   'Administrator',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
                     color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -117,7 +117,7 @@ class _AdminProfileScreenState extends ConsumerState<AdminProfileScreen> {
                 const SizedBox(height: 4),
                 Text(
                   email,
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 14,
                     color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                   ),
@@ -132,7 +132,7 @@ class _AdminProfileScreenState extends ConsumerState<AdminProfileScreen> {
                   ),
                   child: Text(
                     'Admin RT / RW',
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: RukuninColors.brandGreen,
@@ -148,7 +148,7 @@ class _AdminProfileScreenState extends ConsumerState<AdminProfileScreen> {
           // Menu Pengaturan
           Text(
             'Pengaturan',
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               fontSize: 16,
               fontWeight: FontWeight.w700,
               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -236,7 +236,7 @@ class _AdminProfileScreenState extends ConsumerState<AdminProfileScreen> {
                       Expanded(
                         child: Text(
                           'Pusat Bantuan',
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
                             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -269,7 +269,7 @@ class _AdminProfileScreenState extends ConsumerState<AdminProfileScreen> {
               icon: const Icon(Icons.logout_rounded),
               label: Text(
                 'Keluar dari Akun Admin',
-                style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold),
+                style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -327,7 +327,7 @@ class _AdminProfileScreenState extends ConsumerState<AdminProfileScreen> {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -335,7 +335,7 @@ class _AdminProfileScreenState extends ConsumerState<AdminProfileScreen> {
                   ),
                   Text(
                     subtitle,
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontSize: 12,
                       color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                     ),

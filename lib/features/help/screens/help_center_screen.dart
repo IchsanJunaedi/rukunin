@@ -56,7 +56,7 @@ class HelpCenterScreen extends StatelessWidget {
           Center(
             child: Text(
               'Rukunin v1.0 — Dikembangkan untuk kemudahan warga',
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                   fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
               textAlign: TextAlign.center,
             ),
@@ -74,7 +74,7 @@ class HelpCenterScreen extends StatelessWidget {
       children: [
         Text(
           title,
-          style: GoogleFonts.plusJakartaSans(
+          style: GoogleFonts.poppins(
             fontSize: 15,
             fontWeight: FontWeight.w700,
             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -106,7 +106,7 @@ class HelpCenterScreen extends StatelessWidget {
                         const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     title: Text(
                       question,
-                      style: GoogleFonts.plusJakartaSans(
+                      style: GoogleFonts.poppins(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -117,7 +117,7 @@ class HelpCenterScreen extends StatelessWidget {
                     children: [
                       Text(
                         answer,
-                        style: GoogleFonts.plusJakartaSans(
+                        style: GoogleFonts.poppins(
                           fontSize: 13,
                           color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                           height: 1.5,

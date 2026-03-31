@@ -97,7 +97,7 @@ class _PaymentSettingsScreenState extends ConsumerState<PaymentSettingsScreen> {
       backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
         title: Text('Rekening & Kas RW',
-            style: GoogleFonts.plusJakartaSans(fontSize: 18, fontWeight: FontWeight.bold)),
+            style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold)),
         backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         foregroundColor: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
         elevation: 0,
@@ -136,12 +136,12 @@ class _PaymentSettingsScreenState extends ConsumerState<PaymentSettingsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Upload Kode QRIS',
-                              style: GoogleFonts.plusJakartaSans(fontSize: 14,
+                              style: GoogleFonts.poppins(fontSize: 14,
                                   color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                                   fontWeight: FontWeight.w600)),
                           const SizedBox(height: 4),
                           Text('Gambar QRIS akan otomatis ditampilkan saat warga mau bayar secara mandiri dari aplikasi.',
-                              style: GoogleFonts.plusJakartaSans(fontSize: 12,
+                              style: GoogleFonts.poppins(fontSize: 12,
                                   color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                           const SizedBox(height: 16),
                           Center(
@@ -202,7 +202,7 @@ class _PaymentSettingsScreenState extends ConsumerState<PaymentSettingsScreen> {
                         ? const SizedBox(width: 24, height: 24,
                             child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
                         : Text('Simpan Pengaturan',
-                            style: GoogleFonts.plusJakartaSans(fontSize: 15, fontWeight: FontWeight.w700)),
+                            style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w700)),
                   ),
                   const SizedBox(height: 40),
                 ],
@@ -224,7 +224,7 @@ class _PaymentSettingsScreenState extends ConsumerState<PaymentSettingsScreen> {
         const SizedBox(height: 8),
         Text(
           error ? 'Gagal memuat gambar' : 'Upload Gambar',
-          style: GoogleFonts.plusJakartaSans(
+          style: GoogleFonts.poppins(
               fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
         ),
       ],
@@ -233,7 +233,7 @@ class _PaymentSettingsScreenState extends ConsumerState<PaymentSettingsScreen> {
 
   Widget _sectionLabel(BuildContext context, String label) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Text(label, style: GoogleFonts.plusJakartaSans(
+    return Text(label, style: GoogleFonts.poppins(
         fontSize: 13, fontWeight: FontWeight.w700,
         color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
         letterSpacing: 0.5));
@@ -261,11 +261,11 @@ class _PaymentSettingsScreenState extends ConsumerState<PaymentSettingsScreen> {
       controller: ctrl,
       keyboardType: keyboardType,
       validator: validator,
-      style: GoogleFonts.plusJakartaSans(fontSize: 14,
+      style: GoogleFonts.poppins(fontSize: 14,
           color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: GoogleFonts.plusJakartaSans(fontSize: 13,
+        labelStyle: GoogleFonts.poppins(fontSize: 13,
             color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
         prefixIcon: Icon(icon, size: 18,
             color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),

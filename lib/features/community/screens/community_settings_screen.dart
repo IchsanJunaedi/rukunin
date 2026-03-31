@@ -148,7 +148,7 @@ class _CommunitySettingsScreenState
           onPressed: () => context.pop(),
         ),
         title: Text('Profil Community',
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
                 color: Colors.white,
                 fontSize: 17,
                 fontWeight: FontWeight.w700)),
@@ -276,7 +276,7 @@ class _CommunitySettingsScreenState
                                     strokeWidth: 2.5,
                                     color: RukuninColors.brandGreen))
                             : Text('Simpan',
-                                style: GoogleFonts.plusJakartaSans(
+                                style: GoogleFonts.poppins(
                                     color: RukuninColors.brandGreen,
                                     fontSize: 15,
                                     fontWeight: FontWeight.w700)),
@@ -299,7 +299,7 @@ class _CommunitySettingsScreenState
           Icon(Icons.tag_rounded, size: 18, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
           const SizedBox(width: 16),
           Text('Jumlah RT',
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                   fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
           const Spacer(),
           IconButton(
@@ -314,7 +314,7 @@ class _CommunitySettingsScreenState
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text('$_rtCount',
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                     fontSize: 18, fontWeight: FontWeight.w800)),
           ),
           IconButton(
@@ -350,7 +350,7 @@ class _CommunitySettingsScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(label,
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                         fontSize: 12, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                 const SizedBox(height: 4),
                 asyncValue.when(
@@ -361,22 +361,22 @@ class _CommunitySettingsScreenState
                         strokeWidth: 2, color: RukuninColors.brandGreen),
                   ),
                   error: (e, _) => Text('Gagal memuat',
-                      style: GoogleFonts.plusJakartaSans(
+                      style: GoogleFonts.poppins(
                           fontSize: 13, color: RukuninColors.error)),
                   data: (list) => !enabled || list.isEmpty
                       ? Text(
                           enabled ? 'Tidak ada data' : 'Pilih ${_prevLabel(label)} dulu',
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                               fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary))
                       : DropdownButton<WilayahModel>(
                           value: selected,
                           hint: Text('Pilih $label',
-                              style: GoogleFonts.plusJakartaSans(
+                              style: GoogleFonts.poppins(
                                   fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
                           underline: const SizedBox(),
                           isDense: true,
                           isExpanded: true,
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
@@ -410,7 +410,7 @@ class _CommunitySettingsScreenState
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(label,
-          style: GoogleFonts.plusJakartaSans(
+          style: GoogleFonts.poppins(
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
@@ -443,11 +443,11 @@ class _CommunitySettingsScreenState
       controller: ctrl,
       keyboardType: keyboardType,
       validator: validator,
-      style: GoogleFonts.plusJakartaSans(
+      style: GoogleFonts.poppins(
           fontSize: 14, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: GoogleFonts.plusJakartaSans(
+        labelStyle: GoogleFonts.poppins(
             fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
         prefixIcon: Icon(icon, size: 18, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
         filled: true,

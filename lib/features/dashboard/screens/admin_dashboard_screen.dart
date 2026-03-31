@@ -156,7 +156,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: _ServiceCard(
-                      icon: Icons.article_outlined,
+                      icon: Icons.task_outlined,
                       label: 'Permohonan\nSurat',
                       onTap: () => context.push('/admin/layanan-requests'),
                     ),
@@ -164,7 +164,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: _ServiceCard(
-                      icon: Icons.report_problem_outlined,
+                      icon: Icons.feedback_outlined,
                       label: 'Pengaduan\nWarga',
                       onTap: () => context.push('/admin/pengaduan'),
                     ),
@@ -238,7 +238,7 @@ class _DashboardHeader extends StatelessWidget {
                 children: [
                   Text(
                     'Selamat datang,',
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontSize: 13,
                       color: Colors.white.withValues(alpha: 0.75),
                       fontWeight: FontWeight.w400,
@@ -246,7 +246,7 @@ class _DashboardHeader extends StatelessWidget {
                   ),
                   Text(
                     firstName,
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontSize: 17,
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
@@ -268,7 +268,7 @@ class _DashboardHeader extends StatelessWidget {
                     backgroundColor: Colors.white.withValues(alpha: 0.15),
                     child: Text(
                       initial,
-                      style: GoogleFonts.plusJakartaSans(
+                      style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.w800,
                         color: Colors.white,
@@ -282,7 +282,7 @@ class _DashboardHeader extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             d['rw_name']?.toString() ?? 'Dashboard',
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               fontSize: 24,
               fontWeight: FontWeight.w800,
               color: Colors.white,
@@ -336,7 +336,7 @@ class _KasHeroCard extends StatelessWidget {
             children: [
               Text(
                 'TOTAL TERKUMPUL',
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: isDark
@@ -353,7 +353,7 @@ class _KasHeroCard extends StatelessWidget {
                 ),
                 child: Text(
                   '${(pct * 100).toInt()}%',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
@@ -369,7 +369,7 @@ class _KasHeroCard extends StatelessWidget {
             blendMode: BlendMode.srcIn,
             child: Text(
               _fmt(terkumpul),
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                 fontSize: 32,
                 fontWeight: FontWeight.w800,
                 letterSpacing: -1.0,
@@ -397,7 +397,7 @@ class _KasHeroCard extends StatelessWidget {
             children: [
               Text(
                 'Target bulan ini',
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                   fontSize: 12,
                   color: isDark
                       ? RukuninColors.darkTextTertiary
@@ -406,7 +406,7 @@ class _KasHeroCard extends StatelessWidget {
               ),
               Text(
                 _fmt(tagihan),
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: isDark
@@ -457,7 +457,7 @@ class _CommunityCodeTile extends StatelessWidget {
               children: [
                 Text(
                   'KODE KOMUNITAS',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: isDark
@@ -473,7 +473,7 @@ class _CommunityCodeTile extends StatelessWidget {
                   blendMode: BlendMode.srcIn,
                   child: Text(
                     code,
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 3,
@@ -498,7 +498,7 @@ class _CommunityCodeTile extends StatelessWidget {
               ),
               child: Text(
                 'Salin',
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
@@ -533,35 +533,107 @@ class _StatsGrid extends StatelessWidget {
       mainAxisSpacing: 10,
       childAspectRatio: 1.4,
       children: [
-        StatCard(
-          label: 'Total Unit',
-          value: totalUnit.toString(),
-          icon: Icons.home_outlined,
-          iconColor: const Color(0xFF6366F1),
-          accentColor: const Color(0xFF6366F1),
-        ),
-        StatCard(
-          label: 'Sudah Bayar',
-          value: sudahBayar.toString(),
-          icon: Icons.check_circle_outline_rounded,
-          iconColor: RukuninColors.success,
-          accentColor: RukuninColors.success,
-        ),
-        StatCard(
-          label: 'Belum Bayar',
-          value: belumBayar.toString(),
-          icon: Icons.schedule_rounded,
-          iconColor: RukuninColors.warning,
-          accentColor: RukuninColors.warning,
-        ),
-        StatCard(
-          label: 'Perlu Verifikasi',
-          value: tungguVerif.toString(),
-          icon: Icons.pending_outlined,
-          iconColor: RukuninColors.info,
-          accentColor: RukuninColors.info,
-        ),
+        _DashStatCard(label: 'Total Unit',        value: totalUnit.toString(),    icon: Icons.domain_outlined),
+        _DashStatCard(label: 'Sudah Bayar',       value: sudahBayar.toString(),   icon: Icons.verified_outlined),
+        _DashStatCard(label: 'Belum Bayar',       value: belumBayar.toString(),   icon: Icons.hourglass_bottom_rounded),
+        _DashStatCard(label: 'Perlu Verifikasi',  value: tungguVerif.toString(),  icon: Icons.rate_review_outlined),
       ],
+    );
+  }
+}
+
+class _DashStatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final IconData icon;
+
+  const _DashStatCard({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: RukuninColors.brandGreen.withValues(alpha: isDark ? 0.22 : 0.14),
+          width: 1.0,
+        ),
+        boxShadow: isDark
+            ? [
+                BoxShadow(
+                  color: RukuninColors.brandGreen.withValues(alpha: 0.05),
+                  blurRadius: 14,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : [
+                BoxShadow(
+                  color: RukuninColors.brandGreen.withValues(alpha: 0.08),
+                  blurRadius: 14,
+                  offset: const Offset(0, 4),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 4,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  RukuninColors.brandGreen.withValues(alpha: isDark ? 0.20 : 0.13),
+                  RukuninColors.brandTeal.withValues(alpha: isDark ? 0.12 : 0.08),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, size: 18, color: RukuninColors.brandGreen),
+          ),
+          const Spacer(),
+          ShaderMask(
+            shaderCallback: (bounds) =>
+                RukuninColors.brandGradient.createShader(bounds),
+            blendMode: BlendMode.srcIn,
+            child: Text(
+              value,
+              style: GoogleFonts.poppins(
+                fontSize: 26,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.5,
+                height: 1.0,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: GoogleFonts.poppins(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: isDark
+                  ? RukuninColors.darkTextPrimary
+                  : RukuninColors.lightTextPrimary,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -570,14 +642,14 @@ class _StatsGrid extends StatelessWidget {
 
 class _QuickActions extends StatelessWidget {
   static const _items = [
-    (Icons.person_add_outlined,               'Warga Baru',    '/admin/warga/tambah'),
+    (Icons.how_to_reg_outlined,               'Warga Baru',    '/admin/warga/tambah'),
     (Icons.receipt_long_outlined,             'Buat Tagihan',  '/admin/tagihan/buat'),
-    (Icons.account_balance_wallet_outlined,   'Pengeluaran',   '/admin/pengeluaran'),
-    (Icons.campaign_outlined,                 'Pengumuman',    '/admin/pengumuman'),
-    (Icons.how_to_vote_outlined,              'Polling',       '/admin/polling'),
-    (Icons.contacts_outlined,                 'Info Kontak',   '/admin/layanan/kontak'),
+    (Icons.savings_outlined,                  'Pengeluaran',   '/admin/pengeluaran'),
+    (Icons.add_alert_outlined,                'Pengumuman',    '/admin/pengumuman'),
+    (Icons.poll_outlined,                     'Polling',       '/admin/polling'),
+    (Icons.contact_phone_outlined,            'Info Kontak',   '/admin/layanan/kontak'),
     (Icons.account_balance_outlined,          'Rekening',      '/admin/pengaturan-rek'),
-    (Icons.settings_outlined,                 'Profil RW',     '/admin/pengaturan'),
+    (Icons.tune_outlined,                     'Profil RW',     '/admin/pengaturan'),
   ];
 
   @override
@@ -644,25 +716,32 @@ class _ActionBtnState extends State<_ActionBtn>
             Container(
               width: 56, height: 56,
               decoration: BoxDecoration(
-                color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface,
+                gradient: LinearGradient(
+                  colors: [
+                    RukuninColors.brandGreen.withValues(alpha: isDark ? 0.18 : 0.12),
+                    RukuninColors.brandTeal.withValues(alpha: isDark ? 0.10 : 0.07),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
+                  color: RukuninColors.brandGreen.withValues(alpha: isDark ? 0.22 : 0.18),
                   width: 1.0,
                 ),
                 boxShadow: isDark
                     ? []
                     : [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.04),
+                          color: RukuninColors.brandGreen.withValues(alpha: 0.08),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         )
                       ],
               ),
               child: Icon(
-                widget.icon, 
-                color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary, 
+                widget.icon,
+                color: RukuninColors.brandGreen,
                 size: 24,
               ),
             ),
@@ -670,12 +749,12 @@ class _ActionBtnState extends State<_ActionBtn>
             Text(
               widget.label,
               textAlign: TextAlign.center,
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                 fontSize: 11,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w700,
                 color: isDark
-                    ? RukuninColors.darkTextSecondary
-                    : RukuninColors.lightTextSecondary,
+                    ? RukuninColors.darkTextPrimary
+                    : RukuninColors.lightTextPrimary,
               ),
             ),
           ],
@@ -710,32 +789,39 @@ class _ServiceCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface,
+              gradient: LinearGradient(
+                colors: [
+                  RukuninColors.brandGreen.withValues(alpha: isDark ? 0.18 : 0.12),
+                  RukuninColors.brandTeal.withValues(alpha: isDark ? 0.10 : 0.07),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
+                color: RukuninColors.brandGreen.withValues(alpha: isDark ? 0.22 : 0.18),
                 width: 1.0,
               ),
               boxShadow: isDark
                   ? []
                   : [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
+                        color: RukuninColors.brandGreen.withValues(alpha: 0.08),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       )
                     ],
             ),
             child: Icon(
-              icon, 
-              color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary, 
+              icon,
+              color: RukuninColors.brandGreen,
               size: 22,
             ),
           ),
           const SizedBox(height: 12),
           Text(
             label,
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: isDark
