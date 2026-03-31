@@ -28,7 +28,7 @@ class ExpensesScreen extends ConsumerWidget {
         foregroundColor: Colors.white,
         title: Text(
           'Pengeluaran Kas',
-          style: GoogleFonts.plusJakartaSans(
+          style: GoogleFonts.poppins(
               fontWeight: FontWeight.w700, fontSize: 16),
         ),
       ),
@@ -37,7 +37,7 @@ class ExpensesScreen extends ConsumerWidget {
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
         label: Text('Catat Pengeluaran',
-            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
+            style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
         onPressed: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const AddExpenseScreen()),
@@ -58,13 +58,13 @@ class ExpensesScreen extends ConsumerWidget {
               children: [
                 Text(
                   'Total Pengeluaran $monthLabel',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                       fontSize: 13, color: Colors.white70),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   currencyFormat.format(totalAsync),
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                       fontSize: 32,
                       fontWeight: FontWeight.w800,
                       color: Colors.white),
@@ -90,7 +90,7 @@ class ExpensesScreen extends ConsumerWidget {
                         const SizedBox(height: 16),
                         Text(
                           'Belum ada pengeluaran bulan ini',
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                               color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                               fontWeight: FontWeight.w600),
                         ),
@@ -171,19 +171,19 @@ class _ExpenseCard extends StatelessWidget {
           context: context,
           builder: (ctx) => AlertDialog(
             title: Text('Hapus Pengeluaran',
-                style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
+                style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
             content: Text('Yakin ingin menghapus pengeluaran ini?',
-                style: GoogleFonts.plusJakartaSans()),
+                style: GoogleFonts.poppins()),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
-                child: Text('Batal', style: GoogleFonts.plusJakartaSans()),
+                child: Text('Batal', style: GoogleFonts.poppins()),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: RukuninColors.error),
                 onPressed: () => Navigator.pop(ctx, true),
                 child: Text('Hapus',
-                    style: GoogleFonts.plusJakartaSans(color: Colors.white)),
+                    style: GoogleFonts.poppins(color: Colors.white)),
               ),
             ],
           ),
@@ -218,7 +218,7 @@ class _ExpenseCard extends StatelessWidget {
           ),
           title: Text(
             expense.description,
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
                 color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
@@ -227,12 +227,12 @@ class _ExpenseCard extends StatelessWidget {
           ),
           subtitle: Text(
             '${expense.category} · $dateStr',
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
                 fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
           ),
           trailing: Text(
             format.format(expense.amount),
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               fontWeight: FontWeight.w800,
               fontSize: 15,
               color: RukuninColors.error,

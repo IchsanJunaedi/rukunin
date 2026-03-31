@@ -117,17 +117,17 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text('Terbitkan Tagihan?',
-            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 16)),
+            style: GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 16)),
         content: Text(
           'Tagihan ${_selectedBillingType!.name} untuk periode '
           '${_months[_selectedMonth - 1]} $_selectedYear akan diterbitkan ke '
           'semua warga aktif.\n\nJatuh tempo: $dueDateFmt',
-          style: GoogleFonts.plusJakartaSans(fontSize: 14),
+          style: GoogleFonts.poppins(fontSize: 14),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text('Batal', style: GoogleFonts.plusJakartaSans()),
+            child: Text('Batal', style: GoogleFonts.poppins()),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
@@ -135,7 +135,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
               backgroundColor: RukuninColors.brandGreen,
               foregroundColor: Colors.white,
             ),
-            child: Text('Ya, Terbitkan', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
+            child: Text('Ya, Terbitkan', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
           ),
         ],
       ),
@@ -189,7 +189,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
       appBar: AppBar(
         title: Text(
           'Terbitkan Tagihan',
-          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 16),
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 16),
         ),
       ),
       body: _isLoading
@@ -214,7 +214,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                         Expanded(
                           child: Text(
                             'Tagihan akan diterbitkan ke seluruh warga (Resident) aktif yang terdaftar di komunitas ini.',
-                            style: GoogleFonts.plusJakartaSans(fontSize: 13, color: RukuninColors.brandGreen),
+                            style: GoogleFonts.poppins(fontSize: 13, color: RukuninColors.brandGreen),
                           ),
                         ),
                       ],
@@ -234,7 +234,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                       if (activeTypes.isEmpty) {
                         return Text(
                           'Belum ada Jenis Iuran aktif. Tambahkan pada Pengaturan Jenis Iuran.',
-                          style: GoogleFonts.plusJakartaSans(color: RukuninColors.error),
+                          style: GoogleFonts.poppins(color: RukuninColors.error),
                         );
                       }
                       return ListView.separated(
@@ -270,7 +270,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                                       children: [
                                         Text(
                                           t.name,
-                                          style: GoogleFonts.plusJakartaSans(
+                                          style: GoogleFonts.poppins(
                                             fontSize: 15,
                                             fontWeight: FontWeight.w700,
                                             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -279,7 +279,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                                         const SizedBox(height: 2),
                                         Text(
                                           'Nominal: ${currencyFormat.format(t.amount)}',
-                                          style: GoogleFonts.plusJakartaSans(
+                                          style: GoogleFonts.poppins(
                                               fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
                                         ),
                                       ],
@@ -383,7 +383,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                                     children: [
                                       Text(
                                         DateFormat('EEEE, d MMMM yyyy', 'id_ID').format(_selectedDueDate!),
-                                        style: GoogleFonts.plusJakartaSans(
+                                        style: GoogleFonts.poppins(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w600,
                                           color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -392,7 +392,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                                       if (_selectedBillingType != null)
                                         Text(
                                           'Tanggal billing default: ${_selectedBillingType!.billingDay}',
-                                          style: GoogleFonts.plusJakartaSans(
+                                          style: GoogleFonts.poppins(
                                               fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                                         ),
                                     ],
@@ -401,7 +401,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                                     _selectedBillingType == null
                                         ? 'Pilih jenis iuran dahulu'
                                         : 'Ketuk untuk memilih tanggal',
-                                    style: GoogleFonts.plusJakartaSans(
+                                    style: GoogleFonts.poppins(
                                         fontSize: 14, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                                   ),
                           ),
@@ -418,7 +418,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                       padding: const EdgeInsets.only(top: 6, left: 4),
                       child: Text(
                         'Wajib pilih tanggal jatuh tempo',
-                        style: GoogleFonts.plusJakartaSans(fontSize: 12, color: RukuninColors.error),
+                        style: GoogleFonts.poppins(fontSize: 12, color: RukuninColors.error),
                       ),
                     ),
 
@@ -436,7 +436,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Ringkasan Tagihan',
-                              style: GoogleFonts.plusJakartaSans(
+                              style: GoogleFonts.poppins(
                                   fontSize: 12, fontWeight: FontWeight.w600, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
                           const SizedBox(height: 12),
                           _summaryRow('Jenis Iuran', _selectedBillingType!.name),
@@ -475,7 +475,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                       ),
                       child: Text(
                         'Terbitkan ke Semua Warga',
-                        style: GoogleFonts.plusJakartaSans(
+                        style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w700, fontSize: 15),
                       ),
                     ),
@@ -492,10 +492,10 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: GoogleFonts.plusJakartaSans(fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
+        Text(label, style: GoogleFonts.poppins(fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
         Text(
           value,
-          style: GoogleFonts.plusJakartaSans(
+          style: GoogleFonts.poppins(
             fontSize: 14,
             fontWeight: valueBold ? FontWeight.w700 : FontWeight.w600,
             color: valueColor ?? (isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),

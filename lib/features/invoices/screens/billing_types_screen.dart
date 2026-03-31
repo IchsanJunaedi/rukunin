@@ -24,7 +24,7 @@ class BillingTypesScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'Konfigurasi Iuran',
-          style: GoogleFonts.plusJakartaSans(
+          style: GoogleFonts.poppins(
             fontWeight: FontWeight.w700,
             fontSize: 16,
           ),
@@ -56,7 +56,7 @@ class BillingTypesScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   Text(
                     'Belum ada jenis iuran',
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                       fontWeight: FontWeight.w600,
                     ),
@@ -119,7 +119,7 @@ class BillingTypesScreen extends ConsumerWidget {
                           children: [
                             Text(
                               type.name,
-                              style: GoogleFonts.plusJakartaSans(
+                              style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 15,
                                 color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -134,7 +134,7 @@ class BillingTypesScreen extends ConsumerWidget {
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text('Nonaktif',
-                                    style: GoogleFonts.plusJakartaSans(
+                                    style: GoogleFonts.poppins(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w600,
                                         color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
@@ -144,7 +144,7 @@ class BillingTypesScreen extends ConsumerWidget {
                         const SizedBox(height: 4),
                         Text(
                           format.format(type.amount),
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w800,
                             fontSize: 18,
                             color: RukuninColors.brandGreen,
@@ -155,7 +155,7 @@ class BillingTypesScreen extends ConsumerWidget {
                             padding: const EdgeInsets.only(top: 2),
                             child: Text(
                               '+${format.format(type.costPerMotorcycle)}/motor · +${format.format(type.costPerCar)}/mobil',
-                              style: GoogleFonts.plusJakartaSans(
+                              style: GoogleFonts.poppins(
                                 fontSize: 11,
                                 color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                               ),
@@ -195,21 +195,21 @@ class BillingTypesScreen extends ConsumerWidget {
                           context: context,
                           builder: (ctx) => AlertDialog(
                             title: Text('Hapus Jenis Iuran',
-                                style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
+                                style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
                             content: Text(
                               'Yakin ingin menghapus "${type.name}"?\nData historis tagihan tetap tersimpan.',
-                              style: GoogleFonts.plusJakartaSans(),
+                              style: GoogleFonts.poppins(),
                             ),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(ctx, false),
-                                child: Text('Batal', style: GoogleFonts.plusJakartaSans()),
+                                child: Text('Batal', style: GoogleFonts.poppins()),
                               ),
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(backgroundColor: RukuninColors.error),
                                 onPressed: () => Navigator.pop(ctx, true),
                                 child: Text('Hapus',
-                                    style: GoogleFonts.plusJakartaSans(color: Colors.white)),
+                                    style: GoogleFonts.poppins(color: Colors.white)),
                               ),
                             ],
                           ),
@@ -242,7 +242,7 @@ class BillingTypesScreen extends ConsumerWidget {
                           children: [
                             Icon(Icons.edit_outlined, size: 18, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
                             const SizedBox(width: 8),
-                            Text('Edit Iuran', style: GoogleFonts.plusJakartaSans()),
+                            Text('Edit Iuran', style: GoogleFonts.poppins()),
                           ],
                         ),
                       ),
@@ -252,7 +252,7 @@ class BillingTypesScreen extends ConsumerWidget {
                           children: [
                             Icon(Icons.delete_outline, size: 18, color: RukuninColors.error),
                             const SizedBox(width: 8),
-                            Text('Hapus', style: GoogleFonts.plusJakartaSans(color: RukuninColors.error)),
+                            Text('Hapus', style: GoogleFonts.poppins(color: RukuninColors.error)),
                           ],
                         ),
                       ),
@@ -270,7 +270,7 @@ class BillingTypesScreen extends ConsumerWidget {
                   const SizedBox(width: 8),
                   Text(
                     'Jatuh tempo tiap tanggal ${type.billingDay} setiap bulan',
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontSize: 12,
                       color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                     ),

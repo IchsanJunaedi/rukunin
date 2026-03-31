@@ -89,7 +89,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
         foregroundColor: Colors.white,
         title: Text(
           'Catat Pengeluaran',
-          style: GoogleFonts.plusJakartaSans(
+          style: GoogleFonts.poppins(
               fontWeight: FontWeight.w700, fontSize: 16),
         ),
       ),
@@ -107,18 +107,18 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                     _card(context, TextFormField(
                       controller: _amountCtrl,
                       keyboardType: TextInputType.number,
-                      style: GoogleFonts.plusJakartaSans(
+                      style: GoogleFonts.poppins(
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
                           color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface),
                       decoration: InputDecoration(
                         hintText: '0',
-                        hintStyle: GoogleFonts.plusJakartaSans(
+                        hintStyle: GoogleFonts.poppins(
                             fontSize: 22,
                             fontWeight: FontWeight.w800,
                             color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
                         prefixText: 'Rp ',
-                        prefixStyle: GoogleFonts.plusJakartaSans(
+                        prefixStyle: GoogleFonts.poppins(
                             fontSize: 22,
                             fontWeight: FontWeight.w800,
                             color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
@@ -145,7 +145,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                         child: DropdownButton<String>(
                           value: _category,
                           isExpanded: true,
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
@@ -167,11 +167,11 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                     _card(context, TextFormField(
                       controller: _descCtrl,
                       maxLines: 3,
-                      style: GoogleFonts.plusJakartaSans(fontSize: 14),
+                      style: GoogleFonts.poppins(fontSize: 14),
                       decoration: InputDecoration(
                         hintText:
                             'Contoh: Bayar tukang potong rumput Pak Budi...',
-                        hintStyle: GoogleFonts.plusJakartaSans(
+                        hintStyle: GoogleFonts.poppins(
                             fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.all(16),
@@ -196,7 +196,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                             const SizedBox(width: 12),
                             Text(
                               dateLabel,
-                              style: GoogleFonts.plusJakartaSans(
+                              style: GoogleFonts.poppins(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                   color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
@@ -224,7 +224,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                         onPressed: _save,
                         child: Text(
                           'Simpan Pengeluaran',
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w700, fontSize: 15),
                         ),
                       ),
@@ -242,7 +242,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         text,
-        style: GoogleFonts.plusJakartaSans(
+        style: GoogleFonts.poppins(
           fontSize: 12,
           fontWeight: FontWeight.w700,
           color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,

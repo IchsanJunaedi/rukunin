@@ -117,7 +117,7 @@ class _AddEditBillingTypeScreenState
       appBar: AppBar(
         title: Text(
           isEdit ? 'Edit Iuran' : 'Tambah Iuran',
-          style: GoogleFonts.plusJakartaSans(
+          style: GoogleFonts.poppins(
             fontWeight: FontWeight.w700,
             fontSize: 16,
           ),
@@ -132,7 +132,7 @@ class _AddEditBillingTypeScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Nama Iuran', style: GoogleFonts.plusJakartaSans(
+                    Text('Nama Iuran', style: GoogleFonts.poppins(
                       fontSize: 14, fontWeight: FontWeight.w600,
                       color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                     )),
@@ -147,7 +147,7 @@ class _AddEditBillingTypeScreenState
                           : null,
                     ),
                     const SizedBox(height: 20),
-                    Text('Nominal (Rp)', style: GoogleFonts.plusJakartaSans(
+                    Text('Nominal (Rp)', style: GoogleFonts.poppins(
                       fontSize: 14, fontWeight: FontWeight.w600,
                       color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                     )),
@@ -169,7 +169,7 @@ class _AddEditBillingTypeScreenState
                       },
                     ),
                     const SizedBox(height: 20),
-                    Text('Tanggal Jatuh Tempo Tiap Bulan', style: GoogleFonts.plusJakartaSans(
+                    Text('Tanggal Jatuh Tempo Tiap Bulan', style: GoogleFonts.poppins(
                       fontSize: 14, fontWeight: FontWeight.w600,
                       color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                     )),
@@ -204,14 +204,14 @@ class _AddEditBillingTypeScreenState
                               Icon(Icons.two_wheeler, size: 16, color: RukuninColors.brandGreen),
                               const SizedBox(width: 8),
                               Text('Tarif Tambahan per Kendaraan',
-                                  style: GoogleFonts.plusJakartaSans(
+                                  style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.w700, fontSize: 13, color: RukuninColors.brandGreen)),
                             ],
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Isi jika iuran ini dikenakan tambahan berdasarkan jumlah kendaraan warga (misal: iuran Ronda). Kosongkan atau isi 0 jika tidak perlu.',
-                            style: GoogleFonts.plusJakartaSans(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+                            style: GoogleFonts.poppins(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                           ),
                           const SizedBox(height: 12),
                           TextFormField(
@@ -252,7 +252,7 @@ class _AddEditBillingTypeScreenState
                             children: [
                               Text(
                                 'Status Aktif',
-                                style: GoogleFonts.plusJakartaSans(
+                                style: GoogleFonts.poppins(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
                                   color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -263,7 +263,7 @@ class _AddEditBillingTypeScreenState
                                 _isActive
                                     ? 'Tagihan akan diterbitkan'
                                     : 'Tagihan iuran ini dinonaktifkan',
-                                style: GoogleFonts.plusJakartaSans(
+                                style: GoogleFonts.poppins(
                                   fontSize: 12,
                                   color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                                 ),
