@@ -47,7 +47,7 @@ class _ResidentInvoicesScreenState extends ConsumerState<ResidentInvoicesScreen>
           labelColor: RukuninColors.brandGreen,
           unselectedLabelColor: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
           indicatorColor: RukuninColors.brandGreen,
-          labelStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
+          labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600),
           tabs: const [
             Tab(text: 'Semua'),
             Tab(text: 'Belum Lunas'),
@@ -66,7 +66,7 @@ class _ResidentInvoicesScreenState extends ConsumerState<ResidentInvoicesScreen>
                   const SizedBox(height: 16),
                   Text(
                     'Belum ada tagihan sama sekali',
-                    style: GoogleFonts.plusJakartaSans(color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+                    style: GoogleFonts.poppins(color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                   ),
                 ],
               ),
@@ -165,7 +165,7 @@ class _InvoiceListBuilderState extends ConsumerState<_InvoiceListBuilder> {
       return Center(
         child: Text(
           'Tidak ada tagihan di kategori ini',
-          style: GoogleFonts.plusJakartaSans(color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+          style: GoogleFonts.poppins(color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
         ),
       );
     }
@@ -224,7 +224,7 @@ class _InvoiceListBuilderState extends ConsumerState<_InvoiceListBuilder> {
                       children: [
                         Text(
                           inv.billingTypeName,
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w700,
                             fontSize: 15,
                             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -233,7 +233,7 @@ class _InvoiceListBuilderState extends ConsumerState<_InvoiceListBuilder> {
                         const SizedBox(height: 2),
                         Text(
                           'Periode $monthName',
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                             fontSize: 13,
                             color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                           ),
@@ -247,7 +247,7 @@ class _InvoiceListBuilderState extends ConsumerState<_InvoiceListBuilder> {
                           ),
                           child: Text(
                             statusText,
-                            style: GoogleFonts.plusJakartaSans(
+                            style: GoogleFonts.poppins(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               color: statusColor,
@@ -259,7 +259,7 @@ class _InvoiceListBuilderState extends ConsumerState<_InvoiceListBuilder> {
                   ),
                   Text(
                     amountFmt,
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w800,
                       fontSize: 15,
                       color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -375,7 +375,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
           const SizedBox(height: 24),
           Text(
             'Pilih cara pembayaran',
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
@@ -443,7 +443,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
                       color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -452,7 +452,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.plusJakartaSans(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+                    style: GoogleFonts.poppins(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                   ),
                 ],
               ),
@@ -479,7 +479,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
           Expanded(
             child: Text(
               'Admin belum mengatur info pembayaran. Hubungi pengurus RT.',
-              style: GoogleFonts.plusJakartaSans(fontSize: 13, color: RukuninColors.warning),
+              style: GoogleFonts.poppins(fontSize: 13, color: RukuninColors.warning),
             ),
           ),
         ],
@@ -527,7 +527,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
                   widget.amountFormatted,
                   canCopy: true,
                   copyValue: widget.amount.toInt().toString(),
-                  valueStyle: GoogleFonts.plusJakartaSans(
+                  valueStyle: GoogleFonts.poppins(
                     fontWeight: FontWeight.w800,
                     fontSize: 16,
                     color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -563,7 +563,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
           flex: 2,
           child: Text(
             label,
-            style: GoogleFonts.plusJakartaSans(fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+            style: GoogleFonts.poppins(fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
           ),
         ),
         Expanded(
@@ -576,7 +576,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
                   value,
                   textAlign: TextAlign.end,
                   style: valueStyle ??
-                      GoogleFonts.plusJakartaSans(
+                      GoogleFonts.poppins(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
                         color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -671,7 +671,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
         ],
         Text(
           title,
-          style: GoogleFonts.plusJakartaSans(
+          style: GoogleFonts.poppins(
             fontSize: 20,
             fontWeight: FontWeight.w800,
             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -697,18 +697,18 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
             children: [
               Text(
                 widget.billingTypeName,
-                style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
+                style: GoogleFonts.poppins(fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
               ),
               const SizedBox(height: 2),
               Text(
                 widget.periodLabel,
-                style: GoogleFonts.plusJakartaSans(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+                style: GoogleFonts.poppins(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
               ),
             ],
           ),
           Text(
             widget.amountFormatted,
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               fontWeight: FontWeight.w800,
               fontSize: 16,
               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -734,7 +734,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
           Expanded(
             child: Text(
               message,
-              style: GoogleFonts.plusJakartaSans(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+              style: GoogleFonts.poppins(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
             ),
           ),
         ],
@@ -745,7 +745,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
   Widget _buildUploadLabel(bool isDark) {
     return Text(
       'Sudah bayar? Unggah bukti pembayaran',
-      style: GoogleFonts.plusJakartaSans(
+      style: GoogleFonts.poppins(
         fontWeight: FontWeight.w600,
         fontSize: 14,
         color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -767,7 +767,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
             ),
             onPressed: () => _doUpload(ImageSource.camera),
             icon: const Icon(Icons.camera_alt_rounded, size: 20),
-            label: Text('Kamera', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
+            label: Text('Kamera', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
           ),
         ),
         const SizedBox(width: 12),
@@ -782,7 +782,7 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
             ),
             onPressed: () => _doUpload(ImageSource.gallery),
             icon: const Icon(Icons.photo_library_rounded, size: 20),
-            label: Text('Galeri', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
+            label: Text('Galeri', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
           ),
         ),
       ],

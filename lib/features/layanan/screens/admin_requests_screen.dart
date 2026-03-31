@@ -80,7 +80,7 @@ class _AdminRequestsScreenState extends ConsumerState<AdminRequestsScreen> {
                       children: [
                         Text(
                           'Kelola Informasi Kontak',
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
                             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -88,7 +88,7 @@ class _AdminRequestsScreenState extends ConsumerState<AdminRequestsScreen> {
                         ),
                         Text(
                           'Atur kontak pengurus yang tampil ke warga',
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                             fontSize: 11,
                             color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                           ),
@@ -119,7 +119,7 @@ class _AdminRequestsScreenState extends ConsumerState<AdminRequestsScreen> {
                   onSelected: (_) => setState(() => _filter = option),
                   backgroundColor: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
                   selectedColor: RukuninColors.brandGreen,
-                  labelStyle: GoogleFonts.plusJakartaSans(
+                  labelStyle: GoogleFonts.poppins(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: selected ? Colors.white : (isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
@@ -150,7 +150,7 @@ class _AdminRequestsScreenState extends ConsumerState<AdminRequestsScreen> {
                           color: RukuninColors.error, size: 48),
                       const SizedBox(height: 12),
                       Text('Gagal memuat data',
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary)),
                       const SizedBox(height: 8),
                       TextButton(
@@ -170,19 +170,30 @@ class _AdminRequestsScreenState extends ConsumerState<AdminRequestsScreen> {
                         .toList();
 
                 if (filtered.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                  return RefreshIndicator(
+                    color: RukuninColors.brandGreen,
+                    onRefresh: () async => ref.invalidate(adminLetterRequestsProvider),
+                    child: ListView(
                       children: [
-                        Icon(Icons.article_outlined,
-                            color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary, size: 56),
-                        const SizedBox(height: 12),
-                        Text(
-                          'Belum ada permohonan',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.4,
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.article_outlined,
+                                    color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary, size: 56),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'Belum ada permohonan',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -266,7 +277,7 @@ class _RequestCard extends StatelessWidget {
                 ),
                 child: Text(
                   '#SRT-${(index + 1).toString().padLeft(3, '0')}',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
@@ -282,7 +293,7 @@ class _RequestCard extends StatelessWidget {
                 ),
                 child: Text(
                   request.statusLabel,
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     color: statusColor,
@@ -295,8 +306,8 @@ class _RequestCard extends StatelessWidget {
 
           // Resident name + unit
           Text(
-            request.residentName ?? '-',
-            style: GoogleFonts.plusJakartaSans(
+            request.residentName ?? request.applicantName ?? '-',
+            style: GoogleFonts.poppins(
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -306,7 +317,7 @@ class _RequestCard extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               'Unit ${request.residentUnit}',
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                 fontSize: 12,
                 color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
               ),
@@ -323,7 +334,7 @@ class _RequestCard extends StatelessWidget {
             ),
             child: Text(
               request.typeLabel,
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
@@ -336,7 +347,7 @@ class _RequestCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               request.purpose!,
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                 fontSize: 12,
                 color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
               ),
@@ -349,7 +360,7 @@ class _RequestCard extends StatelessWidget {
           // Date
           Text(
             dateStr,
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               fontSize: 11,
               color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
             ),
@@ -367,7 +378,7 @@ class _RequestCard extends StatelessWidget {
                     minimumSize: const Size(0, 40),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     elevation: 0,
-                    textStyle: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w700),
+                    textStyle: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w700),
                   ),
                   onPressed: () => context.push('/admin/layanan-verifikasi/${request.id}', extra: request),
                   child: const Text('Verifikasi'),

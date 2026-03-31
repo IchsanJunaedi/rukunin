@@ -36,7 +36,7 @@ class AdminContactsScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
           child: Text('Error: $e',
-              style: GoogleFonts.plusJakartaSans(color: RukuninColors.error)),
+              style: GoogleFonts.poppins(color: RukuninColors.error)),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -58,7 +58,7 @@ class AdminContactsScreen extends ConsumerWidget {
           const SizedBox(height: 12),
           Text(
             'Belum ada kontak',
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               fontSize: 15,
               fontWeight: FontWeight.w600,
               color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
@@ -67,7 +67,7 @@ class AdminContactsScreen extends ConsumerWidget {
           const SizedBox(height: 4),
           Text(
             'Tap + untuk tambah kontak pengurus',
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               fontSize: 13,
               color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
             ),
@@ -258,7 +258,7 @@ class _ContactAdminCard extends StatelessWidget {
               children: [
                 Text(
                   contact.nama,
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -266,14 +266,14 @@ class _ContactAdminCard extends StatelessWidget {
                 ),
                 Text(
                   contact.jabatan,
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                   ),
                 ),
                 Text(
                   contact.phone,
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                   ),
@@ -338,7 +338,7 @@ class _Avatar extends StatelessWidget {
       backgroundColor: RukuninColors.brandGreen.withValues(alpha: 0.15),
       child: Text(
         contact.initials,
-        style: GoogleFonts.plusJakartaSans(
+        style: GoogleFonts.poppins(
           fontSize: radius * 0.6,
           fontWeight: FontWeight.w700,
           color: RukuninColors.brandGreen,
@@ -449,7 +449,7 @@ class _ContactFormSheetState extends ConsumerState<_ContactFormSheet> {
           children: [
             Text(
               isEdit ? 'Edit Kontak' : 'Tambah Kontak',
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                 fontSize: 17,
                 fontWeight: FontWeight.w700,
                 color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -549,7 +549,7 @@ class _ContactFormSheetState extends ConsumerState<_ContactFormSheet> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(100)),
                   elevation: 0,
-                  textStyle: GoogleFonts.plusJakartaSans(
+                  textStyle: GoogleFonts.poppins(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                   ),
@@ -574,7 +574,7 @@ class _ContactFormSheetState extends ConsumerState<_ContactFormSheet> {
                 child: TextButton(
                   style: TextButton.styleFrom(
                     foregroundColor: RukuninColors.error,
-                    textStyle: GoogleFonts.plusJakartaSans(
+                    textStyle: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),

@@ -39,7 +39,7 @@ class _ResidentKasScreenState extends ConsumerState<ResidentKasScreen> {
                 value: _selectedMonth,
                 underline: const SizedBox(),
                 dropdownColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                     fontSize: 13, fontWeight: FontWeight.w600,
                     color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                 items: months.map((m) => DropdownMenuItem(
@@ -52,7 +52,7 @@ class _ResidentKasScreenState extends ConsumerState<ResidentKasScreen> {
                 value: _selectedYear,
                 underline: const SizedBox(),
                 dropdownColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                     fontSize: 13, fontWeight: FontWeight.w600,
                     color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                 items: years.map((y) => DropdownMenuItem(
@@ -75,7 +75,7 @@ class _ResidentKasScreenState extends ConsumerState<ResidentKasScreen> {
               const Icon(Icons.error_outline, size: 48, color: RukuninColors.error),
               const SizedBox(height: 12),
               Text('Gagal memuat data kas',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                       color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
               const SizedBox(height: 8),
               TextButton(
@@ -103,7 +103,7 @@ class _ResidentKasScreenState extends ConsumerState<ResidentKasScreen> {
                   ),
                   child: Text(
                     'Periode $monthName',
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                         fontSize: 13, fontWeight: FontWeight.w600, color: RukuninColors.brandGreen),
                     textAlign: TextAlign.center,
                   ),
@@ -153,7 +153,7 @@ class _ResidentKasScreenState extends ConsumerState<ResidentKasScreen> {
                         children: [
                           Text(
                             'Saldo Bersih Bulan Ini',
-                            style: GoogleFonts.plusJakartaSans(
+                            style: GoogleFonts.poppins(
                                 fontSize: 13,
                                 color: kas.netBalance >= 0
                                     ? (isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)
@@ -162,7 +162,7 @@ class _ResidentKasScreenState extends ConsumerState<ResidentKasScreen> {
                           const SizedBox(height: 4),
                           Text(
                             currencyFmt.format(kas.netBalance.abs()),
-                            style: GoogleFonts.plusJakartaSans(
+                            style: GoogleFonts.poppins(
                                 fontSize: 22, fontWeight: FontWeight.w800,
                                 color: kas.netBalance >= 0
                                     ? (isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary)
@@ -188,7 +188,7 @@ class _ResidentKasScreenState extends ConsumerState<ResidentKasScreen> {
                 // List pengeluaran terbaru
                 Text(
                   '10 Pengeluaran Terbaru',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                       fontSize: 16, fontWeight: FontWeight.w700,
                       color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                 ),
@@ -204,7 +204,7 @@ class _ResidentKasScreenState extends ConsumerState<ResidentKasScreen> {
                               color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
                           const SizedBox(height: 12),
                           Text('Belum ada catatan pengeluaran',
-                              style: GoogleFonts.plusJakartaSans(
+                              style: GoogleFonts.poppins(
                                   color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
                         ],
                       ),
@@ -237,21 +237,21 @@ class _ResidentKasScreenState extends ConsumerState<ResidentKasScreen> {
                               children: [
                                 Text(
                                   exp.description.isNotEmpty ? exp.description : exp.category,
-                                  style: GoogleFonts.plusJakartaSans(
+                                  style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w600, fontSize: 14,
                                       color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 Text('${exp.category} · $dateStr',
-                                    style: GoogleFonts.plusJakartaSans(
+                                    style: GoogleFonts.poppins(
                                         fontSize: 12,
                                         color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
                               ],
                             ),
                           ),
                           Text(currencyFmt.format(exp.amount),
-                              style: GoogleFonts.plusJakartaSans(
+                              style: GoogleFonts.poppins(
                                   fontWeight: FontWeight.w700, fontSize: 14, color: RukuninColors.error)),
                         ],
                       ),
@@ -261,7 +261,7 @@ class _ResidentKasScreenState extends ConsumerState<ResidentKasScreen> {
                 const SizedBox(height: 16),
                 Text(
                   'Data ini hanya dapat dilihat — tidak dapat diubah oleh warga.',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                       fontSize: 11,
                       color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                       fontStyle: FontStyle.italic),
@@ -311,13 +311,13 @@ class _SummaryCard extends StatelessWidget {
                 child: Icon(icon, color: color, size: 16),
               ),
               const SizedBox(width: 8),
-              Text(label, style: GoogleFonts.plusJakartaSans(
+              Text(label, style: GoogleFonts.poppins(
                   fontSize: 12, fontWeight: FontWeight.w600,
                   color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
             ],
           ),
           const SizedBox(height: 10),
-          Text(value, style: GoogleFonts.plusJakartaSans(
+          Text(value, style: GoogleFonts.poppins(
               fontSize: 14, fontWeight: FontWeight.w800,
               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
             maxLines: 1, overflow: TextOverflow.ellipsis),

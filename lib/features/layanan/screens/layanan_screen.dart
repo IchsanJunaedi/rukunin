@@ -84,11 +84,11 @@ class _LayananScreenState extends ConsumerState<LayananScreen>
           labelColor: Colors.white,
           unselectedLabelColor: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
           indicatorColor: RukuninColors.brandGreen,
-          labelStyle: GoogleFonts.plusJakartaSans(
+          labelStyle: GoogleFonts.poppins(
             fontSize: 14,
             fontWeight: FontWeight.w700,
           ),
-          unselectedLabelStyle: GoogleFonts.plusJakartaSans(
+          unselectedLabelStyle: GoogleFonts.poppins(
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
@@ -129,7 +129,7 @@ class _SuratTab extends ConsumerWidget {
           // Section: Permohonan Aktif
           Text(
             'Permohonan Aktif',
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               fontSize: 16,
               fontWeight: FontWeight.w700,
               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -145,7 +145,7 @@ class _SuratTab extends ConsumerWidget {
                   child: Center(
                     child: Text(
                       'Belum ada permohonan aktif',
-                      style: GoogleFonts.plusJakartaSans(
+                      style: GoogleFonts.poppins(
                         fontSize: 14,
                         color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                       ),
@@ -170,7 +170,7 @@ class _SuratTab extends ConsumerWidget {
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (e, _) => Text(
               'Error: $e',
-              style: GoogleFonts.plusJakartaSans(color: RukuninColors.error),
+              style: GoogleFonts.poppins(color: RukuninColors.error),
             ),
           ),
 
@@ -179,7 +179,7 @@ class _SuratTab extends ConsumerWidget {
           // Section: Buat Permohonan Baru
           Text(
             'Buat Permohonan Baru',
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               fontSize: 16,
               fontWeight: FontWeight.w700,
               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -226,7 +226,7 @@ class _PengaduanTab extends ConsumerWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(100)),
               elevation: 0,
-              textStyle: GoogleFonts.plusJakartaSans(
+              textStyle: GoogleFonts.poppins(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
               ),
@@ -249,7 +249,7 @@ class _PengaduanTab extends ConsumerWidget {
                         const SizedBox(height: 12),
                         Text(
                           'Belum ada pengaduan',
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                             fontSize: 14,
                             color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                           ),
@@ -271,7 +271,7 @@ class _PengaduanTab extends ConsumerWidget {
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (e, _) => Text(
               'Error: $e',
-              style: GoogleFonts.plusJakartaSans(color: RukuninColors.error),
+              style: GoogleFonts.poppins(color: RukuninColors.error),
             ),
           ),
         ],
@@ -316,7 +316,7 @@ class _RequestCard extends StatelessWidget {
             children: [
               Text(
                 number,
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
@@ -328,7 +328,7 @@ class _RequestCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             request.typeLabel,
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               fontSize: 14,
               fontWeight: FontWeight.w700,
               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -337,7 +337,7 @@ class _RequestCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             dateStr,
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               fontSize: 12,
               color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
             ),
@@ -359,7 +359,7 @@ class _RequestCard extends StatelessWidget {
               child: TextButton.icon(
                 onPressed: () => context.push('/resident/dokumen-saya'),
                 icon: const Icon(Icons.download_outlined, size: 16),
-                label: Text('Lihat Dokumen', style: GoogleFonts.plusJakartaSans(fontSize: 12)),
+                label: Text('Lihat Dokumen', style: GoogleFonts.poppins(fontSize: 12)),
                 style: TextButton.styleFrom(foregroundColor: RukuninColors.brandGreen, padding: EdgeInsets.zero),
               ),
             ),
@@ -404,7 +404,7 @@ class _ComplaintCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   complaint.title,
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -429,7 +429,7 @@ class _ComplaintCard extends StatelessWidget {
                 ),
                 child: Text(
                   complaint.categoryLabel,
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
@@ -439,7 +439,7 @@ class _ComplaintCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 dateStr,
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                   fontSize: 12,
                   color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                 ),
@@ -478,7 +478,7 @@ class _StatusBadge extends StatelessWidget {
       ),
       child: Text(
         _label,
-        style: GoogleFonts.plusJakartaSans(
+        style: GoogleFonts.poppins(
           fontSize: 11,
           fontWeight: FontWeight.w700,
           color: color,
@@ -550,8 +550,9 @@ class _GridItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
-      onTap: () =>
-          context.push('/resident/layanan/permohonan?type=$type'),
+      onTap: () => type == 'custom'
+          ? context.push('/resident/layanan/permohonan')
+          : context.push('/resident/layanan/permohonan?type=$type'),
       child: Container(
         decoration: BoxDecoration(
           color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
@@ -578,7 +579,7 @@ class _GridItem extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               label,
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -610,7 +611,7 @@ class _KontakTab extends ConsumerWidget {
         error: (e, _) => Center(
           child: Text(
             'Error: $e',
-            style: GoogleFonts.plusJakartaSans(color: RukuninColors.error),
+            style: GoogleFonts.poppins(color: RukuninColors.error),
           ),
         ),
       ),
@@ -629,7 +630,7 @@ class _KontakTab extends ConsumerWidget {
               const SizedBox(height: 12),
               Text(
                 'Belum ada informasi kontak',
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                   fontSize: 14,
                   color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                 ),
@@ -647,7 +648,7 @@ class _KontakTab extends ConsumerWidget {
       children: [
         Text(
           'Hubungi pengurus komunitas',
-          style: GoogleFonts.plusJakartaSans(
+          style: GoogleFonts.poppins(
             fontSize: 16,
             fontWeight: FontWeight.w700,
             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -695,7 +696,7 @@ class _KontakCard extends StatelessWidget {
               children: [
                 Text(
                   contact.nama,
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -704,7 +705,7 @@ class _KontakCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   contact.jabatan,
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                   ),
@@ -721,7 +722,7 @@ class _KontakCard extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(100)),
               elevation: 0,
-              textStyle: GoogleFonts.plusJakartaSans(
+              textStyle: GoogleFonts.poppins(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
               ),
@@ -748,7 +749,7 @@ class _KontakCard extends StatelessWidget {
       backgroundColor: RukuninColors.brandGreen.withValues(alpha: 0.15),
       child: Text(
         contact.initials,
-        style: GoogleFonts.plusJakartaSans(
+        style: GoogleFonts.poppins(
           fontSize: 14,
           fontWeight: FontWeight.w700,
           color: RukuninColors.brandGreen,
@@ -780,7 +781,7 @@ class _HelpBanner extends StatelessWidget {
               children: [
                 Text(
                   'Butuh bantuan?',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
@@ -789,7 +790,7 @@ class _HelpBanner extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   'Hubungi admin via WhatsApp',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: Colors.white.withValues(alpha: 0.7),
                   ),
@@ -808,7 +809,7 @@ class _HelpBanner extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(100)),
               elevation: 0,
-              textStyle: GoogleFonts.plusJakartaSans(
+              textStyle: GoogleFonts.poppins(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
               ),

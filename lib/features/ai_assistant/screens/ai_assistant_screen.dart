@@ -86,8 +86,8 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Rukunin AI', style: GoogleFonts.plusJakartaSans(fontSize: 16, fontWeight: FontWeight.w700)),
-                Text('Didukung Groq Llama3', style: GoogleFonts.plusJakartaSans(fontSize: 10, color: Colors.white70)),
+                Text('Rukunin AI', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w700)),
+                Text('Didukung Groq Llama3', style: GoogleFonts.poppins(fontSize: 10, color: Colors.white70)),
               ],
             ),
           ],
@@ -165,7 +165,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                 children: [
                   Text(
                     msg.text,
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       color: msg.isUser ? Colors.white : (isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                       fontSize: 14,
                     ),
@@ -173,7 +173,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                   const SizedBox(height: 4),
                   Text(
                     DateFormat('HH:mm').format(msg.timestamp),
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontSize: 10,
                       color: msg.isUser ? Colors.white60 : (isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                     ),
@@ -252,7 +252,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Pertanyaan Cepat:', style: GoogleFonts.plusJakartaSans(
+          Text('Pertanyaan Cepat:', style: GoogleFonts.poppins(
             fontSize: 12,
             color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
           )),
@@ -269,7 +269,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.3)),
                 ),
-                child: Text(q, style: GoogleFonts.plusJakartaSans(fontSize: 12, color: RukuninColors.brandGreen)),
+                child: Text(q, style: GoogleFonts.poppins(fontSize: 12, color: RukuninColors.brandGreen)),
               ),
             )).toList(),
           ),
@@ -295,10 +295,10 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
                 textInputAction: TextInputAction.newline,
-                style: GoogleFonts.plusJakartaSans(fontSize: 14),
+                style: GoogleFonts.poppins(fontSize: 14),
                 decoration: InputDecoration(
                   hintText: 'Tanya sesuatu tentang keuangan RW...',
-                  hintStyle: GoogleFonts.plusJakartaSans(
+                  hintStyle: GoogleFonts.poppins(
                     color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                     fontSize: 13,
                   ),

@@ -128,7 +128,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                                 : (profile.photoUrl == null || profile.photoUrl!.isEmpty)
                                     ? Text(
                                         profile.initials,
-                                        style: GoogleFonts.plusJakartaSans(
+                                        style: GoogleFonts.poppins(
                                           color: Colors.white,
                                           fontSize: 32,
                                           fontWeight: FontWeight.bold,
@@ -167,7 +167,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                       const SizedBox(height: 16),
                       Text(
                         profile.fullName,
-                        style: GoogleFonts.plusJakartaSans(
+                        style: GoogleFonts.poppins(
                           fontSize: 24,
                           fontWeight: FontWeight.w800,
                           color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -182,7 +182,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                         ),
                         child: Text(
                           profile.isActive ? 'Warga Tetap' : 'Belum Registrasi Penuh',
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: profile.isActive ? RukuninColors.success : RukuninColors.warning,
@@ -197,7 +197,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                 // Info Rumah
                 Text(
                   'Info Hunian & Kontak',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -236,7 +236,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                   children: [
                     Text(
                       'Kendaraan Terdaftar',
-                      style: GoogleFonts.plusJakartaSans(
+                      style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                         color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -289,7 +289,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                 // Transparansi
                 Text(
                   'Transparansi Lingkungan',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -337,7 +337,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                                 children: [
                                   Text(
                                     'Laporan Keuangan RT',
-                                    style: GoogleFonts.plusJakartaSans(
+                                    style: GoogleFonts.poppins(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w700,
                                       color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -346,7 +346,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                                   const SizedBox(height: 2),
                                   Text(
                                     'Lihat ringkasan kas bulan ini',
-                                    style: GoogleFonts.plusJakartaSans(
+                                    style: GoogleFonts.poppins(
                                       fontSize: 12,
                                       color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                                     ),
@@ -398,7 +398,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                             Expanded(
                               child: Text(
                                 'Pusat Bantuan',
-                                style: GoogleFonts.plusJakartaSans(
+                                style: GoogleFonts.poppins(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
                                   color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -478,7 +478,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
               const SizedBox(height: 20),
               Text(
                 'Edit Kendaraan',
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -518,7 +518,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
                   ),
                   child: Text(
                     'Simpan',
-                    style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 15),
+                    style: GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 15),
                   ),
                 ),
               ),
@@ -544,7 +544,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
         Expanded(
           child: Text(
             label,
-            style: GoogleFonts.plusJakartaSans(fontSize: 15, fontWeight: FontWeight.w600),
+            style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600),
           ),
         ),
         IconButton(
@@ -554,7 +554,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
         ),
         Text(
           '$value',
-          style: GoogleFonts.plusJakartaSans(fontSize: 18, fontWeight: FontWeight.w800),
+          style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w800),
         ),
         IconButton(
           onPressed: onIncrement,
@@ -611,7 +611,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
             children: [
               Text(
                 label,
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                   fontSize: 12,
                   color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                   fontWeight: FontWeight.w500,
@@ -620,7 +620,7 @@ class _ResidentProfileScreenState extends ConsumerState<ResidentProfileScreen> {
               const SizedBox(height: 2),
               Text(
                 value,
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,

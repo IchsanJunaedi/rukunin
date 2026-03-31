@@ -62,7 +62,7 @@ final adminLetterRequestsProvider =
       .eq('community_id', communityId)
       .order('created_at', ascending: false);
 
-  return (res as List).map((e) => LetterRequestModel.fromMap(e)).toList();
+  return res.map((e) => LetterRequestModel.fromMap(e)).toList();
 });
 
 // ── Admin: semua pengaduan ───────────────────────────────────
@@ -410,17 +410,24 @@ class LayananService {
         .single();
     final communityId = adminProfile['community_id'] as String;
 
-    // 2. Fetch data komunitas (termasuk rt_number dan leader_name)
+    // 2. Fetch data komunitas (rw_number dan info lokasi)
     final communityData = await client
         .from('communities')
-        .select('name, rt_number, rw_number, kelurahan, kecamatan, kabupaten, province, leader_name')
+        .select('name, rw_number, kelurahan, kecamatan, kabupaten, province, leader_name')
         .eq('id', communityId)
         .single();
+
+    // 3. Fetch profil resident untuk rt_number (rt_number ada di profiles, bukan communities)
+    final residentProfile = await client
+        .from('profiles')
+        .select('rt_number')
+        .eq('id', request.residentId)
+        .maybeSingle();
 
     final fd = request.formData ?? {};
     final letterType = request.letterType;
 
-    // 3. Mapping form_data → getTemplate() parameters
+    // 4. Mapping form_data → getTemplate() parameters
     final isKematian = letterType == 'kematian';
 
     final residentNik = isKematian
@@ -438,7 +445,8 @@ class LayananService {
         : (fd['gender'] as String? ?? '-');
 
     final rw = communityData['rw_number']?.toString() ?? '01';
-    final rt = communityData['rt_number']?.toString() ?? '01';
+    // rt_number dari profil warga (bukan communities)
+    final rt = residentProfile?['rt_number']?.toString() ?? '01';
     final kelurahan = communityData['kelurahan'] as String? ?? '';
     final kecamatan = communityData['kecamatan'] as String? ?? '';
     final kabupaten = communityData['kabupaten'] as String? ?? '';

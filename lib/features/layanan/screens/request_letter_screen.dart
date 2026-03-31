@@ -24,41 +24,20 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
   String? _selectedType;
   bool _loading = false;
 
-  // Semua controller untuk semua field (lazy, hanya yang relevan dipakai)
-  final _nikCtrl = TextEditingController();
-  final _ttlCtrl = TextEditingController();
-  final _keperluanCtrl = TextEditingController();
-  final _keteranganCtrl = TextEditingController();
-  final _noKkCtrl = TextEditingController();
-  final _pernyataanKondisiCtrl = TextEditingController();
-  final _namaUsahaCtrl = TextEditingController();
-  final _jenisUsahaCtrl = TextEditingController();
-  final _alamatUsahaCtrl = TextEditingController();
-  final _pekerjaanCtrl = TextEditingController();
-  final _namaAyahCtrl = TextEditingController();
-  final _namaIbuCtrl = TextEditingController();
-  final _namaAlmarhumCtrl = TextEditingController();
-  final _nikAlmarhumCtrl = TextEditingController();
-  final _ttlAlmarhumCtrl = TextEditingController();
-  final _penyebabCtrl = TextEditingController();
+  final _namaCtrl           = TextEditingController();
+  final _ttlCtrl            = TextEditingController();
+  final _nikCtrl            = TextEditingController();
+  final _kewarganegaraanCtrl = TextEditingController();
+  final _pekerjaanCtrl      = TextEditingController();
+  final _alamatCtrl         = TextEditingController();
 
   String? _gender;
   String? _agama;
   String? _maritalStatus;
-  String? _alasanKtpKk;
-  String? _alasanSktm;
-  String? _hubunganPelapor;
-  String? _tanggalMeninggal;
 
-  static const _genderOptions = ['Laki-laki', 'Perempuan'];
-  static const _agamaOptions = ['Islam', 'Kristen Protestan', 'Katolik', 'Hindu', 'Buddha', 'Konghucu'];
+  static const _genderOptions  = ['Laki-laki', 'Perempuan'];
+  static const _agamaOptions   = ['Islam', 'Kristen Protestan', 'Katolik', 'Hindu', 'Buddha', 'Konghucu'];
   static const _maritalOptions = ['Belum Kawin', 'Kawin', 'Cerai Hidup', 'Cerai Mati'];
-  static const _alasanKtpKkOptions = [
-    'KTP baru', 'KTP hilang', 'KTP rusak', 'Perpanjangan KTP',
-    'KK baru', 'Perbaikan data KK',
-  ];
-  static const _alasanSktmOptions = ['Pendidikan', 'Kesehatan / Pengobatan', 'Lainnya'];
-  static const _hubunganPelaporOptions = ['Anak', 'Istri', 'Suami', 'Orang Tua', 'Saudara', 'Lainnya'];
 
   @override
   void initState() {
@@ -71,65 +50,34 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
 
   @override
   void dispose() {
-    for (final c in [
-      _nikCtrl, _ttlCtrl, _keperluanCtrl, _keteranganCtrl, _noKkCtrl,
-      _pernyataanKondisiCtrl, _namaUsahaCtrl, _jenisUsahaCtrl, _alamatUsahaCtrl,
-      _pekerjaanCtrl, _namaAyahCtrl, _namaIbuCtrl, _namaAlmarhumCtrl,
-      _nikAlmarhumCtrl, _ttlAlmarhumCtrl, _penyebabCtrl,
-    ]) { c.dispose(); }
+    for (final c in [_namaCtrl, _ttlCtrl, _nikCtrl, _kewarganegaraanCtrl, _pekerjaanCtrl, _alamatCtrl]) {
+      c.dispose();
+    }
     super.dispose();
   }
 
-  // ── Build form_data dari semua controller sesuai jenis surat ──
-  Map<String, dynamic> _buildFormData() {
-    switch (_selectedType) {
-      case 'domisili':
-        return {'nik': _nikCtrl.text.trim(), 'ttl': _ttlCtrl.text.trim(), 'gender': _gender ?? '-', 'agama': _agama ?? '-', 'keperluan': _keperluanCtrl.text.trim()};
-      case 'ktp_kk':
-        return {'nik': _nikCtrl.text.trim(), 'alasan': _alasanKtpKk ?? '', 'keterangan': _keteranganCtrl.text.trim()};
-      case 'skck':
-        return {'nik': _nikCtrl.text.trim(), 'ttl': _ttlCtrl.text.trim(), 'gender': _gender ?? '-', 'agama': _agama ?? '-', 'marital_status': _maritalStatus ?? '-', 'pekerjaan': _pekerjaanCtrl.text.trim(), 'keperluan': _keperluanCtrl.text.trim()};
-      case 'sktm':
-        return {'nik': _nikCtrl.text.trim(), 'no_kk': _noKkCtrl.text.trim(), 'alasan': _alasanSktm ?? '', 'pernyataan_kondisi': _pernyataanKondisiCtrl.text.trim()};
-      case 'sku':
-        return {'nik': _nikCtrl.text.trim(), 'ttl': _ttlCtrl.text.trim(), 'gender': _gender ?? '-', 'nama_usaha': _namaUsahaCtrl.text.trim(), 'jenis_usaha': _jenisUsahaCtrl.text.trim(), 'alamat_usaha': _alamatUsahaCtrl.text.trim(), 'keperluan': _keperluanCtrl.text.trim()};
-      case 'nikah':
-        return {'nik': _nikCtrl.text.trim(), 'ttl': _ttlCtrl.text.trim(), 'gender': _gender ?? '-', 'pekerjaan': _pekerjaanCtrl.text.trim(), 'nama_ayah': _namaAyahCtrl.text.trim(), 'nama_ibu': _namaIbuCtrl.text.trim()};
-      case 'kematian':
-        return {'nama_almarhum': _namaAlmarhumCtrl.text.trim(), 'nik_almarhum': _nikAlmarhumCtrl.text.trim(), 'ttl_almarhum': _ttlAlmarhumCtrl.text.trim(), 'tanggal_meninggal': _tanggalMeninggal ?? '', 'penyebab': _penyebabCtrl.text.trim(), 'hubungan_pelapor': _hubunganPelapor ?? ''};
-      case 'custom':
-      default:
-        return {'keperluan': _keperluanCtrl.text.trim()};
-    }
-  }
+  Map<String, dynamic> _buildFormData() => {
+    'nama'           : _namaCtrl.text.trim(),
+    'ttl'            : _ttlCtrl.text.trim(),
+    'gender'         : _gender ?? '',
+    'nik'            : _nikCtrl.text.trim(),
+    'kewarganegaraan': _kewarganegaraanCtrl.text.trim(),
+    'agama'          : _agama ?? '',
+    'pekerjaan'      : _pekerjaanCtrl.text.trim(),
+    'marital_status' : _maritalStatus ?? '',
+    'alamat'         : _alamatCtrl.text.trim(),
+  };
 
-  String? _extractPurpose(Map<String, dynamic> fd) {
-    if (_selectedType == 'kematian') return null;
-    if (_selectedType == 'sktm') return fd['alasan'] as String?;
-    return fd['keperluan'] as String?;
-  }
-
-  // ── Validasi form sebelum lanjut ke review ────────────────────
   String? _validate() {
-    final fd = _buildFormData();
-    if (_selectedType == 'kematian') {
-      if ((fd['nama_almarhum'] as String).isEmpty) return 'Nama almarhum wajib diisi';
-      if ((fd['nik_almarhum'] as String).isEmpty) return 'NIK almarhum wajib diisi';
-      if ((fd['ttl_almarhum'] as String).isEmpty) return 'TTL almarhum wajib diisi';
-      if ((fd['tanggal_meninggal'] as String).isEmpty) return 'Tanggal meninggal wajib diisi';
-    } else if (_selectedType == 'ktp_kk') {
-      if ((fd['nik'] as String).isEmpty) return 'NIK wajib diisi';
-      if (_alasanKtpKk == null) return 'Alasan wajib dipilih';
-    } else if (_selectedType == 'sktm') {
-      if ((fd['nik'] as String).isEmpty) return 'NIK wajib diisi';
-      if ((fd['no_kk'] as String).isEmpty) return 'No KK wajib diisi';
-      if (_alasanSktm == null) return 'Alasan wajib dipilih';
-    } else if (_selectedType == 'custom') {
-      if ((fd['keperluan'] as String).isEmpty) return 'Keperluan wajib diisi';
-    } else {
-      if ((fd['nik'] as String? ?? '').isEmpty) return 'NIK wajib diisi';
-      if ((fd['ttl'] as String? ?? '').isEmpty) return 'TTL wajib diisi';
-    }
+    if (_namaCtrl.text.trim().isEmpty)            return 'Nama wajib diisi';
+    if (_ttlCtrl.text.trim().isEmpty)             return 'Tempat, tanggal lahir wajib diisi';
+    if (_gender == null)                          return 'Jenis kelamin wajib dipilih';
+    if (_nikCtrl.text.trim().isEmpty)             return 'NIK / No KTP / KK wajib diisi';
+    if (_kewarganegaraanCtrl.text.trim().isEmpty) return 'Kewarganegaraan wajib diisi';
+    if (_agama == null)                           return 'Agama wajib dipilih';
+    if (_pekerjaanCtrl.text.trim().isEmpty)       return 'Pekerjaan wajib diisi';
+    if (_maritalStatus == null)                   return 'Status perkawinan wajib dipilih';
+    if (_alamatCtrl.text.trim().isEmpty)          return 'Alamat wajib diisi';
     return null;
   }
 
@@ -140,23 +88,19 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
       final userId = client.auth.currentUser!.id;
       final profile = await client
           .from('profiles')
-          .select('community_id, full_name')
+          .select('community_id')
           .eq('id', userId)
           .single();
 
       final fd = _buildFormData();
-      final isKematian = _selectedType == 'kematian';
-      final applicantName = isKematian
-          ? (fd['nama_almarhum'] as String)
-          : (profile['full_name'] as String);
 
       await ref.read(layananServiceProvider).createLetterRequest(
-        communityId: profile['community_id'] as String,
-        residentId: userId,
-        letterType: _selectedType!,
-        applicantName: applicantName,
-        formData: fd,
-        purpose: _extractPurpose(fd),
+        communityId  : profile['community_id'] as String,
+        residentId   : userId,
+        letterType   : _selectedType!,
+        applicantName: fd['nama'] as String,
+        formData     : fd,
+        purpose      : null,
       );
 
       if (mounted) {
@@ -188,7 +132,15 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
             ? null
             : IconButton(
                 icon: const Icon(Icons.arrow_back),
-                onPressed: () => setState(() => _step = _step == _Step.review ? _Step.form : _Step.type),
+                onPressed: () {
+                  if (_step == _Step.review) {
+                    setState(() => _step = _Step.form);
+                  } else if (_step == _Step.form && widget.initialType != null) {
+                    context.pop();
+                  } else {
+                    setState(() => _step = _Step.type);
+                  }
+                },
               ),
       ),
       body: AnimatedSwitcher(
@@ -208,7 +160,7 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
       key: const ValueKey('step-type'),
       padding: const EdgeInsets.all(16),
       children: [
-        Text('Pilih jenis surat yang dibutuhkan:', style: GoogleFonts.plusJakartaSans(fontSize: 14)),
+        Text('Pilih jenis surat yang dibutuhkan:', style: GoogleFonts.poppins(fontSize: 14)),
         const SizedBox(height: 16),
         ...letterRequestTypeLabels.entries.map((e) => _TypeTile(
           key: ValueKey(e.key),
@@ -228,7 +180,15 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ..._buildFormFields(),
+          _textField(_namaCtrl, 'Nama *', hint: 'Nama lengkap sesuai KTP'),
+          _textField(_ttlCtrl, 'Tempat, Tanggal Lahir *', hint: 'Contoh: Jakarta, 15-02-1990'),
+          _dropdownField('Jenis Kelamin *', _genderOptions, _gender, (v) => setState(() => _gender = v)),
+          _textField(_nikCtrl, 'NIK / No KTP / KK *', inputType: TextInputType.number, maxLength: 16),
+          _textField(_kewarganegaraanCtrl, 'Kewarganegaraan *', hint: 'Contoh: WNI'),
+          _dropdownField('Agama *', _agamaOptions, _agama, (v) => setState(() => _agama = v)),
+          _textField(_pekerjaanCtrl, 'Pekerjaan *', hint: 'Contoh: Wiraswasta, Karyawan Swasta'),
+          _dropdownField('Status Perkawinan *', _maritalOptions, _maritalStatus, (v) => setState(() => _maritalStatus = v)),
+          _textField(_alamatCtrl, 'Alamat *', lines: 2, hint: 'Alamat lengkap sesuai KTP'),
           const SizedBox(height: 24),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -251,73 +211,6 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
     );
   }
 
-  List<Widget> _buildFormFields() {
-    switch (_selectedType) {
-      case 'domisili':
-        return [
-          _nikField(),
-          _ttlField(),
-          _genderDropdown(),
-          _agamaDropdown(),
-          _keperluanField(),
-        ];
-      case 'ktp_kk':
-        return [
-          _nikField(),
-          _dropdownField('Alasan Permohonan *', _alasanKtpKkOptions, _alasanKtpKk, (v) => setState(() => _alasanKtpKk = v)),
-          _textField(_keteranganCtrl, 'Keterangan Tambahan (opsional)', lines: 2),
-        ];
-      case 'skck':
-        return [
-          _nikField(),
-          _ttlField(),
-          _genderDropdown(),
-          _agamaDropdown(),
-          _maritalDropdown(),
-          _textField(_pekerjaanCtrl, 'Pekerjaan *'),
-          _keperluanField(),
-        ];
-      case 'sktm':
-        return [
-          _nikField(),
-          _textField(_noKkCtrl, 'No Kartu Keluarga (KK) *', inputType: TextInputType.number),
-          _dropdownField('Alasan Kebutuhan *', _alasanSktmOptions, _alasanSktm, (v) => setState(() => _alasanSktm = v)),
-          _textField(_pernyataanKondisiCtrl, 'Pernyataan Kondisi Ekonomi *', lines: 3, hint: 'Contoh: Kepala keluarga tidak bekerja akibat sakit'),
-        ];
-      case 'sku':
-        return [
-          _nikField(),
-          _ttlField(),
-          _genderDropdown(),
-          _textField(_namaUsahaCtrl, 'Nama Usaha *'),
-          _textField(_jenisUsahaCtrl, 'Jenis Usaha *', hint: 'Contoh: Warung makan, Toko kelontong'),
-          _textField(_alamatUsahaCtrl, 'Alamat Usaha *', hint: 'Jika berbeda dari alamat tinggal'),
-          _keperluanField(),
-        ];
-      case 'nikah':
-        return [
-          _nikField(),
-          _ttlField(),
-          _genderDropdown(),
-          _textField(_pekerjaanCtrl, 'Pekerjaan *'),
-          _textField(_namaAyahCtrl, 'Nama Ayah *'),
-          _textField(_namaIbuCtrl, 'Nama Ibu *'),
-        ];
-      case 'kematian':
-        return [
-          _textField(_namaAlmarhumCtrl, 'Nama Almarhum/Almarhumah *'),
-          _textField(_nikAlmarhumCtrl, 'NIK Almarhum *', inputType: TextInputType.number, maxLength: 16),
-          _textField(_ttlAlmarhumCtrl, 'TTL Almarhum *', hint: 'Contoh: Solo, 12-12-1950'),
-          _datePickerField('Tanggal Meninggal *'),
-          _textField(_penyebabCtrl, 'Penyebab Kematian *', hint: 'Contoh: Sakit, Kecelakaan'),
-          _dropdownField('Hubungan Pelapor dengan Almarhum *', _hubunganPelaporOptions, _hubunganPelapor, (v) => setState(() => _hubunganPelapor = v)),
-        ];
-      case 'custom':
-      default:
-        return [_keperluanField(label: 'Keperluan / Keterangan *', lines: 4)];
-    }
-  }
-
   // ── Step 3: Review ────────────────────────────────────────────
   Widget _buildStepReview() {
     final fd = _buildFormData();
@@ -328,7 +221,7 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Periksa data berikut sebelum mengirim:', style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.w600)),
+          Text('Periksa data berikut sebelum mengirim:', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600)),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(16),
@@ -372,51 +265,27 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 140,
-          child: Text(label, style: GoogleFonts.plusJakartaSans(fontSize: 12, color: RukuninColors.darkTextSecondary)),
+          width: 150,
+          child: Text(label, style: GoogleFonts.poppins(fontSize: 12, color: RukuninColors.darkTextSecondary)),
         ),
-        Expanded(child: Text(value.isEmpty ? '-' : value, style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w600))),
+        Expanded(child: Text(value.isEmpty ? '-' : value, style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600))),
       ],
     ),
   );
 
   String _labelFor(String key) => const {
-    'nik': 'NIK',
-    'ttl': 'Tempat, Tgl Lahir',
-    'gender': 'Jenis Kelamin',
-    'agama': 'Agama',
-    'keperluan': 'Keperluan',
-    'alasan': 'Alasan',
-    'keterangan': 'Keterangan',
-    'no_kk': 'No KK',
-    'pernyataan_kondisi': 'Kondisi Ekonomi',
-    'marital_status': 'Status Perkawinan',
-    'pekerjaan': 'Pekerjaan',
-    'nama_usaha': 'Nama Usaha',
-    'jenis_usaha': 'Jenis Usaha',
-    'alamat_usaha': 'Alamat Usaha',
-    'nama_ayah': 'Nama Ayah',
-    'nama_ibu': 'Nama Ibu',
-    'nama_almarhum': 'Nama Almarhum',
-    'nik_almarhum': 'NIK Almarhum',
-    'ttl_almarhum': 'TTL Almarhum',
-    'tanggal_meninggal': 'Tgl Meninggal',
-    'penyebab': 'Penyebab',
-    'hubungan_pelapor': 'Hubungan Pelapor',
+    'nama'           : 'Nama',
+    'ttl'            : 'Tempat, Tgl Lahir',
+    'gender'         : 'Jenis Kelamin',
+    'nik'            : 'NIK / No KTP / KK',
+    'kewarganegaraan': 'Kewarganegaraan',
+    'agama'          : 'Agama',
+    'pekerjaan'      : 'Pekerjaan',
+    'marital_status' : 'Status Perkawinan',
+    'alamat'         : 'Alamat',
   }[key] ?? key;
 
   // ── Field helpers ─────────────────────────────────────────────
-  Widget _nikField() => _textField(_nikCtrl, 'NIK *', inputType: TextInputType.number, maxLength: 16);
-
-  Widget _ttlField() => _textField(_ttlCtrl, 'Tempat, Tanggal Lahir *', hint: 'Contoh: Jakarta, 15-02-1990');
-
-  Widget _keperluanField({String label = 'Keperluan / Tujuan *', int lines = 2}) =>
-      _textField(_keperluanCtrl, label, lines: lines, hint: 'Jelaskan untuk apa surat ini dibutuhkan');
-
-  Widget _genderDropdown() => _dropdownField('Jenis Kelamin *', _genderOptions, _gender, (v) => setState(() => _gender = v));
-  Widget _agamaDropdown() => _dropdownField('Agama *', _agamaOptions, _agama, (v) => setState(() => _agama = v));
-  Widget _maritalDropdown() => _dropdownField('Status Perkawinan *', _maritalOptions, _maritalStatus, (v) => setState(() => _maritalStatus = v));
-
   Widget _textField(TextEditingController ctrl, String label, {int lines = 1, String? hint, TextInputType? inputType, int? maxLength}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -444,40 +313,8 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
         initialValue: value,
         isExpanded: true,
         decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
-        items: options.map((o) => DropdownMenuItem(value: o, child: Text(o, style: GoogleFonts.plusJakartaSans(fontSize: 14)))).toList(),
+        items: options.map((o) => DropdownMenuItem(value: o, child: Text(o, style: GoogleFonts.poppins(fontSize: 14)))).toList(),
         onChanged: onChanged,
-      ),
-    );
-  }
-
-  Widget _datePickerField(String label) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        onTap: () async {
-          final picked = await showDatePicker(
-            context: context,
-            initialDate: DateTime.now(),
-            firstDate: DateTime(1900),
-            lastDate: DateTime.now(),
-          );
-          if (picked != null && mounted) {
-            setState(() {
-              _tanggalMeninggal = '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
-            });
-          }
-        },
-        child: InputDecorator(
-          decoration: InputDecoration(
-            labelText: label,
-            border: const OutlineInputBorder(),
-            suffixIcon: const Icon(Icons.calendar_today_outlined, size: 18),
-          ),
-          child: Text(
-            _tanggalMeninggal ?? 'Pilih tanggal',
-            style: GoogleFonts.plusJakartaSans(fontSize: 14, color: _tanggalMeninggal == null ? Colors.grey : null),
-          ),
-        ),
       ),
     );
   }
@@ -512,7 +349,7 @@ class _TypeTile extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder)),
       child: ListTile(
         leading: Icon(_icon, color: RukuninColors.brandGreen),
-        title: Text(label, style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.w600)),
+        title: Text(label, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600)),
         trailing: const Icon(Icons.chevron_right),
         onTap: onTap,
       ),

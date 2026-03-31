@@ -20,7 +20,7 @@ class ResidentLettersScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
-        title: Text('Dokumen Saya', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
+        title: Text('Dokumen Saya', style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -30,16 +30,16 @@ class ResidentLettersScreen extends ConsumerWidget {
       ),
       body: lettersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator(color: RukuninColors.brandGreen)),
-        error: (e, _) => Center(child: Text('Gagal memuat dokumen: $e', style: GoogleFonts.plusJakartaSans())),
+        error: (e, _) => Center(child: Text('Gagal memuat dokumen: $e', style: GoogleFonts.poppins())),
         data: (letters) {
           if (letters.isEmpty) {
             return Center(
               child: Column(mainAxisSize: MainAxisSize.min, children: [
                 Icon(Icons.folder_open_outlined, size: 56, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                 const SizedBox(height: 12),
-                Text('Belum ada dokumen', style: GoogleFonts.plusJakartaSans(fontSize: 15, fontWeight: FontWeight.w600, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
+                Text('Belum ada dokumen', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                 const SizedBox(height: 4),
-                Text('Dokumen yang sudah diverifikasi admin akan muncul di sini', textAlign: TextAlign.center, style: GoogleFonts.plusJakartaSans(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
+                Text('Dokumen yang sudah diverifikasi admin akan muncul di sini', textAlign: TextAlign.center, style: GoogleFonts.poppins(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
               ]),
             );
           }
@@ -77,19 +77,37 @@ class _LetterCardState extends State<_LetterCard> {
 
     setState(() => _generatingPdf = true);
     try {
-      // Ambil data komunitas untuk PDF header
+      // Ambil data profil warga + komunitas untuk PDF header
       final client = ProviderScope.containerOf(context).read(supabaseClientProvider);
-      final profile = await client.from('profiles').select('community_id').eq('id', client.auth.currentUser!.id).single();
-      final community = await client.from('communities').select('name, rt_number, rw_number, kelurahan, kecamatan, kabupaten, province, leader_name').eq('id', profile['community_id']).single();
+      final profile = await client
+          .from('profiles')
+          .select('community_id, rt_number, full_name, nik')
+          .eq('id', client.auth.currentUser!.id)
+          .single();
+      final community = await client
+          .from('communities')
+          .select('name, rw_number, kelurahan, kecamatan, kabupaten, province, leader_name')
+          .eq('id', profile['community_id'])
+          .single();
 
       final bytes = await LetterPdfGenerator.generate(
         letterNumber: widget.letter.letterNumber,
         letterType: widget.letter.letterType,
         generatedContent: widget.letter.generatedContent!,
-        resident: {'full_name': '-', 'nik': '-', 'gender': '-', 'date_of_birth': '', 'place_of_birth': '', 'religion': '-', 'marital_status': '-', 'occupation': '-', 'age': '-'},
+        resident: {
+          'full_name': profile['full_name'] ?? '-',
+          'nik': profile['nik'] ?? '-',
+          'gender': '-',
+          'date_of_birth': '',
+          'place_of_birth': '',
+          'religion': '-',
+          'marital_status': '-',
+          'occupation': '-',
+          'age': '-',
+        },
         community: {
           'name': community['name'] ?? '',
-          'rt_number': community['rt_number']?.toString() ?? '01',
+          'rt_number': profile['rt_number']?.toString() ?? '01',
           'rw_number': community['rw_number']?.toString() ?? '01',
           'village': community['kelurahan'] ?? '',
           'district': community['kecamatan'] ?? '',
@@ -131,11 +149,11 @@ class _LetterCardState extends State<_LetterCard> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(letterTypeLabels[letter.letterType] ?? letter.letterType, style: GoogleFonts.plusJakartaSans(fontSize: 15, fontWeight: FontWeight.w700)),
+        Text(letterTypeLabels[letter.letterType] ?? letter.letterType, style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w700)),
         const SizedBox(height: 4),
-        Text('No. ${letter.letterNumber}', style: GoogleFonts.plusJakartaSans(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
+        Text('No. ${letter.letterNumber}', style: GoogleFonts.poppins(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
         const SizedBox(height: 4),
-        Text(dateStr, style: GoogleFonts.plusJakartaSans(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
+        Text(dateStr, style: GoogleFonts.poppins(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
         const SizedBox(height: 12),
         SizedBox(
           width: double.infinity,
@@ -149,7 +167,7 @@ class _LetterCardState extends State<_LetterCard> {
             icon: _generatingPdf
                 ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
                 : const Icon(Icons.download, size: 18),
-            label: Text(_generatingPdf ? 'Membuat PDF...' : 'Unduh PDF', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
+            label: Text(_generatingPdf ? 'Membuat PDF...' : 'Unduh PDF', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
           ),
         ),
       ]),

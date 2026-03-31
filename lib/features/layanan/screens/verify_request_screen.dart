@@ -86,7 +86,7 @@ class _VerifyRequestScreenState extends ConsumerState<VerifyRequestScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Verifikasi Permohonan', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
+        title: Text('Verifikasi Permohonan', style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -98,7 +98,7 @@ class _VerifyRequestScreenState extends ConsumerState<VerifyRequestScreen> {
               isDark: isDark,
               title: 'Data Warga',
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                _row('Nama', request.residentName ?? '-'),
+                _row('Nama', request.residentName ?? request.applicantName ?? '-'),
                 if (request.residentUnit != null) _row('Unit', request.residentUnit!),
                 _row('Jenis Surat', request.typeLabel),
                 _row('Diajukan', _formatDate(request.createdAt)),
@@ -113,7 +113,7 @@ class _VerifyRequestScreenState extends ConsumerState<VerifyRequestScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: fd.isEmpty
-                    ? [Text('Tidak ada data form.', style: GoogleFonts.plusJakartaSans(fontSize: 13))]
+                    ? [Text('Tidak ada data form.', style: GoogleFonts.poppins(fontSize: 13))]
                     : fd.entries.map((e) => _row(_labelFor(e.key), e.value.toString())).toList(),
               ),
             ),
@@ -131,14 +131,14 @@ class _VerifyRequestScreenState extends ConsumerState<VerifyRequestScreen> {
               icon: _loadingAcc
                   ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
                   : const Icon(Icons.check_circle_outline),
-              label: Text(_loadingAcc ? 'Memproses...' : 'ACC & Generate Surat', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
+              label: Text(_loadingAcc ? 'Memproses...' : 'ACC & Generate Surat', style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
             ),
             const SizedBox(height: 24),
 
             Divider(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
             const SizedBox(height: 16),
 
-            Text('Tolak Permohonan', style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.w700, color: RukuninColors.error)),
+            Text('Tolak Permohonan', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w700, color: RukuninColors.error)),
             const SizedBox(height: 8),
             TextField(
               controller: _alasanCtrl,
@@ -159,7 +159,7 @@ class _VerifyRequestScreenState extends ConsumerState<VerifyRequestScreen> {
               ),
               child: _loadingTolak
                   ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: RukuninColors.error, strokeWidth: 2))
-                  : Text('Tolak Permohonan', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
+                  : Text('Tolak Permohonan', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
             ),
             const SizedBox(height: 32),
           ],
@@ -176,7 +176,7 @@ class _VerifyRequestScreenState extends ConsumerState<VerifyRequestScreen> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(title, style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
+        Text(title, style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
         const SizedBox(height: 10),
         child,
       ]),
@@ -186,8 +186,8 @@ class _VerifyRequestScreenState extends ConsumerState<VerifyRequestScreen> {
   Widget _row(String label, String value) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 3),
     child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      SizedBox(width: 140, child: Text(label, style: GoogleFonts.plusJakartaSans(fontSize: 12, color: RukuninColors.darkTextTertiary))),
-      Expanded(child: Text(value.isEmpty ? '-' : value, style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w600))),
+      SizedBox(width: 140, child: Text(label, style: GoogleFonts.poppins(fontSize: 12, color: RukuninColors.darkTextTertiary))),
+      Expanded(child: Text(value.isEmpty ? '-' : value, style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600))),
     ]),
   );
 

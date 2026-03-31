@@ -125,7 +125,7 @@ class _ResidentHeader extends StatelessWidget {
                 children: [
                   Text(
                     'Halo, ${profile?.fullName?.split(' ').first ?? 'Warga'} 👋',
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontSize: 17,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
@@ -134,7 +134,7 @@ class _ResidentHeader extends StatelessWidget {
                   ),
                   Text(
                     profile?.alamatLengkap ?? '',
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontSize: 13,
                       color: Colors.white.withValues(alpha: 0.75),
                     ),
@@ -181,7 +181,7 @@ class _TagihanHeroCard extends StatelessWidget {
             children: [
               Text(
                 'SISA TAGIHAN',
-                style: GoogleFonts.plusJakartaSans(
+                style: GoogleFonts.poppins(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: isDark
@@ -199,7 +199,7 @@ class _TagihanHeroCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             fmt.format(totalPending),
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               fontSize: 30,
               fontWeight: FontWeight.w800,
               letterSpacing: -1.0,
@@ -238,7 +238,7 @@ class _TagihanHeroCard extends StatelessWidget {
                     lunas
                         ? 'Semua tagihan bulan ini lunas ✨'
                         : 'Harap segera dilunasi sebelum jatuh tempo',
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: lunas
@@ -288,7 +288,7 @@ class _KasBanner extends StatelessWidget {
               children: [
                 Text(
                   'Transparansi Kas Lingkungan',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Theme.of(context).brightness == Brightness.dark
@@ -298,7 +298,7 @@ class _KasBanner extends StatelessWidget {
                 ),
                 Text(
                   'Lihat pemasukan & pengeluaran RW',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: Theme.of(context).brightness == Brightness.dark
                         ? RukuninColors.darkTextSecondary
@@ -350,7 +350,7 @@ class _InvoiceItem extends StatelessWidget {
               children: [
                 Text(
                   inv.billingTypeName,
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Theme.of(context).brightness == Brightness.dark
@@ -361,7 +361,7 @@ class _InvoiceItem extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   'Periode $monthName',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: Theme.of(context).brightness == Brightness.dark
                         ? RukuninColors.darkTextSecondary
@@ -375,7 +375,7 @@ class _InvoiceItem extends StatelessWidget {
           ),
           Text(
             fmt.format(inv.amount),
-            style: GoogleFonts.plusJakartaSans(
+            style: GoogleFonts.poppins(
               fontSize: 15,
               fontWeight: FontWeight.w800,
               color: Theme.of(context).brightness == Brightness.dark
