@@ -46,7 +46,7 @@ class NotificationsScreen extends ConsumerWidget {
             onPressed: () => _markAllRead(ref),
             child: Text(
               'Tandai Semua Dibaca',
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                 fontSize: 12,
                 color: RukuninColors.brandGreen,
                 fontWeight: FontWeight.w600,
@@ -68,7 +68,7 @@ class NotificationsScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   Text(
                     'Belum ada notifikasi',
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontSize: 16,
                       color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                       fontWeight: FontWeight.w600,
@@ -164,7 +164,7 @@ class _NotifCard extends StatelessWidget {
                 children: [
                   Text(
                     notif.title,
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: notif.isRead ? FontWeight.w500 : FontWeight.w700,
                       color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -174,7 +174,7 @@ class _NotifCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       notif.body!,
-                      style: GoogleFonts.plusJakartaSans(
+                      style: GoogleFonts.poppins(
                         fontSize: 12,
                         color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                       ),
@@ -183,7 +183,7 @@ class _NotifCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     timeAgo,
-                    style: GoogleFonts.plusJakartaSans(
+                    style: GoogleFonts.poppins(
                       fontSize: 11,
                       color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                     ),
