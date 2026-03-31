@@ -58,7 +58,7 @@ class ResidentDetailScreen extends ConsumerWidget {
         foregroundColor: Colors.white,
         title: Text(
           'Detail Warga',
-          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 16),
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 16),
         ),
         actions: [
           IconButton(
@@ -95,7 +95,7 @@ class ResidentDetailScreen extends ConsumerWidget {
                         const SizedBox(width: 12),
                         Text(
                           'Tidak ada penunggakan kas.',
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                               color: RukuninColors.success, fontWeight: FontWeight.w600),
                         ),
                       ],
@@ -117,7 +117,7 @@ class ResidentDetailScreen extends ConsumerWidget {
                           const Icon(Icons.warning_amber_rounded, color: RukuninColors.error),
                           const SizedBox(width: 8),
                           Text('Total Tunggakan',
-                              style: GoogleFonts.plusJakartaSans(
+                              style: GoogleFonts.poppins(
                                   color: RukuninColors.error, fontWeight: FontWeight.w700)),
                         ],
                       ),
@@ -136,7 +136,7 @@ class ResidentDetailScreen extends ConsumerWidget {
             const SizedBox(height: 24),
             Text(
               'Histori Tagihan (6 Bulan)',
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w700, fontSize: 16,
                   color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
             ),
@@ -155,7 +155,7 @@ class ResidentDetailScreen extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(16)),
                     child: Center(
                       child: Text('Belum ada histori tagihan.',
-                          style: GoogleFonts.plusJakartaSans(
+                          style: GoogleFonts.poppins(
                               color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
                     ),
                   );
@@ -185,10 +185,10 @@ class ResidentDetailScreen extends ConsumerWidget {
                       ),
                       child: ListTile(
                         title: Text('${inv.billingTypeName} - ${inv.month}/${inv.year}',
-                            style: GoogleFonts.plusJakartaSans(
+                            style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w700, fontSize: 14)),
                         subtitle: Text('Jatuh tempo: ${dateFormat.format(inv.dueDate)}',
-                            style: GoogleFonts.plusJakartaSans(
+                            style: GoogleFonts.poppins(
                                 fontSize: 12,
                                 color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
                         trailing: Column(
@@ -196,7 +196,7 @@ class ResidentDetailScreen extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(currencyFormat.format(inv.amount),
-                                style: GoogleFonts.plusJakartaSans(
+                                style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.w700, fontSize: 14,
                                     color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary)),
                             const SizedBox(height: 4),
@@ -206,7 +206,7 @@ class ResidentDetailScreen extends ConsumerWidget {
                                   color: statusColor.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8)),
                               child: Text(statusText,
-                                  style: GoogleFonts.plusJakartaSans(
+                                  style: GoogleFonts.poppins(
                                       fontSize: 10, fontWeight: FontWeight.w700, color: statusColor)),
                             ),
                           ],
@@ -225,7 +225,7 @@ class ResidentDetailScreen extends ConsumerWidget {
         backgroundColor: const Color(0xFF25D366),
         foregroundColor: Colors.white,
         icon: const Icon(Icons.chat_bubble_outline),
-        label: Text('Kirim WA', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700)),
+        label: Text('Kirim WA', style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
       ),
     );
   }
@@ -262,7 +262,7 @@ class ResidentDetailScreen extends ConsumerWidget {
                       children: [
                         Expanded(
                           child: Text(resident.fullName,
-                              style: GoogleFonts.plusJakartaSans(
+                              style: GoogleFonts.poppins(
                                   fontSize: 18, fontWeight: FontWeight.w800,
                                   color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary)),
                         ),
@@ -273,7 +273,7 @@ class ResidentDetailScreen extends ConsumerWidget {
                                 color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
                                 borderRadius: BorderRadius.circular(6)),
                             child: Text('Nonaktif',
-                                style: GoogleFonts.plusJakartaSans(
+                                style: GoogleFonts.poppins(
                                     fontSize: 10, fontWeight: FontWeight.w700,
                                     color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                           ),
@@ -297,11 +297,11 @@ class ResidentDetailScreen extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Terdaftar sejak',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                       fontSize: 12,
                       color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
               Text(dateFormat.format(resident.createdAt),
-                  style: GoogleFonts.plusJakartaSans(
+                  style: GoogleFonts.poppins(
                       fontSize: 12, fontWeight: FontWeight.w600,
                       color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary)),
             ],
@@ -319,7 +319,7 @@ class ResidentDetailScreen extends ConsumerWidget {
       child: Center(
         child: Text(
           resident.initials,
-          style: GoogleFonts.plusJakartaSans(
+          style: GoogleFonts.poppins(
               color: resident.isActive ? Colors.white : Colors.grey.shade600,
               fontSize: 20, fontWeight: FontWeight.w800),
         ),
@@ -336,7 +336,7 @@ class ResidentDetailScreen extends ConsumerWidget {
         const SizedBox(width: 6),
         Expanded(
           child: Text(text,
-              style: GoogleFonts.plusJakartaSans(
+              style: GoogleFonts.poppins(
                   fontSize: 13,
                   color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
         ),
