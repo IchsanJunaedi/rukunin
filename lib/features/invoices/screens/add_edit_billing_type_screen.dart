@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../app/theme.dart';
 import '../../../app/tokens.dart';
 import '../models/billing_type_model.dart';
 import '../providers/billing_type_provider.dart';
@@ -117,7 +116,7 @@ class _AddEditBillingTypeScreenState
       appBar: AppBar(
         title: Text(
           isEdit ? 'Edit Iuran' : 'Tambah Iuran',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontWeight: FontWeight.w700,
             fontSize: 16,
           ),
@@ -132,7 +131,7 @@ class _AddEditBillingTypeScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Nama Iuran', style: GoogleFonts.poppins(
+                    Text('Nama Iuran', style: RukuninFonts.pjs(
                       fontSize: 14, fontWeight: FontWeight.w600,
                       color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                     )),
@@ -147,7 +146,7 @@ class _AddEditBillingTypeScreenState
                           : null,
                     ),
                     const SizedBox(height: 20),
-                    Text('Nominal (Rp)', style: GoogleFonts.poppins(
+                    Text('Nominal (Rp)', style: RukuninFonts.pjs(
                       fontSize: 14, fontWeight: FontWeight.w600,
                       color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                     )),
@@ -169,7 +168,7 @@ class _AddEditBillingTypeScreenState
                       },
                     ),
                     const SizedBox(height: 20),
-                    Text('Tanggal Jatuh Tempo Tiap Bulan', style: GoogleFonts.poppins(
+                    Text('Tanggal Jatuh Tempo Tiap Bulan', style: RukuninFonts.pjs(
                       fontSize: 14, fontWeight: FontWeight.w600,
                       color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                     )),
@@ -204,14 +203,14 @@ class _AddEditBillingTypeScreenState
                               Icon(Icons.two_wheeler, size: 16, color: RukuninColors.brandGreen),
                               const SizedBox(width: 8),
                               Text('Tarif Tambahan per Kendaraan',
-                                  style: GoogleFonts.poppins(
+                                  style: RukuninFonts.pjs(
                                     fontWeight: FontWeight.w700, fontSize: 13, color: RukuninColors.brandGreen)),
                             ],
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Isi jika iuran ini dikenakan tambahan berdasarkan jumlah kendaraan warga (misal: iuran Ronda). Kosongkan atau isi 0 jika tidak perlu.',
-                            style: GoogleFonts.poppins(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+                            style: RukuninFonts.pjs(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                           ),
                           const SizedBox(height: 12),
                           TextFormField(
@@ -252,7 +251,7 @@ class _AddEditBillingTypeScreenState
                             children: [
                               Text(
                                 'Status Aktif',
-                                style: GoogleFonts.poppins(
+                                style: RukuninFonts.pjs(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
                                   color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -263,7 +262,7 @@ class _AddEditBillingTypeScreenState
                                 _isActive
                                     ? 'Tagihan akan diterbitkan'
                                     : 'Tagihan iuran ini dinonaktifkan',
-                                style: GoogleFonts.poppins(
+                                style: RukuninFonts.pjs(
                                   fontSize: 12,
                                   color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                                 ),

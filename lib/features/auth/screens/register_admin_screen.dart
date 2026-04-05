@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../app/tokens.dart';
 import '../providers/register_provider.dart';
 
 const _kYellow = Color(0xFFFFC107);
@@ -81,7 +82,7 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           'Komunitas Berhasil Dibuat! 🎉',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             color: _kWhite,
             fontWeight: FontWeight.w800,
           ),
@@ -92,7 +93,7 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
           children: [
             Text(
               'Bagikan kode ini ke grup WA wargamu agar mereka bisa bergabung:',
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                 color: _kWhite.withValues(alpha: 0.7),
                 fontSize: 13,
               ),
@@ -109,7 +110,7 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
                 children: [
                   Text(
                     'KODE KOMUNITAS',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       color: _kBlack.withValues(alpha: 0.6),
@@ -119,7 +120,7 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
                   const SizedBox(height: 6),
                   Text(
                     code,
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontSize: 36,
                       fontWeight: FontWeight.w900,
                       color: _kBlack,
@@ -144,7 +145,7 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
                   const SizedBox(width: 6),
                   Text(
                     'Salin kode',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       color: _kYellow,
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -160,7 +161,7 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
               'Masuk ke Dashboard →',
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                 color: _kYellow,
                 fontWeight: FontWeight.w700,
               ),
@@ -212,7 +213,7 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
                     const SizedBox(height: 12),
                     Text(
                       'Buat akun RT/RW dan mulai kelola komunitasmu.',
-                      style: GoogleFonts.poppins(
+                      style: RukuninFonts.pjs(
                         fontSize: 13,
                         color: _kBlack.withValues(alpha: 0.6),
                       ),
@@ -364,7 +365,7 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
                                   )
                                 : Text(
                                     'Daftar & Buat Komunitas →',
-                                    style: GoogleFonts.poppins(
+                                    style: RukuninFonts.pjs(
                                       color: _kBlack,
                                       fontSize: 15,
                                       fontWeight: FontWeight.w800,
@@ -414,10 +415,10 @@ class _DarkTextField extends StatelessWidget {
       keyboardType: keyboardType,
       validator: validator,
       inputFormatters: inputFormatters,
-      style: GoogleFonts.poppins(color: _kWhite, fontSize: 14),
+      style: RukuninFonts.pjs(color: _kWhite, fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.poppins(
+        hintStyle: RukuninFonts.pjs(
           color: _kWhite.withValues(alpha: 0.3),
           fontSize: 13,
         ),

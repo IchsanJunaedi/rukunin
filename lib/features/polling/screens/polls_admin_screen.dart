@@ -27,7 +27,7 @@ class PollsAdminScreen extends ConsumerWidget {
         ),
         title: Text(
           'Polling',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -47,7 +47,7 @@ class PollsAdminScreen extends ConsumerWidget {
             children: [
               Icon(Icons.error_outline_rounded, color: RukuninColors.error, size: 48),
               const SizedBox(height: 12),
-              Text('Gagal memuat polling', style: GoogleFonts.poppins(
+              Text('Gagal memuat polling', style: RukuninFonts.pjs(
                   color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
               TextButton(
                 onPressed: () => ref.invalidate(pollsAdminProvider),
@@ -67,13 +67,13 @@ class PollsAdminScreen extends ConsumerWidget {
                       color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                   const SizedBox(height: 16),
                   Text('Belum ada polling',
-                      style: GoogleFonts.poppins(
+                      style: RukuninFonts.pjs(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                   const SizedBox(height: 6),
                   Text('Buat polling untuk musyawarah warga.',
-                      style: GoogleFonts.poppins(
+                      style: RukuninFonts.pjs(
                           fontSize: 13,
                           color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
                 ],
@@ -119,7 +119,7 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       label.toUpperCase(),
-      style: GoogleFonts.poppins(
+      style: RukuninFonts.pjs(
         fontSize: 11,
         fontWeight: FontWeight.w700,
         letterSpacing: 0.8,
@@ -160,7 +160,7 @@ class _PollCard extends StatelessWidget {
                 children: [
                   Text(
                     poll.title,
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -169,7 +169,7 @@ class _PollCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     'Berakhir ${DateFormat('dd MMM yyyy', 'id').format(poll.endsAt)}',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontSize: 12,
                       color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                     ),
@@ -185,7 +185,7 @@ class _PollCard extends StatelessWidget {
               ),
               child: Text(
                 statusLabel,
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   color: statusColor,

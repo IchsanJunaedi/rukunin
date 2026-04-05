@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import '../../../app/components.dart';
 import '../../../app/tokens.dart';
 import '../providers/poll_provider.dart';
 import '../providers/poll_vote_provider.dart';
@@ -31,7 +32,7 @@ class PollDetailAdminScreen extends ConsumerWidget {
         ),
         title: Text(
           'Detail Polling',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -40,12 +41,27 @@ class PollDetailAdminScreen extends ConsumerWidget {
       ),
       body: pollAsync.when(
         loading: () => const Center(child: CircularProgressIndicator(color: RukuninColors.brandGreen)),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, _) => Center(
+          child: EmptyState(
+            icon: Icons.error_outline_rounded,
+            title: 'Gagal memuat polling',
+            description: 'Periksa koneksi internet, lalu coba lagi.',
+            ctaLabel: 'Coba lagi',
+            onCta: () => ref.invalidate(pollDetailProvider(pollId)),
+          ),
+        ),
         data: (poll) {
           if (poll == null) return const Center(child: Text('Polling tidak ditemukan'));
           return votesAsync.when(
             loading: () => const Center(child: CircularProgressIndicator(color: RukuninColors.brandGreen)),
-            error: (e, _) => Center(child: Text('Error memuat votes: $e')),
+            error: (e, _) => Center(
+              child: EmptyState(
+                icon: Icons.error_outline_rounded,
+                title: 'Gagal memuat hasil voting',
+                ctaLabel: 'Coba lagi',
+                onCta: () => ref.invalidate(pollVotesProvider(pollId)),
+              ),
+            ),
             data: (votes) => _PollDetailBody(
               poll: poll,
               votes: votes,
@@ -63,17 +79,17 @@ class PollDetailAdminScreen extends ConsumerWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text('Tutup Polling?',
-            style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
+            style: RukuninFonts.pjs(fontWeight: FontWeight.w700)),
         content: Text(
           'Polling "${poll.title}" akan ditutup dan warga tidak bisa lagi memberikan suara.',
-          style: GoogleFonts.poppins(),
+          style: RukuninFonts.pjs(),
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Batal')),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             child: Text('Tutup Polling',
-                style: GoogleFonts.poppins(color: RukuninColors.error)),
+                style: RukuninFonts.pjs(color: RukuninColors.error)),
           ),
         ],
       ),
@@ -134,7 +150,7 @@ class _PollDetailBody extends StatelessWidget {
               ),
               child: Text(
                 poll.isOpen ? 'Polling Aktif' : 'Polling Selesai',
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: poll.isOpen ? RukuninColors.brandGreen : RukuninColors.lightTextTertiary,
@@ -146,7 +162,7 @@ class _PollDetailBody extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           poll.title,
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -156,7 +172,7 @@ class _PollDetailBody extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             poll.description!,
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               fontSize: 14,
               color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
               height: 1.6,
@@ -166,7 +182,7 @@ class _PollDetailBody extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           '${fmt.format(poll.startsAt)} – ${fmt.format(poll.endsAt)}',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 12,
             color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
           ),
@@ -176,7 +192,7 @@ class _PollDetailBody extends StatelessWidget {
         const SizedBox(height: 20),
         Text(
           'Hasil Suara',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 15,
             fontWeight: FontWeight.w700,
             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -185,7 +201,7 @@ class _PollDetailBody extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           '$total suara masuk',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 12,
             color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
           ),
@@ -198,7 +214,7 @@ class _PollDetailBody extends StatelessWidget {
         if (votes.isNotEmpty) ...[
           Text(
             'Rincian Suara',
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -220,7 +236,7 @@ class _PollDetailBody extends StatelessWidget {
               ),
               child: Text(
                 'Tutup Polling',
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: RukuninColors.error,
@@ -253,12 +269,12 @@ class _VoteBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(label,
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary)),
             Text('$count suara (${(percent * 100).toInt()}%)',
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                     fontSize: 13,
                     color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
           ],
@@ -300,7 +316,7 @@ class _VoterTile extends StatelessWidget {
           Expanded(
             child: Text(
               vote.residentName ?? 'Warga',
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -316,7 +332,7 @@ class _VoterTile extends StatelessWidget {
             ),
             child: Text(
               vote.vote ? 'Ya' : 'Tidak',
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: vote.vote ? RukuninColors.brandGreen : RukuninColors.error,
@@ -326,7 +342,7 @@ class _VoterTile extends StatelessWidget {
           const SizedBox(width: 10),
           Text(
             fmt.format(vote.votedAt),
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               fontSize: 11,
               color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
             ),

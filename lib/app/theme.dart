@@ -35,7 +35,7 @@ class AppTextStyles {
       );
 
   static TextStyle body(double size, {Color color = AppColors.onSurface, FontWeight weight = FontWeight.w600}) =>
-      GoogleFonts.poppins(
+      RukuninFonts.pjs(
         fontSize: size,
         fontWeight: weight,
         color: color,
@@ -43,7 +43,7 @@ class AppTextStyles {
       );
 
   static TextStyle label(double size, {Color color = AppColors.onSurface}) =>
-      GoogleFonts.poppins(
+      RukuninFonts.pjs(
         fontSize: size,
         fontWeight: FontWeight.w600,
         color: color,
@@ -95,7 +95,7 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
     brightness: brightness,
     colorScheme: colorScheme,
     scaffoldBackgroundColor: bg,
-    fontFamily: GoogleFonts.poppins().fontFamily,
+    fontFamily: RukuninFonts.pjs().fontFamily,
 
     // ── AppBar ──────────────────────────────────────────────────────────────
     appBarTheme: AppBarTheme(
@@ -104,7 +104,7 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
       elevation: 0,
       scrolledUnderElevation: 0,
       surfaceTintColor: Colors.transparent,
-      titleTextStyle: GoogleFonts.poppins(
+      titleTextStyle: RukuninFonts.pjs(
         fontSize: 17,
         fontWeight: FontWeight.w700,
         color: textPri,
@@ -129,9 +129,9 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
       showUnselectedLabels: true,
       type: BottomNavigationBarType.fixed,
       elevation: 0,
-      selectedLabelStyle: GoogleFonts.poppins(
+      selectedLabelStyle: RukuninFonts.pjs(
           fontSize: 11, fontWeight: FontWeight.w600),
-      unselectedLabelStyle: GoogleFonts.poppins(
+      unselectedLabelStyle: RukuninFonts.pjs(
           fontSize: 11, fontWeight: FontWeight.w500),
     ),
 
@@ -147,12 +147,12 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
       }),
       labelTextStyle: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return GoogleFonts.poppins(
+          return RukuninFonts.pjs(
             fontSize: 11, fontWeight: FontWeight.w700,
             color: RukuninColors.brandGreen,
           );
         }
-        return GoogleFonts.poppins(
+        return RukuninFonts.pjs(
           fontSize: 11, fontWeight: FontWeight.w500, color: textTer,
         );
       }),
@@ -199,9 +199,9 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: RukuninColors.error, width: 1.5),
       ),
-      hintStyle: GoogleFonts.poppins(fontSize: 14, color: textTer),
-      labelStyle: GoogleFonts.poppins(fontSize: 14, color: textSec),
-      errorStyle: GoogleFonts.poppins(
+      hintStyle: RukuninFonts.pjs(fontSize: 14, color: textTer),
+      labelStyle: RukuninFonts.pjs(fontSize: 14, color: textSec),
+      errorStyle: RukuninFonts.pjs(
           fontSize: 12, color: RukuninColors.error),
     ),
 
@@ -220,7 +220,7 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
         ),
-        textStyle: GoogleFonts.poppins(
+        textStyle: RukuninFonts.pjs(
             fontSize: 15, fontWeight: FontWeight.w700),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
       ),
@@ -235,7 +235,7 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
         ),
-        textStyle: GoogleFonts.poppins(
+        textStyle: RukuninFonts.pjs(
             fontSize: 15, fontWeight: FontWeight.w600),
       ),
     ),
@@ -244,7 +244,7 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: RukuninColors.brandGreen,
-        textStyle: GoogleFonts.poppins(
+        textStyle: RukuninFonts.pjs(
             fontSize: 14, fontWeight: FontWeight.w600),
       ),
     ),
@@ -266,7 +266,7 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
     chipTheme: ChipThemeData(
       backgroundColor: surface2,
       selectedColor: RukuninColors.brandGreen.withValues(alpha: 0.15),
-      labelStyle: GoogleFonts.poppins(
+      labelStyle: RukuninFonts.pjs(
           fontSize: 13, fontWeight: FontWeight.w500, color: textSec),
       side: BorderSide(color: border, width: 0.5),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -279,9 +279,9 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
       unselectedLabelColor: textSec,
       indicatorColor: RukuninColors.brandGreen,
       indicatorSize: TabBarIndicatorSize.label,
-      labelStyle: GoogleFonts.poppins(
+      labelStyle: RukuninFonts.pjs(
           fontSize: 14, fontWeight: FontWeight.w700),
-      unselectedLabelStyle: GoogleFonts.poppins(
+      unselectedLabelStyle: RukuninFonts.pjs(
           fontSize: 14, fontWeight: FontWeight.w500),
       dividerColor: border,
       overlayColor: WidgetStateProperty.all(Colors.transparent),
@@ -298,9 +298,9 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
     listTileTheme: ListTileThemeData(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       tileColor: surface,
-      titleTextStyle: GoogleFonts.poppins(
+      titleTextStyle: RukuninFonts.pjs(
           fontSize: 14, fontWeight: FontWeight.w600, color: textPri),
-      subtitleTextStyle: GoogleFonts.poppins(
+      subtitleTextStyle: RukuninFonts.pjs(
           fontSize: 13, color: textSec),
       iconColor: textSec,
       minLeadingWidth: 0,
@@ -315,9 +315,9 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(color: border, width: 0.5),
       ),
-      titleTextStyle: GoogleFonts.poppins(
+      titleTextStyle: RukuninFonts.pjs(
           fontSize: 17, fontWeight: FontWeight.w700, color: textPri),
-      contentTextStyle: GoogleFonts.poppins(
+      contentTextStyle: RukuninFonts.pjs(
           fontSize: 14, color: textSec, height: 1.5),
     ),
 
@@ -326,7 +326,7 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
       backgroundColor: isDark
           ? const Color(0xFF1C2330)
           : const Color(0xFF0D1117),
-      contentTextStyle: GoogleFonts.poppins(
+      contentTextStyle: RukuninFonts.pjs(
           fontSize: 14, color: Colors.white),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       behavior: SnackBarBehavior.floating,
@@ -402,10 +402,10 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
         borderRadius: BorderRadius.circular(14),
         side: BorderSide(color: border, width: 0.5),
       ),
-      textStyle: GoogleFonts.poppins(fontSize: 14, color: textPri),
+      textStyle: RukuninFonts.pjs(fontSize: 14, color: textPri),
     ),
 
-    textTheme: GoogleFonts.poppinsTextTheme(
+    textTheme: GoogleFonts.plusJakartaSansTextTheme(
       ThemeData(brightness: brightness).textTheme,
     ),
   );

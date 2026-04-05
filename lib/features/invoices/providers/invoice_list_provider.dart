@@ -165,7 +165,7 @@ class InvoiceListNotifier extends AsyncNotifier<List<InvoiceModel>> {
       // 1. Ambil data invoice untuk dicatat ke tabel payments
       final invoiceData = await client
           .from('invoices')
-          .select('amount, community_id, resident_id, profiles:resident_id(full_name, phone)')
+          .select('amount, community_id, resident_id, profiles:resident_id(full_name, phone, fcm_token)')
           .eq('id', invoiceId)
           .single();
 
@@ -201,7 +201,29 @@ class InvoiceListNotifier extends AsyncNotifier<List<InvoiceModel>> {
         );
       }
 
-      // 4. Kirim WA konfirmasi ke warga (best-effort, tidak gagalkan proses)
+      // 4a. Kirim FCM push notification ke warga (best-effort)
+      try {
+        final fcmToken = invoiceData['profiles']?['fcm_token']?.toString();
+        if (fcmToken != null && fcmToken.isNotEmpty) {
+          final session = client.auth.currentSession;
+          await client.functions.invoke(
+            'send-fcm',
+            headers: session?.accessToken != null
+                ? {'Authorization': 'Bearer ${session!.accessToken}'}
+                : null,
+            body: {
+              'token': fcmToken,
+              'title': 'Pembayaran Dikonfirmasi ✅',
+              'body': 'Tagihan Anda telah dinyatakan lunas.',
+              'data': {'type': 'payment', 'invoice_id': invoiceId},
+            },
+          );
+        }
+      } catch (_) {
+        // FCM bersifat best-effort
+      }
+
+      // 4b. Kirim WA konfirmasi ke warga (best-effort, tidak gagalkan proses)
       try {
         final phone = invoiceData['profiles']?['phone']?.toString();
         final name = invoiceData['profiles']?['full_name'] ?? 'Bapak/Ibu';

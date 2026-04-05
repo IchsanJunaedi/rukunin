@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:io';
-import '../../../app/theme.dart';
 import '../../../app/tokens.dart';
 import '../../../core/supabase/supabase_client.dart';
 import '../models/marketplace_listing_model.dart';
@@ -227,7 +226,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
         foregroundColor: Colors.white,
         title: Text(
           isEdit ? 'Edit Iklan' : 'Pasang Iklan',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
               color: Colors.white, fontWeight: FontWeight.w700),
         ),
         actions: [
@@ -246,7 +245,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
               onPressed: _submit,
               child: Text(
                 isEdit ? 'Simpan' : 'Pasang',
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                     color: RukuninColors.brandGreen,
                     fontWeight: FontWeight.w700,
                     fontSize: 15),
@@ -262,7 +261,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
             // ── Upload foto ──
             Text(
               'Foto Produk (maks. 3)',
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
@@ -369,7 +368,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
                             const SizedBox(height: 4),
                             Text(
                               'Tambah Foto',
-                              style: GoogleFonts.poppins(
+                              style: RukuninFonts.pjs(
                                   fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                             ),
                           ],
@@ -417,7 +416,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
                     ),
                     child: Text(
                       label,
-                      style: GoogleFonts.poppins(
+                      style: RukuninFonts.pjs(
                         fontSize: 13,
                         fontWeight:
                             isSelected ? FontWeight.w700 : FontWeight.w500,
@@ -467,7 +466,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
               maxLines: 4,
               decoration: InputDecoration(
                 hintText: 'Ceritakan detail produk/jasa kamu...',
-                hintStyle: GoogleFonts.poppins(
+                hintStyle: RukuninFonts.pjs(
                     color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary, fontSize: 14),
                 filled: true,
                 fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
@@ -477,7 +476,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
                 ),
                 contentPadding: const EdgeInsets.all(16),
               ),
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                   fontSize: 14, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
             ),
             const SizedBox(height: 32),
@@ -487,7 +486,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
                   isEdit ? Icons.save_rounded : Icons.check_circle_rounded),
               label: Text(
                 isEdit ? 'Simpan Perubahan' : 'Pasang Iklan Sekarang',
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                     fontWeight: FontWeight.w700, fontSize: 15),
               ),
               style: ElevatedButton.styleFrom(
@@ -506,7 +505,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
 
   Widget _label(bool isDark, String text) => Text(
         text,
-        style: GoogleFonts.poppins(
+        style: RukuninFonts.pjs(
             fontSize: 13,
             fontWeight: FontWeight.w600,
             color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
@@ -526,7 +525,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
       inputFormatters: inputFormatters,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.poppins(
+        hintStyle: RukuninFonts.pjs(
             color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary, fontSize: 14),
         filled: true,
         fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
@@ -538,7 +537,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       style:
-          GoogleFonts.poppins(fontSize: 15, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
+          RukuninFonts.pjs(fontSize: 15, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
       validator: validator,
     );
   }

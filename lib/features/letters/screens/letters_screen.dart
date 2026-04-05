@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../app/theme.dart';
+import '../../../app/components.dart';
 import '../../../app/tokens.dart';
 import '../providers/letter_provider.dart';
 
@@ -39,7 +39,7 @@ class LettersScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
-        title: Text('Surat Keterangan', style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
+        title: Text('Surat Keterangan', style: RukuninFonts.pjs(fontWeight: FontWeight.w700)),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -51,11 +51,19 @@ class LettersScreen extends ConsumerWidget {
         onPressed: () => context.push('/admin/surat/buat'),
         backgroundColor: RukuninColors.brandGreen,
         icon: const Icon(Icons.add, color: Colors.white),
-        label: Text('Buat Surat', style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w600)),
+        label: Text('Buat Surat', style: RukuninFonts.pjs(color: Colors.white, fontWeight: FontWeight.w600)),
       ),
       body: lettersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, _) => Center(
+          child: EmptyState(
+            icon: Icons.error_outline_rounded,
+            title: 'Gagal memuat daftar surat',
+            description: 'Periksa koneksi internet, lalu coba lagi.',
+            ctaLabel: 'Coba lagi',
+            onCta: () => ref.invalidate(lettersProvider),
+          ),
+        ),
         data: (letters) {
           if (letters.isEmpty) {
             return Center(
@@ -66,13 +74,13 @@ class LettersScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   Text(
                     'Belum ada surat dibuat',
-                    style: GoogleFonts.poppins(fontSize: 16, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, fontWeight: FontWeight.w500),
+                    style: RukuninFonts.pjs(fontSize: 16, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Tekan tombol "Buat Surat" untuk membuat\nsurat keterangan warga',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+                    style: RukuninFonts.pjs(fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                   ),
                 ],
               ),
@@ -150,17 +158,17 @@ class _LetterCard extends StatelessWidget {
                   children: [
                     Text(
                       residentName,
-                      style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
+                      style: RukuninFonts.pjs(fontSize: 14, fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       typeLabel,
-                      style: GoogleFonts.poppins(fontSize: 12, color: RukuninColors.brandGreen, fontWeight: FontWeight.w600),
+                      style: RukuninFonts.pjs(fontSize: 12, color: RukuninColors.brandGreen, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       '${letter.letterNumber} • Unit $unitNumber',
-                      style: GoogleFonts.poppins(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+                      style: RukuninFonts.pjs(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                     ),
                   ],
                 ),
@@ -174,12 +182,12 @@ class _LetterCard extends StatelessWidget {
                       color: statusColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text(statusLabel, style: GoogleFonts.poppins(fontSize: 10, color: statusColor, fontWeight: FontWeight.w700)),
+                    child: Text(statusLabel, style: RukuninFonts.pjs(fontSize: 10, color: statusColor, fontWeight: FontWeight.w700)),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     DateFormat('dd MMM yy', 'id_ID').format(letter.createdAt),
-                    style: GoogleFonts.poppins(fontSize: 10, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+                    style: RukuninFonts.pjs(fontSize: 10, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                   ),
                 ],
               ),

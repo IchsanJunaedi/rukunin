@@ -47,8 +47,8 @@ Future<void> insertNotification({
       'user_id': userId,
       'type': type,
       'title': title,
-      if (body != null) 'body': body,
-      if (metadata != null) 'metadata': metadata,
+      'body': ?body,
+      'metadata': ?metadata,
     });
   } catch (_) {
     // Notifikasi gagal tidak boleh break flow utama

@@ -8,7 +8,6 @@ import '../../../app/tokens.dart';
 import '../models/billing_type_model.dart';
 import '../providers/billing_type_provider.dart';
 import '../providers/invoice_list_provider.dart';
-import '../../resident_portal/providers/resident_invoices_provider.dart';
 
 class CreateInvoiceScreen extends ConsumerStatefulWidget {
   const CreateInvoiceScreen({super.key});
@@ -117,17 +116,17 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text('Terbitkan Tagihan?',
-            style: GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 16)),
+            style: RukuninFonts.pjs(fontWeight: FontWeight.w700, fontSize: 16)),
         content: Text(
           'Tagihan ${_selectedBillingType!.name} untuk periode '
           '${_months[_selectedMonth - 1]} $_selectedYear akan diterbitkan ke '
           'semua warga aktif.\n\nJatuh tempo: $dueDateFmt',
-          style: GoogleFonts.poppins(fontSize: 14),
+          style: RukuninFonts.pjs(fontSize: 14),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text('Batal', style: GoogleFonts.poppins()),
+            child: Text('Batal', style: RukuninFonts.pjs()),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
@@ -135,7 +134,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
               backgroundColor: RukuninColors.brandGreen,
               foregroundColor: Colors.white,
             ),
-            child: Text('Ya, Terbitkan', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+            child: Text('Ya, Terbitkan', style: RukuninFonts.pjs(fontWeight: FontWeight.w600)),
           ),
         ],
       ),
@@ -189,7 +188,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
       appBar: AppBar(
         title: Text(
           'Terbitkan Tagihan',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 16),
+          style: RukuninFonts.pjs(fontWeight: FontWeight.w700, fontSize: 16),
         ),
       ),
       body: _isLoading
@@ -214,7 +213,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                         Expanded(
                           child: Text(
                             'Tagihan akan diterbitkan ke seluruh warga (Resident) aktif yang terdaftar di komunitas ini.',
-                            style: GoogleFonts.poppins(fontSize: 13, color: RukuninColors.brandGreen),
+                            style: RukuninFonts.pjs(fontSize: 13, color: RukuninColors.brandGreen),
                           ),
                         ),
                       ],
@@ -228,20 +227,23 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                   const SizedBox(height: 8),
                   billingTypesAsync.when(
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (e, _) => Text('Error: $e'),
+                    error: (e, _) => Text(
+                      'Gagal memuat jenis iuran. Coba tutup dan buka halaman ini kembali.',
+                      style: RukuninFonts.pjs(color: RukuninColors.error, fontSize: 13),
+                    ),
                     data: (types) {
                       final activeTypes = types.where((t) => t.isActive).toList();
                       if (activeTypes.isEmpty) {
                         return Text(
                           'Belum ada Jenis Iuran aktif. Tambahkan pada Pengaturan Jenis Iuran.',
-                          style: GoogleFonts.poppins(color: RukuninColors.error),
+                          style: RukuninFonts.pjs(color: RukuninColors.error),
                         );
                       }
                       return ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: activeTypes.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 10),
+                        separatorBuilder: (_, _) => const SizedBox(height: 10),
                         itemBuilder: (context, index) {
                           final t = activeTypes[index];
                           final isSelected = _selectedBillingType?.id == t.id;
@@ -270,7 +272,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                                       children: [
                                         Text(
                                           t.name,
-                                          style: GoogleFonts.poppins(
+                                          style: RukuninFonts.pjs(
                                             fontSize: 15,
                                             fontWeight: FontWeight.w700,
                                             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -279,7 +281,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                                         const SizedBox(height: 2),
                                         Text(
                                           'Nominal: ${currencyFormat.format(t.amount)}',
-                                          style: GoogleFonts.poppins(
+                                          style: RukuninFonts.pjs(
                                               fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
                                         ),
                                       ],
@@ -304,7 +306,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                       Expanded(
                         flex: 2,
                         child: DropdownButtonFormField<int>(
-                          value: _selectedMonth,
+                          initialValue: _selectedMonth,
                           decoration: const InputDecoration(filled: true, labelText: 'Bulan'),
                           items: List.generate(12, (index) {
                             final month = index + 1;
@@ -329,7 +331,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                       Expanded(
                         flex: 1,
                         child: DropdownButtonFormField<int>(
-                          value: _selectedYear,
+                          initialValue: _selectedYear,
                           decoration: const InputDecoration(filled: true, labelText: 'Tahun'),
                           items: List.generate(4, (index) {
                             final yearVal = DateTime.now().year + index;
@@ -383,7 +385,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                                     children: [
                                       Text(
                                         DateFormat('EEEE, d MMMM yyyy', 'id_ID').format(_selectedDueDate!),
-                                        style: GoogleFonts.poppins(
+                                        style: RukuninFonts.pjs(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w600,
                                           color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -392,7 +394,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                                       if (_selectedBillingType != null)
                                         Text(
                                           'Tanggal billing default: ${_selectedBillingType!.billingDay}',
-                                          style: GoogleFonts.poppins(
+                                          style: RukuninFonts.pjs(
                                               fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                                         ),
                                     ],
@@ -401,7 +403,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                                     _selectedBillingType == null
                                         ? 'Pilih jenis iuran dahulu'
                                         : 'Ketuk untuk memilih tanggal',
-                                    style: GoogleFonts.poppins(
+                                    style: RukuninFonts.pjs(
                                         fontSize: 14, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                                   ),
                           ),
@@ -418,7 +420,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                       padding: const EdgeInsets.only(top: 6, left: 4),
                       child: Text(
                         'Wajib pilih tanggal jatuh tempo',
-                        style: GoogleFonts.poppins(fontSize: 12, color: RukuninColors.error),
+                        style: RukuninFonts.pjs(fontSize: 12, color: RukuninColors.error),
                       ),
                     ),
 
@@ -436,7 +438,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Ringkasan Tagihan',
-                              style: GoogleFonts.poppins(
+                              style: RukuninFonts.pjs(
                                   fontSize: 12, fontWeight: FontWeight.w600, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
                           const SizedBox(height: 12),
                           _summaryRow('Jenis Iuran', _selectedBillingType!.name),
@@ -475,7 +477,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                       ),
                       child: Text(
                         'Terbitkan ke Semua Warga',
-                        style: GoogleFonts.poppins(
+                        style: RukuninFonts.pjs(
                             fontWeight: FontWeight.w700, fontSize: 15),
                       ),
                     ),
@@ -492,10 +494,10 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: GoogleFonts.poppins(fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
+        Text(label, style: RukuninFonts.pjs(fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
         Text(
           value,
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 14,
             fontWeight: valueBold ? FontWeight.w700 : FontWeight.w600,
             color: valueColor ?? (isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),

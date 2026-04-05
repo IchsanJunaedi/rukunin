@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../app/tokens.dart';
 import '../models/register_step1_data.dart';
 import '../providers/register_provider.dart';
 
@@ -111,7 +112,7 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                     const SizedBox(height: 12),
                     Text(
                       'Minta kode komunitas dari admin RT/RW-mu, lalu daftar di sini.',
-                      style: GoogleFonts.poppins(
+                      style: RukuninFonts.pjs(
                         fontSize: 13,
                         color: _kBlack.withValues(alpha: 0.6),
                       ),
@@ -144,7 +145,7 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                         controller: _codeCtrl,
                         textCapitalization: TextCapitalization.characters,
                         inputFormatters: [LengthLimitingTextInputFormatter(6)],
-                        style: GoogleFonts.poppins(
+                        style: RukuninFonts.pjs(
                           color: _kYellow,
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
@@ -152,14 +153,14 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                         ),
                         decoration: InputDecoration(
                           hintText: 'KODE',
-                          hintStyle: GoogleFonts.poppins(
+                          hintStyle: RukuninFonts.pjs(
                             color: _kYellow.withValues(alpha: 0.3),
                             fontSize: 22,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 6,
                           ),
                           labelText: 'Kode Komunitas (6 huruf)',
-                          labelStyle: GoogleFonts.poppins(
+                          labelStyle: RukuninFonts.pjs(
                             color: _kWhite.withValues(alpha: 0.5),
                             fontSize: 12,
                           ),
@@ -268,7 +269,7 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                                   )
                                 : Text(
                                     'Lanjut →',
-                                    style: GoogleFonts.poppins(
+                                    style: RukuninFonts.pjs(
                                       color: _kBlack,
                                       fontSize: 15,
                                       fontWeight: FontWeight.w800,
@@ -319,10 +320,10 @@ class _DarkTextField extends StatelessWidget {
       keyboardType: keyboardType,
       validator: validator,
       inputFormatters: inputFormatters,
-      style: GoogleFonts.poppins(color: _kWhite, fontSize: 14),
+      style: RukuninFonts.pjs(color: _kWhite, fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.poppins(
+        hintStyle: RukuninFonts.pjs(
           color: _kWhite.withValues(alpha: 0.3),
           fontSize: 13,
         ),

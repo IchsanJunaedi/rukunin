@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import '../../../app/theme.dart';
 import '../../../app/tokens.dart';
 import '../models/complaint_model.dart';
 import '../providers/layanan_provider.dart';
@@ -69,7 +68,7 @@ class _AdminComplaintsScreenState
                   onSelected: (_) => setState(() => _filter = option),
                   backgroundColor: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
                   selectedColor: RukuninColors.brandGreen,
-                  labelStyle: GoogleFonts.poppins(
+                  labelStyle: RukuninFonts.pjs(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: selected ? Colors.white : (isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
@@ -100,7 +99,7 @@ class _AdminComplaintsScreenState
                           color: RukuninColors.error, size: 48),
                       const SizedBox(height: 12),
                       Text('Gagal memuat data',
-                          style: GoogleFonts.poppins(
+                          style: RukuninFonts.pjs(
                               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary)),
                       const SizedBox(height: 8),
                       TextButton(
@@ -129,7 +128,7 @@ class _AdminComplaintsScreenState
                         const SizedBox(height: 12),
                         Text(
                           'Belum ada pengaduan',
-                          style: GoogleFonts.poppins(
+                          style: RukuninFonts.pjs(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                             color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
@@ -221,7 +220,7 @@ class _ComplaintCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   complaint.title,
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -238,7 +237,7 @@ class _ComplaintCard extends StatelessWidget {
                 ),
                 child: Text(
                   complaint.statusLabel,
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     color: statusColor,
@@ -258,7 +257,7 @@ class _ComplaintCard extends StatelessWidget {
             ),
             child: Text(
               complaint.categoryLabel,
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
@@ -270,7 +269,7 @@ class _ComplaintCard extends StatelessWidget {
           // Resident name + unit
           Text(
             complaint.residentName ?? '-',
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -280,7 +279,7 @@ class _ComplaintCard extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               'Unit ${complaint.residentUnit}',
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                 fontSize: 12,
                 color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
               ),
@@ -291,7 +290,7 @@ class _ComplaintCard extends StatelessWidget {
           // Date
           Text(
             dateStr,
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               fontSize: 11,
               color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
             ),
@@ -326,7 +325,7 @@ class _ComplaintCard extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
                 side: BorderSide(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
-                textStyle: GoogleFonts.poppins(
+                textStyle: RukuninFonts.pjs(
                     fontSize: 13, fontWeight: FontWeight.w600),
               ),
               onPressed: onUpdateStatus,
@@ -395,7 +394,7 @@ class _UpdateStatusSheetState extends ConsumerState<_UpdateStatusSheet> {
           const SizedBox(height: 16),
           Text(
             'Update Status Pengaduan',
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               fontSize: 16,
               fontWeight: FontWeight.w700,
               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -408,13 +407,13 @@ class _UpdateStatusSheetState extends ConsumerState<_UpdateStatusSheet> {
             initialValue: _selectedStatus,
             decoration: InputDecoration(
               labelText: 'Status Baru',
-              labelStyle: GoogleFonts.poppins(fontSize: 13),
+              labelStyle: RukuninFonts.pjs(fontSize: 13),
             ),
             items: _statusOptions
                 .map((s) => DropdownMenuItem(
                       value: s.$1,
                       child: Text(s.$2,
-                          style: GoogleFonts.poppins(fontSize: 14)),
+                          style: RukuninFonts.pjs(fontSize: 14)),
                     ))
                 .toList(),
             onChanged: (v) {
@@ -429,7 +428,7 @@ class _UpdateStatusSheetState extends ConsumerState<_UpdateStatusSheet> {
             maxLines: 3,
             decoration: InputDecoration(
               labelText: 'Catatan Admin (opsional)',
-              labelStyle: GoogleFonts.poppins(fontSize: 13),
+              labelStyle: RukuninFonts.pjs(fontSize: 13),
               alignLabelWithHint: true,
             ),
           ),
@@ -446,7 +445,7 @@ class _UpdateStatusSheetState extends ConsumerState<_UpdateStatusSheet> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
                 elevation: 0,
-                textStyle: GoogleFonts.poppins(
+                textStyle: RukuninFonts.pjs(
                     fontSize: 15, fontWeight: FontWeight.w700),
               ),
               onPressed: _saving ? null : _save,
@@ -482,7 +481,7 @@ class _UpdateStatusSheetState extends ConsumerState<_UpdateStatusSheet> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Gagal update status: $e',
-                style: GoogleFonts.poppins()),
+                style: RukuninFonts.pjs()),
             backgroundColor: RukuninColors.error,
           ),
         );

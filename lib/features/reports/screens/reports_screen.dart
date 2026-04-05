@@ -7,7 +7,6 @@ import 'package:file_saver/file_saver.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../app/theme.dart';
 import '../../../app/tokens.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../../core/utils/pdf_generator.dart';
@@ -58,7 +57,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                        children: [
                          Padding(
                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-                           child: Text('Pilih Aksi PDF', style: GoogleFonts.poppins(fontWeight: FontWeight.w800, fontSize: 18)),
+                           child: Text('Pilih Aksi PDF', style: RukuninFonts.pjs(fontWeight: FontWeight.w800, fontSize: 18)),
                          ),
                          ListTile(
                            leading: Icon(Icons.share, color: RukuninColors.brandGreen),
@@ -129,7 +128,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                   ),
                   Text(
                     '$monthName ${state.selectedYear}',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
                       color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -155,7 +154,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
               child: Center(
                 child: Text(
                   '$monthName ${state.selectedYear}',
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
                     color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -214,14 +213,14 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                   const SizedBox(width: 10),
                   Text(
                     'Saldo Bersih Bulan Ini',
-                    style: GoogleFonts.poppins(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
+                    style: RukuninFonts.pjs(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
               Text(
                 CurrencyFormatter.format(report.netBalance),
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                   color: Colors.white,
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
@@ -254,13 +253,13 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                                 child: const Icon(Icons.south_rounded, color: Colors.white, size: 11),
                               ),
                               const SizedBox(width: 6),
-                              Text('Pemasukan', style: GoogleFonts.poppins(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
+                              Text('Pemasukan', style: RukuninFonts.pjs(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
                             ],
                           ),
                           const SizedBox(height: 7),
                           Text(
                             CurrencyFormatter.format(report.totalIncome),
-                            style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14, letterSpacing: -0.3),
+                            style: RukuninFonts.pjs(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14, letterSpacing: -0.3),
                           ),
                         ],
                       ),
@@ -289,13 +288,13 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                                 child: const Icon(Icons.north_rounded, color: Colors.white, size: 11),
                               ),
                               const SizedBox(width: 6),
-                              Text('Pengeluaran', style: GoogleFonts.poppins(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
+                              Text('Pengeluaran', style: RukuninFonts.pjs(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
                             ],
                           ),
                           const SizedBox(height: 7),
                           Text(
                             CurrencyFormatter.format(report.totalExpense),
-                            style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14, letterSpacing: -0.3),
+                            style: RukuninFonts.pjs(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14, letterSpacing: -0.3),
                           ),
                         ],
                       ),
@@ -341,7 +340,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                   ),
                   Text(
                     '${report.collectionRate.toStringAsFixed(0)}%',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontWeight: FontWeight.w800,
                       fontSize: 13,
                       color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -356,7 +355,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                   children: [
                     Text(
                       'Tingkat Kolektibilitas',
-                      style: GoogleFonts.poppins(
+                      style: RukuninFonts.pjs(
                         fontWeight: FontWeight.w800,
                         fontSize: 14,
                         color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -365,7 +364,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                     const SizedBox(height: 4),
                     Text(
                       '${CurrencyFormatter.format(report.totalIncome)} terkumpul dari target ${CurrencyFormatter.format(report.totalExpected)}',
-                      style: GoogleFonts.poppins(
+                      style: RukuninFonts.pjs(
                         color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -395,7 +394,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         ),
         child: Text(
           label,
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 13,
             fontWeight: FontWeight.w700,
             color: isSelected ? Colors.white : (isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
@@ -442,7 +441,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         children: [
            Text(
              filterMode == ReportFilterMode.threeMonths ? 'Kas 3 Bulan Terakhir' : 'Kas 6 Bulan Terakhir',
-             style: GoogleFonts.poppins(
+             style: RukuninFonts.pjs(
                fontWeight: FontWeight.w800,
                fontSize: 16,
                color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -466,7 +465,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                          if (value.toInt() >= reversed.length) return const Text('');
                          final report = reversed[value.toInt()];
                          final monthStr = DateFormat('MMM', 'id_ID').format(DateTime(report.year, report.month));
-                         return Padding(padding: const EdgeInsets.only(top: 8), child: Text(monthStr, style: GoogleFonts.poppins(fontSize: 10, fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary)));
+                         return Padding(padding: const EdgeInsets.only(top: 8), child: Text(monthStr, style: RukuninFonts.pjs(fontSize: 10, fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary)));
                        },
                        reservedSize: 28,
                      ),
@@ -532,7 +531,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         const SizedBox(width: 6),
         Text(
           text,
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,

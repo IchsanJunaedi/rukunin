@@ -53,6 +53,7 @@ import '../features/polling/screens/polls_admin_screen.dart';
 import '../features/polling/screens/create_poll_screen.dart';
 import '../features/polling/screens/poll_detail_admin_screen.dart';
 import '../features/polling/screens/poll_vote_screen.dart';
+import '../features/payments/screens/payments_screen.dart';
 import '../shell/admin_shell.dart';
 import '../shell/resident_shell.dart';
 
@@ -192,6 +193,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/admin/profil',
         builder: (context, state) => const AdminProfileScreen(),
+      ),
+      GoRoute(
+        path: '/admin/riwayat-pembayaran',
+        builder: (context, state) => const PaymentsScreen(),
       ),
       GoRoute(
         path: '/admin/pengaturan-rek',

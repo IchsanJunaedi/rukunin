@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import '../../../app/components.dart';
 import '../../../app/tokens.dart';
 import '../providers/poll_provider.dart';
 import '../providers/poll_vote_provider.dart';
@@ -32,7 +33,7 @@ class PollVoteScreen extends ConsumerWidget {
         ),
         title: Text(
           'Polling',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -41,19 +42,41 @@ class PollVoteScreen extends ConsumerWidget {
       ),
       body: pollAsync.when(
         loading: () => const Center(child: CircularProgressIndicator(color: RukuninColors.brandGreen)),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, _) => Center(
+          child: EmptyState(
+            icon: Icons.error_outline_rounded,
+            title: 'Gagal memuat polling',
+            description: 'Periksa koneksi internet, lalu coba lagi.',
+            ctaLabel: 'Coba lagi',
+            onCta: () => ref.invalidate(pollDetailProvider(pollId)),
+          ),
+        ),
         data: (poll) {
           if (poll == null) {
             return Center(child: Text('Polling tidak ditemukan',
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                     color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)));
           }
           return votesAsync.when(
             loading: () => const Center(child: CircularProgressIndicator(color: RukuninColors.brandGreen)),
-            error: (e, _) => Center(child: Text('Error: $e')),
+            error: (e, _) => Center(
+              child: EmptyState(
+                icon: Icons.error_outline_rounded,
+                title: 'Gagal memuat data voting',
+                ctaLabel: 'Coba lagi',
+                onCta: () => ref.invalidate(pollVotesProvider(pollId)),
+              ),
+            ),
             data: (votes) => myVoteAsync.when(
               loading: () => const Center(child: CircularProgressIndicator(color: RukuninColors.brandGreen)),
-              error: (e, _) => Center(child: Text('Error: $e')),
+              error: (e, _) => Center(
+                child: EmptyState(
+                  icon: Icons.error_outline_rounded,
+                  title: 'Gagal memuat status vote',
+                  ctaLabel: 'Coba lagi',
+                  onCta: () => ref.invalidate(myVoteProvider(pollId)),
+                ),
+              ),
               data: (myVote) => _PollVoteBody(
                 poll: poll,
                 votes: votes,
@@ -140,7 +163,7 @@ class _PollVoteBodyState extends ConsumerState<_PollVoteBody> {
               ),
               child: Text(
                 poll.isClosed ? 'Polling Selesai' : 'Polling Aktif',
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: poll.isOpen ? RukuninColors.brandGreen : RukuninColors.lightTextTertiary,
@@ -152,7 +175,7 @@ class _PollVoteBodyState extends ConsumerState<_PollVoteBody> {
         const SizedBox(height: 16),
         Text(
           poll.title,
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 22,
             fontWeight: FontWeight.w800,
             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -163,7 +186,7 @@ class _PollVoteBodyState extends ConsumerState<_PollVoteBody> {
           const SizedBox(height: 10),
           Text(
             poll.description!,
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               fontSize: 14,
               color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
               height: 1.6,
@@ -173,7 +196,7 @@ class _PollVoteBodyState extends ConsumerState<_PollVoteBody> {
         const SizedBox(height: 8),
         Text(
           'Berakhir ${fmt.format(poll.endsAt)}',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 12,
             color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
           ),
@@ -184,7 +207,7 @@ class _PollVoteBodyState extends ConsumerState<_PollVoteBody> {
         if (showResults) ...[
           Text(
             'Hasil Suara',
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -193,7 +216,7 @@ class _PollVoteBodyState extends ConsumerState<_PollVoteBody> {
           const SizedBox(height: 4),
           Text(
             '$total suara',
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               fontSize: 12,
               color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
             ),
@@ -231,7 +254,7 @@ class _PollVoteBodyState extends ConsumerState<_PollVoteBody> {
                   const SizedBox(width: 8),
                   Text(
                     'Kamu sudah memilih "${myVote.vote ? 'Ya' : 'Tidak'}"',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontSize: 13,
                       color: RukuninColors.brandGreen,
                       fontWeight: FontWeight.w500,
@@ -245,7 +268,7 @@ class _PollVoteBodyState extends ConsumerState<_PollVoteBody> {
         if (!hasVoted && poll.isOpen) ...[
           Text(
             'Berikan Suaramu',
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -261,7 +284,7 @@ class _PollVoteBodyState extends ConsumerState<_PollVoteBody> {
                     onPressed: _voting ? null : () => _vote(true),
                     icon: const Icon(Icons.thumb_up_rounded, size: 18),
                     label: Text('Ya',
-                        style: GoogleFonts.poppins(
+                        style: RukuninFonts.pjs(
                             fontSize: 16, fontWeight: FontWeight.w700)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: RukuninColors.brandGreen,
@@ -281,7 +304,7 @@ class _PollVoteBodyState extends ConsumerState<_PollVoteBody> {
                     onPressed: _voting ? null : () => _vote(false),
                     icon: const Icon(Icons.thumb_down_rounded, size: 18),
                     label: Text('Tidak',
-                        style: GoogleFonts.poppins(
+                        style: RukuninFonts.pjs(
                             fontSize: 16, fontWeight: FontWeight.w700)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: RukuninColors.error,
@@ -346,7 +369,7 @@ class _ResidentVoteBar extends StatelessWidget {
               Row(
                 children: [
                   Text(label,
-                      style: GoogleFonts.poppins(
+                      style: RukuninFonts.pjs(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary)),
@@ -357,7 +380,7 @@ class _ResidentVoteBar extends StatelessWidget {
                 ],
               ),
               Text('${(percent * 100).toInt()}% ($count)',
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: color)),

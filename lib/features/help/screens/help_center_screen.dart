@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../app/theme.dart';
 import '../../../app/tokens.dart';
 
 class HelpCenterScreen extends StatelessWidget {
@@ -56,7 +55,7 @@ class HelpCenterScreen extends StatelessWidget {
           Center(
             child: Text(
               'Rukunin v1.0 — Dikembangkan untuk kemudahan warga',
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                   fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
               textAlign: TextAlign.center,
             ),
@@ -74,7 +73,7 @@ class HelpCenterScreen extends StatelessWidget {
       children: [
         Text(
           title,
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 15,
             fontWeight: FontWeight.w700,
             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -106,7 +105,7 @@ class HelpCenterScreen extends StatelessWidget {
                         const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     title: Text(
                       question,
-                      style: GoogleFonts.poppins(
+                      style: RukuninFonts.pjs(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -117,7 +116,7 @@ class HelpCenterScreen extends StatelessWidget {
                     children: [
                       Text(
                         answer,
-                        style: GoogleFonts.poppins(
+                        style: RukuninFonts.pjs(
                           fontSize: 13,
                           color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                           height: 1.5,

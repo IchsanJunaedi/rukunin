@@ -93,18 +93,42 @@ class _IconPainter extends CustomPainter {
 
   void _applyCmd(Path path, String cmd, List<double> n) {
     switch (cmd) {
-      case 'M': for (var i = 0; i + 1 < n.length; i += 2) path.moveTo(n[i], n[i+1]); break;
-      case 'm': for (var i = 0; i + 1 < n.length; i += 2) path.relativeMoveTo(n[i], n[i+1]); break;
-      case 'L': for (var i = 0; i + 1 < n.length; i += 2) path.lineTo(n[i], n[i+1]); break;
-      case 'l': for (var i = 0; i + 1 < n.length; i += 2) path.relativeLineTo(n[i], n[i+1]); break;
-      case 'H': for (final x in n) path.lineTo(x, path.getBounds().bottom); break;
-      case 'h': for (final dx in n) path.relativeLineTo(dx, 0); break;
-      case 'V': for (final y in n) path.lineTo(path.getBounds().right, y); break;
-      case 'v': for (final dy in n) path.relativeLineTo(0, dy); break;
-      case 'C': for (var i = 0; i + 5 < n.length; i += 6) path.cubicTo(n[i], n[i+1], n[i+2], n[i+3], n[i+4], n[i+5]); break;
-      case 'c': for (var i = 0; i + 5 < n.length; i += 6) path.relativeCubicTo(n[i], n[i+1], n[i+2], n[i+3], n[i+4], n[i+5]); break;
-      case 'Q': for (var i = 0; i + 3 < n.length; i += 4) path.quadraticBezierTo(n[i], n[i+1], n[i+2], n[i+3]); break;
-      case 'q': for (var i = 0; i + 3 < n.length; i += 4) path.relativeQuadraticBezierTo(n[i], n[i+1], n[i+2], n[i+3]); break;
+      case 'M': for (var i = 0; i + 1 < n.length; i += 2) {
+        path.moveTo(n[i], n[i+1]);
+      } break;
+      case 'm': for (var i = 0; i + 1 < n.length; i += 2) {
+        path.relativeMoveTo(n[i], n[i+1]);
+      } break;
+      case 'L': for (var i = 0; i + 1 < n.length; i += 2) {
+        path.lineTo(n[i], n[i+1]);
+      } break;
+      case 'l': for (var i = 0; i + 1 < n.length; i += 2) {
+        path.relativeLineTo(n[i], n[i+1]);
+      } break;
+      case 'H': for (final x in n) {
+        path.lineTo(x, path.getBounds().bottom);
+      } break;
+      case 'h': for (final dx in n) {
+        path.relativeLineTo(dx, 0);
+      } break;
+      case 'V': for (final y in n) {
+        path.lineTo(path.getBounds().right, y);
+      } break;
+      case 'v': for (final dy in n) {
+        path.relativeLineTo(0, dy);
+      } break;
+      case 'C': for (var i = 0; i + 5 < n.length; i += 6) {
+        path.cubicTo(n[i], n[i+1], n[i+2], n[i+3], n[i+4], n[i+5]);
+      } break;
+      case 'c': for (var i = 0; i + 5 < n.length; i += 6) {
+        path.relativeCubicTo(n[i], n[i+1], n[i+2], n[i+3], n[i+4], n[i+5]);
+      } break;
+      case 'Q': for (var i = 0; i + 3 < n.length; i += 4) {
+        path.quadraticBezierTo(n[i], n[i+1], n[i+2], n[i+3]);
+      } break;
+      case 'q': for (var i = 0; i + 3 < n.length; i += 4) {
+        path.relativeQuadraticBezierTo(n[i], n[i+1], n[i+2], n[i+3]);
+      } break;
       case 'Z': case 'z': path.close(); break;
     }
   }

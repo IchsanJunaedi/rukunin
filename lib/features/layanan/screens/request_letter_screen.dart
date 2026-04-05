@@ -160,7 +160,7 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
       key: const ValueKey('step-type'),
       padding: const EdgeInsets.all(16),
       children: [
-        Text('Pilih jenis surat yang dibutuhkan:', style: GoogleFonts.poppins(fontSize: 14)),
+        Text('Pilih jenis surat yang dibutuhkan:', style: RukuninFonts.pjs(fontSize: 14)),
         const SizedBox(height: 16),
         ...letterRequestTypeLabels.entries.map((e) => _TypeTile(
           key: ValueKey(e.key),
@@ -221,7 +221,7 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Periksa data berikut sebelum mengirim:', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600)),
+          Text('Periksa data berikut sebelum mengirim:', style: RukuninFonts.pjs(fontSize: 14, fontWeight: FontWeight.w600)),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(16),
@@ -266,9 +266,9 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
       children: [
         SizedBox(
           width: 150,
-          child: Text(label, style: GoogleFonts.poppins(fontSize: 12, color: RukuninColors.darkTextSecondary)),
+          child: Text(label, style: RukuninFonts.pjs(fontSize: 12, color: RukuninColors.darkTextSecondary)),
         ),
-        Expanded(child: Text(value.isEmpty ? '-' : value, style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600))),
+        Expanded(child: Text(value.isEmpty ? '-' : value, style: RukuninFonts.pjs(fontSize: 12, fontWeight: FontWeight.w600))),
       ],
     ),
   );
@@ -313,7 +313,7 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
         initialValue: value,
         isExpanded: true,
         decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
-        items: options.map((o) => DropdownMenuItem(value: o, child: Text(o, style: GoogleFonts.poppins(fontSize: 14)))).toList(),
+        items: options.map((o) => DropdownMenuItem(value: o, child: Text(o, style: RukuninFonts.pjs(fontSize: 14)))).toList(),
         onChanged: onChanged,
       ),
     );
@@ -349,7 +349,7 @@ class _TypeTile extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder)),
       child: ListTile(
         leading: Icon(_icon, color: RukuninColors.brandGreen),
-        title: Text(label, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600)),
+        title: Text(label, style: RukuninFonts.pjs(fontSize: 14, fontWeight: FontWeight.w600)),
         trailing: const Icon(Icons.chevron_right),
         onTap: onTap,
       ),

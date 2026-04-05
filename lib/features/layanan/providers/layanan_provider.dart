@@ -160,7 +160,7 @@ class LayananService {
       'letter_type': letterType,
       'applicant_name': applicantName,
       'form_data': formData,
-      if (purpose != null) 'purpose': purpose,
+      'purpose': ?purpose,
     });
     ref.invalidate(myLetterRequestsProvider);
   }
@@ -198,8 +198,8 @@ class LayananService {
     final client = ref.read(supabaseClientProvider);
     await client.from('letter_requests').update({
       'status': newStatus,
-      if (adminNotes != null) 'admin_notes': adminNotes,
-      if (letterId != null) 'letter_id': letterId,
+      'admin_notes': ?adminNotes,
+      'letter_id': ?letterId,
       'updated_at': DateTime.now().toIso8601String(),
     }).eq('id', requestId);
 
@@ -228,7 +228,7 @@ class LayananService {
     final client = ref.read(supabaseClientProvider);
     await client.from('complaints').update(<String, dynamic>{
       'status': newStatus,
-      if (adminNotes != null) 'admin_notes': adminNotes,
+      'admin_notes': ?adminNotes,
       'updated_at': DateTime.now().toIso8601String(),
     }).eq('id', complaintId);
 
@@ -270,7 +270,7 @@ class LayananService {
       'nama': nama,
       'jabatan': jabatan,
       'phone': phone,
-      if (photoUrl != null) 'photo_url': photoUrl,
+      'photo_url': ?photoUrl,
       'urutan': nextUrutan,
       'updated_at': DateTime.now().toIso8601String(),
     });
@@ -291,7 +291,7 @@ class LayananService {
       'nama': nama,
       'jabatan': jabatan,
       'phone': phone,
-      if (photoUrl != null) 'photo_url': photoUrl,
+      'photo_url': ?photoUrl,
       'updated_at': DateTime.now().toIso8601String(),
     }).eq('id', id);
     ref.invalidate(adminContactsProvider);

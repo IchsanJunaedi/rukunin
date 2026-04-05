@@ -110,8 +110,8 @@ class MarketplaceService {
       'category': category,
       'description': description,
       'price': price ?? 0,
-      if (imageUrls != null) 'images': imageUrls,
-      if (stock != null) 'stock': stock,
+      'images': ?imageUrls,
+      'stock': ?stock,
       if (stock != null && stock <= 0) 'status': 'sold',
     }).eq('id', listingId);
     ref.invalidate(marketplaceListingsProvider);

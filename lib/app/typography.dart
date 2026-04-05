@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'tokens.dart';
+
 // ─────────────────────────────────────────────────────────────────────────────
 //  RUKUNIN — Typography Scale
 // ─────────────────────────────────────────────────────────────────────────────
@@ -8,7 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 abstract class RukuninText {
 
   // ── Display ───────────────────────────────────────────────────────────────
-  static TextStyle displayLg({Color? color}) => GoogleFonts.poppins(
+  static TextStyle displayLg({Color? color}) => RukuninFonts.pjs(
     fontSize: 40,
     fontWeight: FontWeight.w800,
     letterSpacing: -1.5,
@@ -16,7 +18,7 @@ abstract class RukuninText {
     color: color,
   );
 
-  static TextStyle displayMd({Color? color}) => GoogleFonts.poppins(
+  static TextStyle displayMd({Color? color}) => RukuninFonts.pjs(
     fontSize: 32,
     fontWeight: FontWeight.w800,
     letterSpacing: -1.0,
@@ -25,7 +27,7 @@ abstract class RukuninText {
   );
 
   // ── Heading ───────────────────────────────────────────────────────────────
-  static TextStyle h1({Color? color}) => GoogleFonts.poppins(
+  static TextStyle h1({Color? color}) => RukuninFonts.pjs(
     fontSize: 24,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.5,
@@ -33,7 +35,7 @@ abstract class RukuninText {
     color: color,
   );
 
-  static TextStyle h2({Color? color}) => GoogleFonts.poppins(
+  static TextStyle h2({Color? color}) => RukuninFonts.pjs(
     fontSize: 20,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.3,
@@ -41,7 +43,7 @@ abstract class RukuninText {
     color: color,
   );
 
-  static TextStyle h3({Color? color}) => GoogleFonts.poppins(
+  static TextStyle h3({Color? color}) => RukuninFonts.pjs(
     fontSize: 17,
     fontWeight: FontWeight.w600,
     letterSpacing: -0.2,
@@ -49,7 +51,7 @@ abstract class RukuninText {
     color: color,
   );
 
-  static TextStyle h4({Color? color}) => GoogleFonts.poppins(
+  static TextStyle h4({Color? color}) => RukuninFonts.pjs(
     fontSize: 15,
     fontWeight: FontWeight.w600,
     letterSpacing: -0.1,
@@ -58,21 +60,21 @@ abstract class RukuninText {
   );
 
   // ── Body ──────────────────────────────────────────────────────────────────
-  static TextStyle bodyLg({Color? color}) => GoogleFonts.poppins(
+  static TextStyle bodyLg({Color? color}) => RukuninFonts.pjs(
     fontSize: 16,
     fontWeight: FontWeight.w600,
     height: 1.6,
     color: color,
   );
 
-  static TextStyle body({Color? color}) => GoogleFonts.poppins(
+  static TextStyle body({Color? color}) => RukuninFonts.pjs(
     fontSize: 14,
     fontWeight: FontWeight.w600,
     height: 1.55,
     color: color,
   );
 
-  static TextStyle bodySm({Color? color}) => GoogleFonts.poppins(
+  static TextStyle bodySm({Color? color}) => RukuninFonts.pjs(
     fontSize: 13,
     fontWeight: FontWeight.w600,
     height: 1.5,
@@ -80,33 +82,33 @@ abstract class RukuninText {
   );
 
   // ── Label / UI ────────────────────────────────────────────────────────────
-  static TextStyle labelLg({Color? color}) => GoogleFonts.poppins(
+  static TextStyle labelLg({Color? color}) => RukuninFonts.pjs(
     fontSize: 15,
     fontWeight: FontWeight.w700,
     color: color,
   );
 
-  static TextStyle label({Color? color}) => GoogleFonts.poppins(
+  static TextStyle label({Color? color}) => RukuninFonts.pjs(
     fontSize: 14,
     fontWeight: FontWeight.w700,
     color: color,
   );
 
-  static TextStyle labelSm({Color? color}) => GoogleFonts.poppins(
+  static TextStyle labelSm({Color? color}) => RukuninFonts.pjs(
     fontSize: 13,
     fontWeight: FontWeight.w600,
     color: color,
   );
 
   // ── Caption ───────────────────────────────────────────────────────────────
-  static TextStyle caption({Color? color}) => GoogleFonts.poppins(
+  static TextStyle caption({Color? color}) => RukuninFonts.pjs(
     fontSize: 12,
     fontWeight: FontWeight.w600,
     height: 1.45,
     color: color,
   );
 
-  static TextStyle captionBold({Color? color}) => GoogleFonts.poppins(
+  static TextStyle captionBold({Color? color}) => RukuninFonts.pjs(
     fontSize: 12,
     fontWeight: FontWeight.w600,
     letterSpacing: 0.1,
@@ -114,7 +116,7 @@ abstract class RukuninText {
   );
 
   // ── Overline ──────────────────────────────────────────────────────────────
-  static TextStyle overline({Color? color}) => GoogleFonts.poppins(
+  static TextStyle overline({Color? color}) => RukuninFonts.pjs(
     fontSize: 11,
     fontWeight: FontWeight.w600,
     letterSpacing: 0.8,
@@ -122,7 +124,7 @@ abstract class RukuninText {
   );
 
   // ── Numeric ───────────────────────────────────────────────────────────────
-  static TextStyle numericHero({Color? color}) => GoogleFonts.poppins(
+  static TextStyle numericHero({Color? color}) => RukuninFonts.pjs(
     fontSize: 36,
     fontWeight: FontWeight.w800,
     letterSpacing: -1.5,
@@ -130,14 +132,14 @@ abstract class RukuninText {
     color: color,
   );
 
-  static TextStyle numericLg({Color? color}) => GoogleFonts.poppins(
+  static TextStyle numericLg({Color? color}) => RukuninFonts.pjs(
     fontSize: 24,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.5,
     color: color,
   );
 
-  static TextStyle numericMd({Color? color}) => GoogleFonts.poppins(
+  static TextStyle numericMd({Color? color}) => RukuninFonts.pjs(
     fontSize: 18,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.3,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../app/tokens.dart';
 import '../providers/auth_provider.dart';
 
 const _kYellow = Color(0xFFFFC107);
@@ -113,7 +114,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen>
                             const SizedBox(width: 6),
                             Text(
                               'Rukunin',
-                              style: GoogleFonts.poppins(
+                              style: RukuninFonts.pjs(
                                 color: _kYellow,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
@@ -170,7 +171,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen>
         children: [
           Text(
             'Masukkan password baru untuk akunmu.',
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               color: _kWhite.withValues(alpha: 0.5),
               fontSize: 13,
               fontWeight: FontWeight.w500,
@@ -256,7 +257,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen>
                       )
                     : Text(
                         'Simpan Password →',
-                        style: GoogleFonts.poppins(
+                        style: RukuninFonts.pjs(
                           color: _kBlack,
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
@@ -289,7 +290,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen>
 
         Text(
           'Password kamu sudah diperbarui. Silakan login dengan password barumu.',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             color: _kWhite.withValues(alpha: 0.5),
             fontSize: 13,
             height: 1.6,
@@ -309,7 +310,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen>
             child: Center(
               child: Text(
                 'Masuk Sekarang →',
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                   color: _kBlack,
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
@@ -352,14 +353,14 @@ class _DarkTextField extends StatelessWidget {
       textInputAction: textInputAction,
       validator: validator,
       onFieldSubmitted: onFieldSubmitted,
-      style: GoogleFonts.poppins(
+      style: RukuninFonts.pjs(
         color: _kWhite,
         fontSize: 15,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.poppins(
+        hintStyle: RukuninFonts.pjs(
           color: _kWhite.withValues(alpha: 0.3),
           fontSize: 14,
         ),

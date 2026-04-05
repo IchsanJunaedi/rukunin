@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../app/theme.dart';
 import '../../../app/tokens.dart';
 import '../../../core/supabase/supabase_client.dart';
 import '../models/resident_model.dart';
@@ -238,7 +237,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
         ),
         title: Text(
           isEdit ? 'Edit Warga' : 'Tambah Warga',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
               color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700),
         ),
       ),
@@ -259,7 +258,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                 child: Center(
                   child: Text(
                     _getInitials(_nameCtrl.text),
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       color: Colors.white,
                       fontSize: 28,
                       fontWeight: FontWeight.w800,
@@ -321,7 +320,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                   value: _selectedRt,
                   underline: const SizedBox(),
                   isDense: true,
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
@@ -379,9 +378,9 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('${member.fullName} (${member.relationship})', style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 13)),
+                                Text('${member.fullName} (${member.relationship})', style: RukuninFonts.pjs(fontWeight: FontWeight.w600, fontSize: 13)),
                                 if (member.nik != null && member.nik!.isNotEmpty)
-                                  Text('NIK: ${member.nik}', style: GoogleFonts.poppins(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, fontSize: 12)),
+                                  Text('NIK: ${member.nik}', style: RukuninFonts.pjs(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, fontSize: 12)),
                               ],
                             ),
                           ),
@@ -409,7 +408,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                     children: [
                       const Icon(Icons.add, color: RukuninColors.brandGreen, size: 20),
                       const SizedBox(width: 8),
-                      Text('Tambah Anggota Keluarga', style: GoogleFonts.poppins(color: RukuninColors.brandGreen, fontWeight: FontWeight.w600, fontSize: 13)),
+                      Text('Tambah Anggota Keluarga', style: RukuninFonts.pjs(color: RukuninColors.brandGreen, fontWeight: FontWeight.w600, fontSize: 13)),
                     ],
                   ),
                 ),
@@ -435,7 +434,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                     ),
                     Text(
                       '$_motorcycleCount',
-                      style: GoogleFonts.poppins(
+                      style: RukuninFonts.pjs(
                           fontSize: 16, fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                     ),
                     IconButton(
@@ -461,7 +460,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                     ),
                     Text(
                       '$_carCount',
-                      style: GoogleFonts.poppins(
+                      style: RukuninFonts.pjs(
                           fontSize: 16, fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                     ),
                     IconButton(
@@ -527,16 +526,16 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Rincian Tagihan Ronda Bulan Ini',
-                    style: GoogleFonts.poppins(fontSize: 12, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
+                    style: RukuninFonts.pjs(fontSize: 12, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                   const SizedBox(height: 8),
                   Row(
                     children: [
                       Icon(Icons.security_outlined, size: 14, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                       const SizedBox(width: 6),
-                      Text('Biaya rata', style: GoogleFonts.poppins(fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
+                      Text('Biaya rata', style: RukuninFonts.pjs(fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                       const Spacer(),
                       Text('Rp ${(double.tryParse(_baseRondaCtrl.text) ?? 0).toStringAsFixed(0)}',
-                          style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600)),
+                          style: RukuninFonts.pjs(fontSize: 13, fontWeight: FontWeight.w600)),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -545,10 +544,10 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                       Icon(Icons.two_wheeler, size: 14, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                       const SizedBox(width: 6),
                       Text('$_motorcycleCount motor × Rp ${(double.tryParse(_costPerMotorcycleCtrl.text) ?? 0).toStringAsFixed(0)}',
-                          style: GoogleFonts.poppins(fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
+                          style: RukuninFonts.pjs(fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                       const Spacer(),
                       Text('Rp ${(_motorcycleCount * (double.tryParse(_costPerMotorcycleCtrl.text) ?? 0)).toStringAsFixed(0)}',
-                          style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600)),
+                          style: RukuninFonts.pjs(fontSize: 13, fontWeight: FontWeight.w600)),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -557,22 +556,22 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                       Icon(Icons.directions_car_outlined, size: 14, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                       const SizedBox(width: 6),
                       Text('$_carCount mobil × Rp ${(double.tryParse(_costPerCarCtrl.text) ?? 0).toStringAsFixed(0)}',
-                          style: GoogleFonts.poppins(fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
+                          style: RukuninFonts.pjs(fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                       const Spacer(),
                       Text('Rp ${(_carCount * (double.tryParse(_costPerCarCtrl.text) ?? 0)).toStringAsFixed(0)}',
-                          style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600)),
+                          style: RukuninFonts.pjs(fontSize: 13, fontWeight: FontWeight.w600)),
                     ],
                   ),
                   Divider(color: RukuninColors.success.withValues(alpha: 0.3), height: 20),
                   Row(
                     children: [
                       Text('Total Tagihan Ronda',
-                          style: GoogleFonts.poppins(
+                          style: RukuninFonts.pjs(
                             fontWeight: FontWeight.w800, fontSize: 14, color: RukuninColors.success)),
                       const Spacer(),
                       Text(
                         'Rp ${_totalRonda.toStringAsFixed(0)}',
-                        style: GoogleFonts.poppins(
+                        style: RukuninFonts.pjs(
                           fontWeight: FontWeight.w800, fontSize: 18, color: RukuninColors.success),
                       ),
                     ],
@@ -581,7 +580,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                     [const SizedBox(height: 6),
                     Text(
                       '📌 Invoice Ronda bulan ini akan otomatis dibuat/diperbarui saat simpan.',
-                      style: GoogleFonts.poppins(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+                      style: RukuninFonts.pjs(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                     )],
                 ],
               ),
@@ -603,7 +602,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                   const SizedBox(width: 8),
                   Text(
                     'Blok $_selectedBlock · No. ${_unitCtrl.text.isEmpty ? "?" : _unitCtrl.text} · RT $_selectedRt',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: RukuninColors.brandGreen,
@@ -639,7 +638,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                         )
                       : Text(
                           isEdit ? 'Simpan Perubahan' : 'Tambah Warga',
-                          style: GoogleFonts.poppins(
+                          style: RukuninFonts.pjs(
                             color: RukuninColors.brandGreen,
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
@@ -670,7 +669,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
             final isDark = Theme.of(context).brightness == Brightness.dark;
             return Text(
               label,
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
@@ -715,11 +714,11 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Tambah Anggota Keluarga', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w700)),
+                  Text('Tambah Anggota Keluarga', style: RukuninFonts.pjs(fontSize: 18, fontWeight: FontWeight.w700)),
                   const SizedBox(height: 20),
                   TextFormField(
                     controller: fmName,
-                    style: GoogleFonts.poppins(fontSize: 14),
+                    style: RukuninFonts.pjs(fontSize: 14),
                     decoration: InputDecoration(
                       labelText: 'Nama Lengkap *',
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -733,7 +732,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     items: ['Istri', 'Suami', 'Anak', 'Orang Tua', 'Lainnya']
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e, style: GoogleFonts.poppins(fontSize: 14))))
+                        .map((e) => DropdownMenuItem(value: e, child: Text(e, style: RukuninFonts.pjs(fontSize: 14))))
                         .toList(),
                     onChanged: (v) => setModalState(() => fmRel = v!),
                   ),
@@ -741,7 +740,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                   TextFormField(
                     controller: fmNik,
                     keyboardType: TextInputType.number,
-                    style: GoogleFonts.poppins(fontSize: 14),
+                    style: RukuninFonts.pjs(fontSize: 14),
                     decoration: InputDecoration(
                       labelText: 'NIK (Opsional)',
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -767,7 +766,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                         backgroundColor: RukuninColors.brandGreen,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
                       ),
-                      child: Text('Tambah', style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w700)),
+                      child: Text('Tambah', style: RukuninFonts.pjs(color: Colors.white, fontWeight: FontWeight.w700)),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -798,11 +797,11 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
           onChanged: onChanged,
           validator: validator,
           maxLength: maxLength,
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
               fontSize: 14, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
           decoration: InputDecoration(
             labelText: label,
-            labelStyle: GoogleFonts.poppins(
+            labelStyle: RukuninFonts.pjs(
                 fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
             prefixIcon: Icon(icon, size: 18, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
             filled: true,
@@ -838,7 +837,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
               Icon(icon, size: 18, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
               const SizedBox(width: 16),
               Text(label,
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                       fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
               const Spacer(),
               child,
@@ -862,7 +861,7 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                   color: _status == 'active' ? Colors.green : (isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
               const SizedBox(width: 16),
               Text('Status',
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                       fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
               const Spacer(),
               SegmentedButton<String>(
@@ -870,11 +869,11 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                   ButtonSegment(
                       value: 'active',
                       label: Text('Aktif',
-                          style: GoogleFonts.poppins(fontSize: 12))),
+                          style: RukuninFonts.pjs(fontSize: 12))),
                   ButtonSegment(
                       value: 'inactive',
                       label: Text('Nonaktif',
-                          style: GoogleFonts.poppins(fontSize: 12))),
+                          style: RukuninFonts.pjs(fontSize: 12))),
                 ],
                 selected: {_status},
                 onSelectionChanged: (v) => setState(() => _status = v.first),

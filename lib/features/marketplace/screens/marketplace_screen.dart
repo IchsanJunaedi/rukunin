@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../app/theme.dart';
 import '../../../app/tokens.dart';
 import '../models/marketplace_listing_model.dart';
 import '../providers/marketplace_provider.dart';
@@ -41,7 +40,7 @@ class MarketplaceScreen extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       'Marketplace Warga',
-                      style: GoogleFonts.poppins(
+                      style: RukuninFonts.pjs(
                         color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
@@ -96,7 +95,7 @@ class MarketplaceScreen extends ConsumerWidget {
                               const SizedBox(width: 5),
                               Text(
                                 label,
-                                style: GoogleFonts.poppins(
+                                style: RukuninFonts.pjs(
                                   fontSize: 12,
                                   fontWeight: isSelected
                                       ? FontWeight.w700
@@ -129,7 +128,7 @@ class MarketplaceScreen extends ConsumerWidget {
                           color: RukuninColors.error, size: 48),
                       const SizedBox(height: 12),
                       Text('Gagal memuat listing',
-                          style: GoogleFonts.poppins(
+                          style: RukuninFonts.pjs(
                               color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                       TextButton(
                         onPressed: () =>
@@ -156,7 +155,7 @@ class MarketplaceScreen extends ConsumerWidget {
                           const SizedBox(height: 16),
                           Text(
                             'Belum ada yang jualan nih!',
-                            style: GoogleFonts.poppins(
+                            style: RukuninFonts.pjs(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                                 color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
@@ -164,7 +163,7 @@ class MarketplaceScreen extends ConsumerWidget {
                           const SizedBox(height: 6),
                           Text(
                             'Jadilah yang pertama jualan di sini 🎉',
-                            style: GoogleFonts.poppins(
+                            style: RukuninFonts.pjs(
                                 fontSize: 13, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                           ),
                         ],
@@ -245,7 +244,7 @@ class _ListingCard extends StatelessWidget {
                     item.title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
@@ -253,7 +252,7 @@ class _ListingCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     item.formattedPrice,
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: RukuninColors.brandGreen),
@@ -261,7 +260,7 @@ class _ListingCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     'Unit ${item.sellerUnit ?? '-'}',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                         fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                   ),
                 ],

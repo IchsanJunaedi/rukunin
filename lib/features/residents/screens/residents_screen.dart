@@ -7,7 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:go_router/go_router.dart';
-import '../../../app/theme.dart';
+import '../../../app/components.dart';
 import '../../../app/tokens.dart';
 import '../models/resident_model.dart';
 import '../providers/resident_provider.dart';
@@ -79,13 +79,13 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
                   TextField(
                     controller: _searchController,
                     onChanged: (v) => setState(() => _query = v.toLowerCase()),
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       color: Colors.white,
                       fontSize: 14,
                     ),
                     decoration: InputDecoration(
                       hintText: 'Cari nama atau nomor unit...',
-                      hintStyle: GoogleFonts.poppins(
+                      hintStyle: RukuninFonts.pjs(
                         color: Colors.white38,
                         fontSize: 14,
                       ),
@@ -134,7 +134,7 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
                           ),
                           child: Text(
                             '${list.length} Warga',
-                            style: GoogleFonts.poppins(
+                            style: RukuninFonts.pjs(
                               color: Colors.white,
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
@@ -161,8 +161,17 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
                 child: CircularProgressIndicator(color: RukuninColors.brandGreen),
               ),
             ),
-            error: (e, _) =>
-                SliverFillRemaining(child: Center(child: Text('Error: $e'))),
+            error: (e, _) => SliverFillRemaining(
+              child: Center(
+                child: EmptyState(
+                  icon: Icons.error_outline_rounded,
+                  title: 'Gagal memuat daftar warga',
+                  description: 'Periksa koneksi internet, lalu coba lagi.',
+                  ctaLabel: 'Coba lagi',
+                  onCta: () => ref.invalidate(residentsProvider),
+                ),
+              ),
+            ),
             data: (list) {
               final filtered = _query.isEmpty
                   ? list
@@ -191,7 +200,7 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
                           _query.isEmpty
                               ? 'Belum ada warga terdaftar'
                               : 'Tidak ditemukan',
-                          style: GoogleFonts.poppins(
+                          style: RukuninFonts.pjs(
                             color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                             fontSize: 14,
                           ),
@@ -233,7 +242,7 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
         icon: const Icon(Icons.add_rounded),
         label: Text(
           'Tambah Warga',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.w700),
+          style: RukuninFonts.pjs(fontWeight: FontWeight.w700),
         ),
       ),
     );
@@ -248,11 +257,11 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
       builder: (ctx) => AlertDialog(
         title: Text(
           'Hapus Warga',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.w700),
+          style: RukuninFonts.pjs(fontWeight: FontWeight.w700),
         ),
         content: Text(
           'Hapus ${resident.fullName} dari data warga? Tindakan ini tidak bisa dibatalkan.',
-          style: GoogleFonts.poppins(fontSize: 14),
+          style: RukuninFonts.pjs(fontSize: 14),
         ),
         actions: [
           TextButton(
@@ -391,11 +400,11 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
           builder: (ctx) => AlertDialog(
             title: Text(
               'Import ${residentsData.length} Warga',
-              style: GoogleFonts.poppins(fontWeight: FontWeight.w700),
+              style: RukuninFonts.pjs(fontWeight: FontWeight.w700),
             ),
             content: Text(
               'Apakah Anda yakin ingin mengimpor data ini?',
-              style: GoogleFonts.poppins(fontSize: 14),
+              style: RukuninFonts.pjs(fontSize: 14),
             ),
             actions: [
               TextButton(
@@ -487,7 +496,7 @@ class _PendingBanner extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     '${pending.length} warga baru menunggu persetujuan',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: RukuninColors.brandGreen,
@@ -562,7 +571,7 @@ class _PendingSheet extends StatelessWidget {
                 children: [
                   Text(
                     'Permintaan Bergabung',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                       color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -577,7 +586,7 @@ class _PendingSheet extends StatelessWidget {
                     ),
                     child: Text(
                       '${pending.length}',
-                      style: GoogleFonts.poppins(
+                      style: RukuninFonts.pjs(
                         fontWeight: FontWeight.w800,
                         fontSize: 13,
                         color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -654,7 +663,7 @@ void _showPendingDetailSheet(
             const SizedBox(height: 20),
             Text(
               'Detail Warga Pending',
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
                 color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -695,7 +704,7 @@ void _showPendingDetailSheet(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                    child: Text('Tolak', style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
+                    child: Text('Tolak', style: RukuninFonts.pjs(fontWeight: FontWeight.w700)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -712,7 +721,7 @@ void _showPendingDetailSheet(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                    child: Text('Setujui', style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
+                    child: Text('Setujui', style: RukuninFonts.pjs(fontWeight: FontWeight.w700)),
                   ),
                 ),
               ],
@@ -742,11 +751,11 @@ Widget _pendingDetailRow(IconData icon, String label, String value) {
                   children: [
                     Text(
                       label,
-                      style: GoogleFonts.poppins(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+                      style: RukuninFonts.pjs(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                     ),
                     Text(
                       value,
-                      style: GoogleFonts.poppins(
+                      style: RukuninFonts.pjs(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -812,7 +821,7 @@ class _PendingCard extends StatelessWidget {
                   children: [
                     Text(
                       resident.fullName,
-                      style: GoogleFonts.poppins(
+                      style: RukuninFonts.pjs(
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
                         color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -823,7 +832,7 @@ class _PendingCard extends StatelessWidget {
                         if (resident.phone != null) resident.phone!,
                         'Daftar $joinedAt',
                       ].join(' · '),
-                      style: GoogleFonts.poppins(
+                      style: RukuninFonts.pjs(
                         fontSize: 11,
                         color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                       ),
@@ -849,7 +858,7 @@ class _PendingCard extends StatelessWidget {
                   ),
                   child: Text(
                     'Tolak',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontWeight: FontWeight.w700,
                       fontSize: 13,
                     ),
@@ -871,7 +880,7 @@ class _PendingCard extends StatelessWidget {
                   ),
                   child: Text(
                     'Setujui',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontWeight: FontWeight.w700,
                       fontSize: 13,
                     ),
@@ -898,7 +907,7 @@ Widget _initialsBox(ResidentModel resident, double size, double radius) {
     child: Center(
       child: Text(
         resident.initials,
-        style: GoogleFonts.poppins(
+        style: RukuninFonts.pjs(
           color: Colors.white,
           fontSize: size * 0.33,
           fontWeight: FontWeight.w800,
@@ -916,7 +925,7 @@ Widget _pendingInitialsBox(ResidentModel resident) {
     child: Center(
       child: Text(
         resident.initials,
-        style: GoogleFonts.poppins(
+        style: RukuninFonts.pjs(
           fontWeight: FontWeight.w800,
           fontSize: 15,
           color: Colors.white,
@@ -965,7 +974,7 @@ class _ResidentCard extends StatelessWidget {
         ),
         title: Text(
           resident.fullName,
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 14,
             fontWeight: FontWeight.w700,
             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -977,7 +986,7 @@ class _ResidentCard extends StatelessWidget {
             if (resident.unitNumber != null) 'No. ${resident.unitNumber}',
             if (resident.phone != null) resident.phone!,
           ].join(' · '),
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 12,
             color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
           ),

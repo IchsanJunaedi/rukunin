@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../app/theme.dart';
 import '../../../app/tokens.dart';
 import '../models/marketplace_listing_model.dart';
 import '../providers/marketplace_provider.dart';
@@ -110,7 +109,7 @@ class ListingDetailScreen extends ConsumerWidget {
           backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
           title: Text(
             'Beri Ulasan Penjual',
-            style: GoogleFonts.poppins(fontWeight: FontWeight.w700),
+            style: RukuninFonts.pjs(fontWeight: FontWeight.w700),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -118,7 +117,7 @@ class ListingDetailScreen extends ConsumerWidget {
               Text(
                 'Sudah beli barang ini?\nBeri rating untuk ${listing.sellerName ?? 'penjual'}!',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                     fontSize: 14, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
               ),
               const SizedBox(height: 20),
@@ -142,7 +141,7 @@ class ListingDetailScreen extends ConsumerWidget {
                 maxLines: 2,
                 decoration: InputDecoration(
                   hintText: 'Tulis komentar (opsional)...',
-                  hintStyle: GoogleFonts.poppins(fontSize: 13),
+                  hintStyle: RukuninFonts.pjs(fontSize: 13),
                   filled: true,
                   fillColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
                   border: OutlineInputBorder(
@@ -157,7 +156,7 @@ class ListingDetailScreen extends ConsumerWidget {
             TextButton(
               onPressed: () => Navigator.pop(ctx),
               child: Text('Batal',
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                       color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
             ),
             ElevatedButton(
@@ -204,16 +203,16 @@ class ListingDetailScreen extends ConsumerWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         title: Text('Hapus Iklan?',
-            style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
+            style: RukuninFonts.pjs(fontWeight: FontWeight.w700)),
         content: Text(
           'Iklan "${listing.title}" akan dihapus secara permanen.',
-          style: GoogleFonts.poppins(fontSize: 14, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
+          style: RukuninFonts.pjs(fontSize: 14, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text('Batal',
-                style: GoogleFonts.poppins(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
+                style: RukuninFonts.pjs(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -252,16 +251,16 @@ class ListingDetailScreen extends ConsumerWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         title: Text('Tandai Iklan Terjual?',
-            style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
+            style: RukuninFonts.pjs(fontWeight: FontWeight.w700)),
         content: Text(
           'Iklan "${listing.title}" akan ditandai sebagai terjual dan tidak akan muncul lagi di halaman Marketplace. Aksi ini tidak dapat dibatalkan.',
-          style: GoogleFonts.poppins(fontSize: 14, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
+          style: RukuninFonts.pjs(fontSize: 14, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text('Batal',
-                style: GoogleFonts.poppins(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
+                style: RukuninFonts.pjs(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -353,7 +352,7 @@ class _ImageHeroAppBarState extends State<_ImageHeroAppBar> {
                   children: [
                     Icon(Icons.edit_rounded, size: 18, color: Theme.of(context).brightness == Brightness.dark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                     const SizedBox(width: 10),
-                    Text('Edit Iklan', style: GoogleFonts.poppins(fontSize: 14)),
+                    Text('Edit Iklan', style: RukuninFonts.pjs(fontSize: 14)),
                   ],
                 ),
               ),
@@ -364,7 +363,7 @@ class _ImageHeroAppBarState extends State<_ImageHeroAppBar> {
                     const Icon(Icons.check_circle_outline_rounded, size: 18, color: RukuninColors.success),
                     const SizedBox(width: 10),
                     Text('Tandai Terjual',
-                        style: GoogleFonts.poppins(fontSize: 14, color: RukuninColors.success)),
+                        style: RukuninFonts.pjs(fontSize: 14, color: RukuninColors.success)),
                   ],
                 ),
               ),
@@ -375,7 +374,7 @@ class _ImageHeroAppBarState extends State<_ImageHeroAppBar> {
                     const Icon(Icons.delete_outline_rounded, size: 18, color: RukuninColors.error),
                     const SizedBox(width: 10),
                     Text('Hapus Iklan',
-                        style: GoogleFonts.poppins(fontSize: 14, color: RukuninColors.error)),
+                        style: RukuninFonts.pjs(fontSize: 14, color: RukuninColors.error)),
                   ],
                 ),
               ),
@@ -454,7 +453,7 @@ class _ListingHeader extends StatelessWidget {
       children: [
         Text(
           listing.formattedPrice,
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 26,
             fontWeight: FontWeight.w900,
             color: RukuninColors.brandGreen,
@@ -464,7 +463,7 @@ class _ListingHeader extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           listing.title,
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -481,7 +480,7 @@ class _ListingHeader extends StatelessWidget {
               ),
               child: Text(
                 listing.categoryLabel,
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: RukuninColors.brandGreen,
@@ -499,7 +498,7 @@ class _ListingHeader extends StatelessWidget {
               ),
               child: Text(
                 listing.isAvailable ? 'Stok: ${listing.stock}' : 'Habis',
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: listing.isAvailable ? RukuninColors.success : RukuninColors.error,
@@ -558,7 +557,7 @@ class _MetaChip extends StatelessWidget {
         children: [
           Icon(icon, size: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
           const SizedBox(width: 4),
-          Text(label, style: GoogleFonts.poppins(
+          Text(label, style: RukuninFonts.pjs(
             fontSize: 11, fontWeight: FontWeight.w500,
             color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
           )),
@@ -594,7 +593,7 @@ class _StatusChip extends StatelessWidget {
         children: [
           Icon(icon, size: 12, color: textColor),
           const SizedBox(width: 4),
-          Text(label, style: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.w700, color: textColor)),
+          Text(label, style: RukuninFonts.pjs(fontSize: 11, fontWeight: FontWeight.w700, color: textColor)),
         ],
       ),
     );
@@ -632,7 +631,7 @@ class _SellerCard extends StatelessWidget {
                     listing.sellerName?.isNotEmpty == true
                         ? listing.sellerName![0].toUpperCase()
                         : '?',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       color: RukuninColors.brandGreen,
                       fontWeight: FontWeight.w700,
                       fontSize: 18,
@@ -647,7 +646,7 @@ class _SellerCard extends StatelessWidget {
               children: [
                 Text(
                   listing.sellerName ?? 'Warga',
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
                     color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -655,7 +654,7 @@ class _SellerCard extends StatelessWidget {
                 ),
                 Text(
                   'Unit ${listing.sellerUnit ?? '-'}',
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                       fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                 ),
               ],
@@ -691,7 +690,7 @@ class _RatingBadge extends StatelessWidget {
               Icon(Icons.star_rounded, color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder, size: 16),
               const SizedBox(width: 4),
               Text('Baru',
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
@@ -704,14 +703,14 @@ class _RatingBadge extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               val.averageScore.toStringAsFixed(1),
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
             ),
             Text(
               ' (${val.totalReviews})',
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                   fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
             ),
           ],
@@ -736,7 +735,7 @@ class _DescriptionSection extends StatelessWidget {
       children: [
         Text(
           'Deskripsi',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontSize: 15,
             fontWeight: FontWeight.w700,
             color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -752,7 +751,7 @@ class _DescriptionSection extends StatelessWidget {
           ),
           child: Text(
             description,
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               fontSize: 14,
               color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
               height: 1.7,
@@ -789,7 +788,7 @@ class _ActionButtons extends StatelessWidget {
           icon: const Icon(Icons.chat_rounded),
           label: Text(
             'Hubungi via WhatsApp',
-            style: GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 15),
+            style: RukuninFonts.pjs(fontWeight: FontWeight.w700, fontSize: 15),
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF25D366),
@@ -805,7 +804,7 @@ class _ActionButtons extends StatelessWidget {
           icon: const Icon(Icons.star_outline_rounded, size: 18),
           label: Text(
             'Beri Ulasan Penjual',
-            style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 13),
+            style: RukuninFonts.pjs(fontWeight: FontWeight.w600, fontSize: 13),
           ),
           style: OutlinedButton.styleFrom(
             foregroundColor: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,

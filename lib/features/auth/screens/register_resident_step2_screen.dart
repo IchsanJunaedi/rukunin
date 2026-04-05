@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../app/tokens.dart';
 import '../models/register_step1_data.dart';
 import '../providers/register_provider.dart';
 
@@ -124,7 +125,7 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                       const SizedBox(height: 8),
                       Text(
                         'Blok dan No. RT wajib diisi.',
-                        style: GoogleFonts.poppins(
+                        style: RukuninFonts.pjs(
                           fontSize: 13,
                           color: _kBlack.withValues(alpha: 0.5),
                           fontWeight: FontWeight.w500,
@@ -153,7 +154,7 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                     children: [
                       Text(
                         'Data ini membantu admin mengenal kamu.',
-                        style: GoogleFonts.poppins(
+                        style: RukuninFonts.pjs(
                           color: _kWhite.withValues(alpha: 0.5),
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
@@ -195,13 +196,13 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<int>(
-                        value: _selectedRt,
+                        initialValue: _selectedRt,
                         dropdownColor: const Color(0xFF1A1A1A),
-                        style: GoogleFonts.poppins(
+                        style: RukuninFonts.pjs(
                             color: _kWhite, fontSize: 15, fontWeight: FontWeight.w500),
                         decoration: InputDecoration(
                           hintText: 'Pilih No. RT',
-                          hintStyle: GoogleFonts.poppins(
+                          hintStyle: RukuninFonts.pjs(
                             color: _kWhite.withValues(alpha: 0.3),
                             fontSize: 14,
                           ),
@@ -264,7 +265,7 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                                   )
                                 : Text(
                                     'Daftar →',
-                                    style: GoogleFonts.poppins(
+                                    style: RukuninFonts.pjs(
                                       color: _kBlack,
                                       fontSize: 16,
                                       fontWeight: FontWeight.w800,
@@ -312,11 +313,11 @@ class _DarkTextField extends StatelessWidget {
       textInputAction: textInputAction,
       inputFormatters: inputFormatters,
       validator: validator,
-      style: GoogleFonts.poppins(
+      style: RukuninFonts.pjs(
           color: _kWhite, fontSize: 15, fontWeight: FontWeight.w500),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.poppins(
+        hintStyle: RukuninFonts.pjs(
           color: _kWhite.withValues(alpha: 0.3),
           fontSize: 14,
         ),

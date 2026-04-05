@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -8,6 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'app/router.dart';
 import 'app/theme.dart';
+import 'core/services/fcm_service.dart';
 
 // Background handler wajib top-level function
 @pragma('vm:entry-point')
@@ -25,7 +28,12 @@ Future<void> main() async {
   if (!kIsWeb) {
     await Firebase.initializeApp();
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    await FirebaseMessaging.instance.requestPermission();
+    await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+    await FcmService.initialize();
   }
 
   await Supabase.initialize(
@@ -42,12 +50,39 @@ Future<void> main() async {
   );
 }
 
-class RukuninApp extends ConsumerWidget {
+class RukuninApp extends ConsumerStatefulWidget {
   const RukuninApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<RukuninApp> createState() => _RukuninAppState();
+}
+
+class _RukuninAppState extends ConsumerState<RukuninApp> {
+  StreamSubscription? _authSub;
+
+  @override
+  void initState() {
+    super.initState();
+    // Simpan FCM token setiap kali user login
+    _authSub = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      if (data.event == AuthChangeEvent.signedIn) {
+        FcmService.saveTokenToProfile();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _authSub?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
+
+    // Set navigate callback agar FCM bisa navigasi ke screen yang tepat
+    FcmService.setNavigate((route) => router.go(route));
 
     return MaterialApp.router(
       title: 'Rukunin',

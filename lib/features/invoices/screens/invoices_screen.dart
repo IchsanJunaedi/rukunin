@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import '../../../app/theme.dart';
+import '../../../app/components.dart';
 import '../../../app/tokens.dart';
 import '../providers/invoice_list_provider.dart';
 
@@ -92,7 +92,7 @@ class InvoicesScreen extends ConsumerWidget {
                   ),
                   Text(
                     '$monthName $selectedYear',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
                       color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -117,7 +117,15 @@ class InvoicesScreen extends ConsumerWidget {
             Expanded(
               child: invoiceListAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Center(child: Text('Error: $e')),
+                error: (e, _) => Center(
+                  child: EmptyState(
+                    icon: Icons.error_outline_rounded,
+                    title: 'Gagal memuat tagihan',
+                    description: 'Periksa koneksi internet, lalu coba lagi.',
+                    ctaLabel: 'Coba lagi',
+                    onCta: () => ref.invalidate(invoiceWithResidentProvider),
+                  ),
+                ),
                 data: (invoices) {
                   return TabBarView(
                     children: [
@@ -162,7 +170,7 @@ class InvoicesScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               'Tidak ada tagihan',
-              style: GoogleFonts.poppins(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, fontWeight: FontWeight.w500),
+              style: RukuninFonts.pjs(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, fontWeight: FontWeight.w500),
             ),
           ],
         ),
@@ -204,7 +212,7 @@ class InvoicesScreen extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     residentName,
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 16),
+                    style: RukuninFonts.pjs(fontWeight: FontWeight.w700, fontSize: 16),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -217,7 +225,7 @@ class InvoicesScreen extends ConsumerWidget {
                 const SizedBox(height: 6),
                 Text(
                   billingName,
-                  style: GoogleFonts.poppins(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, fontSize: 14),
+                  style: RukuninFonts.pjs(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, fontSize: 14),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -271,7 +279,7 @@ class InvoicesScreen extends ConsumerWidget {
       ),
       child: Text(
         label,
-        style: GoogleFonts.poppins(
+        style: RukuninFonts.pjs(
           fontSize: 12,
           fontWeight: FontWeight.w700,
           color: textColor,
@@ -290,17 +298,17 @@ class InvoicesScreen extends ConsumerWidget {
      showDialog(
        context: context,
        builder: (ctx) => AlertDialog(
-         title: Text('Aksi Tagihan', style: GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 16)),
+         title: Text('Aksi Tagihan', style: RukuninFonts.pjs(fontWeight: FontWeight.w700, fontSize: 16)),
          content: Column(
            mainAxisSize: MainAxisSize.min,
            crossAxisAlignment: CrossAxisAlignment.start,
            children: [
-             Text(residentName, style: GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 15)),
+             Text(residentName, style: RukuninFonts.pjs(fontWeight: FontWeight.w700, fontSize: 15)),
              const SizedBox(height: 4),
-             Text('Status: $status', style: GoogleFonts.poppins(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, fontSize: 13)),
+             Text('Status: $status', style: RukuninFonts.pjs(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, fontSize: 13)),
              if (isAwaitingVerif) ...[
               const SizedBox(height: 12),
-              Text('Bukti Transfer:', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary)),
+              Text('Bukti Transfer:', style: RukuninFonts.pjs(fontSize: 13, fontWeight: FontWeight.w600, color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary)),
               const SizedBox(height: 8),
               if (invoice['proof_url'] != null)
                 GestureDetector(
@@ -331,7 +339,7 @@ class InvoicesScreen extends ConsumerWidget {
                   ),
                 )
               else
-                Row(children: [const Icon(Icons.info_outline, size: 14, color: Colors.blue), const SizedBox(width: 4), Flexible(child: Text('Warga mengklaim sudah mentransfer (tanpa foto bukti).', style: GoogleFonts.poppins(fontSize: 12, color: Colors.blue)))]),
+                Row(children: [const Icon(Icons.info_outline, size: 14, color: Colors.blue), const SizedBox(width: 4), Flexible(child: Text('Warga mengklaim sudah mentransfer (tanpa foto bukti).', style: RukuninFonts.pjs(fontSize: 12, color: Colors.blue)))]),
             ],
            ],
          ),
@@ -349,7 +357,7 @@ class InvoicesScreen extends ConsumerWidget {
                    if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal: $e')));
                  }
                },
-               child: Text('Tandai Menunggu Verif', style: GoogleFonts.poppins(fontSize: 13)),
+               child: Text('Tandai Menunggu Verif', style: RukuninFonts.pjs(fontSize: 13)),
              ),
            if (!isPaid)
              ElevatedButton(
@@ -364,7 +372,7 @@ class InvoicesScreen extends ConsumerWidget {
                    if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal: $e')));
                  }
                },
-               child: Text(isAwaitingVerif ? 'Konfirmasi Lunas ✓' : 'Tandai Lunas', style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w600)),
+               child: Text(isAwaitingVerif ? 'Konfirmasi Lunas ✓' : 'Tandai Lunas', style: RukuninFonts.pjs(color: Colors.white, fontWeight: FontWeight.w600)),
              ),
            if (isAwaitingVerif)
              TextButton(
@@ -379,11 +387,11 @@ class InvoicesScreen extends ConsumerWidget {
                    if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal: $e')));
                  }
                },
-               child: Text('Tolak', style: GoogleFonts.poppins(color: RukuninColors.error)),
+               child: Text('Tolak', style: RukuninFonts.pjs(color: RukuninColors.error)),
              ),
            TextButton(
              onPressed: () => Navigator.pop(ctx),
-             child: Text('Tutup', style: GoogleFonts.poppins(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
+             child: Text('Tutup', style: RukuninFonts.pjs(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
            ),
          ],
        )
@@ -397,7 +405,7 @@ class InvoicesScreen extends ConsumerWidget {
         appBar: AppBar(
           backgroundColor: Colors.black,
           iconTheme: const IconThemeData(color: Colors.white),
-          title: Text('Bukti Transfer', style: GoogleFonts.poppins(color: Colors.white)),
+          title: Text('Bukti Transfer', style: RukuninFonts.pjs(color: Colors.white)),
         ),
         body: Center(
           child: InteractiveViewer(
@@ -418,12 +426,12 @@ class InvoicesScreen extends ConsumerWidget {
     showDialog(
        context: context,
        builder: (ctx) => AlertDialog(
-         title: Text('Broadcast WhatsApp', style: GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 16)),
-         content: Text('Kirim pesan WA tagihan ke semua warga yang belum Lunas bulan ini?', style: GoogleFonts.poppins()),
+         title: Text('Broadcast WhatsApp', style: RukuninFonts.pjs(fontWeight: FontWeight.w700, fontSize: 16)),
+         content: Text('Kirim pesan WA tagihan ke semua warga yang belum Lunas bulan ini?', style: RukuninFonts.pjs()),
          actions: [
            TextButton(
              onPressed: () => Navigator.pop(ctx),
-             child: Text('Batal', style: GoogleFonts.poppins(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
+             child: Text('Batal', style: RukuninFonts.pjs(color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
            ),
            ElevatedButton(
              style: ElevatedButton.styleFrom(backgroundColor: RukuninColors.brandGreen),
@@ -451,7 +459,7 @@ class InvoicesScreen extends ConsumerWidget {
                  }
                }
              },
-             child: Text('Ya, Kirim Semua', style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w600)),
+             child: Text('Ya, Kirim Semua', style: RukuninFonts.pjs(color: Colors.white, fontWeight: FontWeight.w600)),
            ),
          ],
        )

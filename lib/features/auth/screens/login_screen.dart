@@ -99,7 +99,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         const SizedBox(width: 6),
                         Text(
                           'Rukunin',
-                          style: GoogleFonts.poppins(
+                          style: RukuninFonts.pjs(
                             color: Colors.white,
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
@@ -113,7 +113,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   // ── Headline ───────────────────────────────────────────
                   Text(
                     'Selamat\nDatang Kembali.',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontSize: 36,
                       fontWeight: FontWeight.w800,
                       letterSpacing: -1.5,
@@ -126,7 +126,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   const SizedBox(height: 8),
                   Text(
                     'Masuk ke akun komunitasmu.',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontSize: 15,
                       color: isDark
                           ? RukuninColors.darkTextSecondary
@@ -187,7 +187,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                 context.push('/forgot-password'),
                             child: Text(
                               'Lupa password?',
-                              style: GoogleFonts.poppins(
+                              style: RukuninFonts.pjs(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                                 color: RukuninColors.brandGreen,
@@ -272,7 +272,7 @@ class _InputField extends StatelessWidget {
       textInputAction: textInputAction,
       validator: validator,
       onFieldSubmitted: onSubmitted,
-      style: GoogleFonts.poppins(
+      style: RukuninFonts.pjs(
         fontSize: 15,
         color: isDark
             ? RukuninColors.darkTextPrimary
@@ -329,7 +329,7 @@ class _RegisterOption extends StatelessWidget {
             Text(
               label,
               textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: isDark

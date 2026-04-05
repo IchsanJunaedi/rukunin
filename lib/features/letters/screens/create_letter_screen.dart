@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../app/theme.dart';
 import '../../../app/tokens.dart';
 import '../providers/letter_provider.dart';
 import '../../../core/supabase/supabase_client.dart';
@@ -181,7 +180,7 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
         content: Row(children: [
           const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)),
           const SizedBox(width: 12),
-          Text('Membuat PDF...', style: GoogleFonts.poppins()),
+          Text('Membuat PDF...', style: RukuninFonts.pjs()),
         ]),
         duration: const Duration(seconds: 2),
       ));
@@ -334,7 +333,7 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
     return Scaffold(
       backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
-        title: Text('Buat Surat Keterangan', style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
+        title: Text('Buat Surat Keterangan', style: RukuninFonts.pjs(fontWeight: FontWeight.w700)),
       ),
       body: _loadingCommunity
           ? const Center(child: CircularProgressIndicator())
@@ -354,7 +353,7 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
                       decoration: _deco(context, 'Pilih jenis surat...'),
                       items: letterTypeLabels.entries.map((e) => DropdownMenuItem(
                         value: e.key,
-                        child: Text(e.value, style: GoogleFonts.poppins(fontSize: 13)),
+                        child: Text(e.value, style: RukuninFonts.pjs(fontSize: 13)),
                       )).toList(),
                       onChanged: (v) => setState(() { _letterType = v!; _pdfReady = false; }),
                     ),
@@ -398,7 +397,7 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       icon: const Icon(Icons.auto_fix_high, color: Colors.white, size: 20),
-                      label: Text('Terapkan ke Surat', style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14)),
+                      label: Text('Terapkan ke Surat', style: RukuninFonts.pjs(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14)),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -412,7 +411,7 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
                       child: TextFormField(
                         controller: _contentCtrl,
                         maxLines: null,
-                        style: GoogleFonts.poppins(fontSize: 13, height: 1.7),
+                        style: RukuninFonts.pjs(fontSize: 13, height: 1.7),
                         decoration: const InputDecoration(border: InputBorder.none, isDense: true, contentPadding: EdgeInsets.zero),
                       ),
                     ),
@@ -427,7 +426,7 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                         icon: const Icon(Icons.share_outlined, size: 18),
-                        label: Text('Bagikan', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                        label: Text('Bagikan', style: RukuninFonts.pjs(fontWeight: FontWeight.w600)),
                       )),
                       const SizedBox(width: 10),
                       Expanded(child: ElevatedButton.icon(
@@ -438,7 +437,7 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                         icon: const Icon(Icons.download, color: Colors.white, size: 18),
-                        label: Text('Unduh PDF', style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w600)),
+                        label: Text('Unduh PDF', style: RukuninFonts.pjs(color: Colors.white, fontWeight: FontWeight.w600)),
                       )),
                     ]),
                     if (widget.fromRequestId != null) ...[
@@ -457,7 +456,7 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
                               : const Icon(Icons.check_circle_outline, color: Colors.white, size: 20),
                           label: Text(
                             _savingLetter ? 'Menyimpan...' : 'Simpan & Tandai Selesai',
-                            style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14),
+                            style: RukuninFonts.pjs(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14),
                           ),
                         ),
                       ),
@@ -476,7 +475,7 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
                         const SizedBox(width: 8),
                         Expanded(child: Text(
                           'Isi data pemohon lalu tekan "Terapkan ke Surat".',
-                          style: GoogleFonts.poppins(fontSize: 13, color: RukuninColors.brandGreen),
+                          style: RukuninFonts.pjs(fontSize: 13, color: RukuninColors.brandGreen),
                         )),
                       ]),
                     ),
@@ -502,7 +501,7 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
         Row(children: [
           Icon(icon, color: RukuninColors.brandGreen, size: 18),
           const SizedBox(width: 6),
-          Text(title, style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
+          Text(title, style: RukuninFonts.pjs(fontSize: 13, fontWeight: FontWeight.w700, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
         ]),
         const SizedBox(height: 10),
         child,
@@ -516,7 +515,7 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
       child: TextField(
         controller: ctrl,
         maxLines: lines,
-        style: GoogleFonts.poppins(fontSize: 13),
+        style: RukuninFonts.pjs(fontSize: 13),
         decoration: _deco(context, hint),
       ),
     );
@@ -530,7 +529,7 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
         keyboardType: TextInputType.number,
         maxLength: 16,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        style: GoogleFonts.poppins(fontSize: 13),
+        style: RukuninFonts.pjs(fontSize: 13),
         decoration: _deco(context, 'NIK (maks. 16 digit)').copyWith(counterText: ''),
       ),
     );
@@ -545,7 +544,7 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
         decoration: _deco(context, label),
         items: options.map((o) => DropdownMenuItem(
           value: o,
-          child: Text(o, style: GoogleFonts.poppins(fontSize: 13)),
+          child: Text(o, style: RukuninFonts.pjs(fontSize: 13)),
         )).toList(),
         onChanged: onChanged,
       ),
@@ -556,7 +555,7 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.poppins(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+      hintStyle: RukuninFonts.pjs(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
       filled: true,
       fillColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),

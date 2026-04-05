@@ -1,6 +1,5 @@
 // lib/features/layanan/screens/admin_contacts_screen.dart
 
-import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 
@@ -10,7 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../app/theme.dart';
 import '../../../app/tokens.dart';
 import '../../../core/supabase/supabase_client.dart';
 import '../models/community_contact_model.dart';
@@ -36,7 +34,7 @@ class AdminContactsScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
           child: Text('Error: $e',
-              style: GoogleFonts.poppins(color: RukuninColors.error)),
+              style: RukuninFonts.pjs(color: RukuninColors.error)),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -58,7 +56,7 @@ class AdminContactsScreen extends ConsumerWidget {
           const SizedBox(height: 12),
           Text(
             'Belum ada kontak',
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               fontSize: 15,
               fontWeight: FontWeight.w600,
               color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
@@ -67,7 +65,7 @@ class AdminContactsScreen extends ConsumerWidget {
           const SizedBox(height: 4),
           Text(
             'Tap + untuk tambah kontak pengurus',
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               fontSize: 13,
               color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
             ),
@@ -82,7 +80,7 @@ class AdminContactsScreen extends ConsumerWidget {
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: contacts.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
+      separatorBuilder: (_, _) => const SizedBox(height: 10),
       itemBuilder: (context, index) {
         final contact = contacts[index];
         return _ContactAdminCard(
@@ -258,7 +256,7 @@ class _ContactAdminCard extends StatelessWidget {
               children: [
                 Text(
                   contact.nama,
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -266,14 +264,14 @@ class _ContactAdminCard extends StatelessWidget {
                 ),
                 Text(
                   contact.jabatan,
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                     fontSize: 12,
                     color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                   ),
                 ),
                 Text(
                   contact.phone,
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                     fontSize: 12,
                     color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                   ),
@@ -338,7 +336,7 @@ class _Avatar extends StatelessWidget {
       backgroundColor: RukuninColors.brandGreen.withValues(alpha: 0.15),
       child: Text(
         contact.initials,
-        style: GoogleFonts.poppins(
+        style: RukuninFonts.pjs(
           fontSize: radius * 0.6,
           fontWeight: FontWeight.w700,
           color: RukuninColors.brandGreen,
@@ -449,7 +447,7 @@ class _ContactFormSheetState extends ConsumerState<_ContactFormSheet> {
           children: [
             Text(
               isEdit ? 'Edit Kontak' : 'Tambah Kontak',
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                 fontSize: 17,
                 fontWeight: FontWeight.w700,
                 color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -549,7 +547,7 @@ class _ContactFormSheetState extends ConsumerState<_ContactFormSheet> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(100)),
                   elevation: 0,
-                  textStyle: GoogleFonts.poppins(
+                  textStyle: RukuninFonts.pjs(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                   ),
@@ -574,7 +572,7 @@ class _ContactFormSheetState extends ConsumerState<_ContactFormSheet> {
                 child: TextButton(
                   style: TextButton.styleFrom(
                     foregroundColor: RukuninColors.error,
-                    textStyle: GoogleFonts.poppins(
+                    textStyle: RukuninFonts.pjs(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),

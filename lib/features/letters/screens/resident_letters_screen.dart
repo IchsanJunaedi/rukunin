@@ -20,7 +20,7 @@ class ResidentLettersScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
-        title: Text('Dokumen Saya', style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
+        title: Text('Dokumen Saya', style: RukuninFonts.pjs(fontWeight: FontWeight.w700)),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -30,16 +30,16 @@ class ResidentLettersScreen extends ConsumerWidget {
       ),
       body: lettersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator(color: RukuninColors.brandGreen)),
-        error: (e, _) => Center(child: Text('Gagal memuat dokumen: $e', style: GoogleFonts.poppins())),
+        error: (e, _) => Center(child: Text('Gagal memuat dokumen: $e', style: RukuninFonts.pjs())),
         data: (letters) {
           if (letters.isEmpty) {
             return Center(
               child: Column(mainAxisSize: MainAxisSize.min, children: [
                 Icon(Icons.folder_open_outlined, size: 56, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                 const SizedBox(height: 12),
-                Text('Belum ada dokumen', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
+                Text('Belum ada dokumen', style: RukuninFonts.pjs(fontSize: 15, fontWeight: FontWeight.w600, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                 const SizedBox(height: 4),
-                Text('Dokumen yang sudah diverifikasi admin akan muncul di sini', textAlign: TextAlign.center, style: GoogleFonts.poppins(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
+                Text('Dokumen yang sudah diverifikasi admin akan muncul di sini', textAlign: TextAlign.center, style: RukuninFonts.pjs(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
               ]),
             );
           }
@@ -149,11 +149,11 @@ class _LetterCardState extends State<_LetterCard> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(letterTypeLabels[letter.letterType] ?? letter.letterType, style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w700)),
+        Text(letterTypeLabels[letter.letterType] ?? letter.letterType, style: RukuninFonts.pjs(fontSize: 15, fontWeight: FontWeight.w700)),
         const SizedBox(height: 4),
-        Text('No. ${letter.letterNumber}', style: GoogleFonts.poppins(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
+        Text('No. ${letter.letterNumber}', style: RukuninFonts.pjs(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
         const SizedBox(height: 4),
-        Text(dateStr, style: GoogleFonts.poppins(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
+        Text(dateStr, style: RukuninFonts.pjs(fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
         const SizedBox(height: 12),
         SizedBox(
           width: double.infinity,
@@ -167,7 +167,7 @@ class _LetterCardState extends State<_LetterCard> {
             icon: _generatingPdf
                 ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
                 : const Icon(Icons.download, size: 18),
-            label: Text(_generatingPdf ? 'Membuat PDF...' : 'Unduh PDF', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+            label: Text(_generatingPdf ? 'Membuat PDF...' : 'Unduh PDF', style: RukuninFonts.pjs(fontWeight: FontWeight.w600)),
           ),
         ),
       ]),

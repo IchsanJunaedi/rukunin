@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import '../../../app/theme.dart';
+import '../../../app/components.dart';
 import '../../../app/tokens.dart';
 import '../models/expense_model.dart';
 import '../providers/expense_provider.dart';
@@ -28,7 +28,7 @@ class ExpensesScreen extends ConsumerWidget {
         foregroundColor: Colors.white,
         title: Text(
           'Pengeluaran Kas',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
               fontWeight: FontWeight.w700, fontSize: 16),
         ),
       ),
@@ -37,7 +37,7 @@ class ExpensesScreen extends ConsumerWidget {
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
         label: Text('Catat Pengeluaran',
-            style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
+            style: RukuninFonts.pjs(fontWeight: FontWeight.w700)),
         onPressed: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const AddExpenseScreen()),
@@ -58,13 +58,13 @@ class ExpensesScreen extends ConsumerWidget {
               children: [
                 Text(
                   'Total Pengeluaran $monthLabel',
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                       fontSize: 13, color: Colors.white70),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   currencyFormat.format(totalAsync),
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                       fontSize: 32,
                       fontWeight: FontWeight.w800,
                       color: Colors.white),
@@ -78,7 +78,15 @@ class ExpensesScreen extends ConsumerWidget {
             child: expensesAsync.when(
               loading: () =>
                   const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text('Error: $e')),
+              error: (e, _) => Center(
+                child: EmptyState(
+                  icon: Icons.error_outline_rounded,
+                  title: 'Gagal memuat pengeluaran',
+                  description: 'Periksa koneksi internet, lalu coba lagi.',
+                  ctaLabel: 'Coba lagi',
+                  onCta: () => ref.invalidate(expensesProvider),
+                ),
+              ),
               data: (expenses) {
                 if (expenses.isEmpty) {
                   return Center(
@@ -90,7 +98,7 @@ class ExpensesScreen extends ConsumerWidget {
                         const SizedBox(height: 16),
                         Text(
                           'Belum ada pengeluaran bulan ini',
-                          style: GoogleFonts.poppins(
+                          style: RukuninFonts.pjs(
                               color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                               fontWeight: FontWeight.w600),
                         ),
@@ -171,19 +179,19 @@ class _ExpenseCard extends StatelessWidget {
           context: context,
           builder: (ctx) => AlertDialog(
             title: Text('Hapus Pengeluaran',
-                style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
+                style: RukuninFonts.pjs(fontWeight: FontWeight.w700)),
             content: Text('Yakin ingin menghapus pengeluaran ini?',
-                style: GoogleFonts.poppins()),
+                style: RukuninFonts.pjs()),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
-                child: Text('Batal', style: GoogleFonts.poppins()),
+                child: Text('Batal', style: RukuninFonts.pjs()),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: RukuninColors.error),
                 onPressed: () => Navigator.pop(ctx, true),
                 child: Text('Hapus',
-                    style: GoogleFonts.poppins(color: Colors.white)),
+                    style: RukuninFonts.pjs(color: Colors.white)),
               ),
             ],
           ),
@@ -218,7 +226,7 @@ class _ExpenseCard extends StatelessWidget {
           ),
           title: Text(
             expense.description,
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
                 color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
@@ -227,12 +235,12 @@ class _ExpenseCard extends StatelessWidget {
           ),
           subtitle: Text(
             '${expense.category} · $dateStr',
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
                 fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
           ),
           trailing: Text(
             format.format(expense.amount),
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               fontWeight: FontWeight.w800,
               fontSize: 15,
               color: RukuninColors.error,

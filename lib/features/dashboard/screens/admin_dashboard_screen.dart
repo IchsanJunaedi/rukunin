@@ -238,7 +238,7 @@ class _DashboardHeader extends StatelessWidget {
                 children: [
                   Text(
                     'Selamat datang,',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontSize: 13,
                       color: Colors.white.withValues(alpha: 0.75),
                       fontWeight: FontWeight.w400,
@@ -246,7 +246,7 @@ class _DashboardHeader extends StatelessWidget {
                   ),
                   Text(
                     firstName,
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontSize: 17,
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
@@ -268,7 +268,7 @@ class _DashboardHeader extends StatelessWidget {
                     backgroundColor: Colors.white.withValues(alpha: 0.15),
                     child: Text(
                       initial,
-                      style: GoogleFonts.poppins(
+                      style: RukuninFonts.pjs(
                         fontSize: 14,
                         fontWeight: FontWeight.w800,
                         color: Colors.white,
@@ -282,7 +282,7 @@ class _DashboardHeader extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             d['rw_name']?.toString() ?? 'Dashboard',
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               fontSize: 24,
               fontWeight: FontWeight.w800,
               color: Colors.white,
@@ -336,7 +336,7 @@ class _KasHeroCard extends StatelessWidget {
             children: [
               Text(
                 'TOTAL TERKUMPUL',
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: isDark
@@ -353,7 +353,7 @@ class _KasHeroCard extends StatelessWidget {
                 ),
                 child: Text(
                   '${(pct * 100).toInt()}%',
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
@@ -369,7 +369,7 @@ class _KasHeroCard extends StatelessWidget {
             blendMode: BlendMode.srcIn,
             child: Text(
               _fmt(terkumpul),
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                 fontSize: 32,
                 fontWeight: FontWeight.w800,
                 letterSpacing: -1.0,
@@ -397,7 +397,7 @@ class _KasHeroCard extends StatelessWidget {
             children: [
               Text(
                 'Target bulan ini',
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                   fontSize: 12,
                   color: isDark
                       ? RukuninColors.darkTextTertiary
@@ -406,7 +406,7 @@ class _KasHeroCard extends StatelessWidget {
               ),
               Text(
                 _fmt(tagihan),
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: isDark
@@ -457,7 +457,7 @@ class _CommunityCodeTile extends StatelessWidget {
               children: [
                 Text(
                   'KODE KOMUNITAS',
-                  style: GoogleFonts.poppins(
+                  style: RukuninFonts.pjs(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: isDark
@@ -473,7 +473,7 @@ class _CommunityCodeTile extends StatelessWidget {
                   blendMode: BlendMode.srcIn,
                   child: Text(
                     code,
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 3,
@@ -498,7 +498,7 @@ class _CommunityCodeTile extends StatelessWidget {
               ),
               child: Text(
                 'Salin',
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
@@ -612,7 +612,7 @@ class _DashStatCard extends StatelessWidget {
             blendMode: BlendMode.srcIn,
             child: Text(
               value,
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                 fontSize: 26,
                 fontWeight: FontWeight.w800,
                 letterSpacing: -0.5,
@@ -624,7 +624,7 @@ class _DashStatCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             label,
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: isDark
@@ -642,14 +642,15 @@ class _DashStatCard extends StatelessWidget {
 
 class _QuickActions extends StatelessWidget {
   static const _items = [
-    (Icons.how_to_reg_outlined,               'Warga Baru',    '/admin/warga/tambah'),
-    (Icons.receipt_long_outlined,             'Buat Tagihan',  '/admin/tagihan/buat'),
-    (Icons.savings_outlined,                  'Pengeluaran',   '/admin/pengeluaran'),
-    (Icons.add_alert_outlined,                'Pengumuman',    '/admin/pengumuman'),
-    (Icons.poll_outlined,                     'Polling',       '/admin/polling'),
-    (Icons.contact_phone_outlined,            'Info Kontak',   '/admin/layanan/kontak'),
-    (Icons.account_balance_outlined,          'Rekening',      '/admin/pengaturan-rek'),
-    (Icons.tune_outlined,                     'Profil RW',     '/admin/pengaturan'),
+    (Icons.how_to_reg_outlined,               'Warga Baru',       '/admin/warga/tambah'),
+    (Icons.receipt_long_outlined,             'Buat Tagihan',     '/admin/tagihan/buat'),
+    (Icons.savings_outlined,                  'Pengeluaran',      '/admin/pengeluaran'),
+    (Icons.history_rounded,                   'Riwayat Bayar',    '/admin/riwayat-pembayaran'),
+    (Icons.add_alert_outlined,                'Pengumuman',       '/admin/pengumuman'),
+    (Icons.poll_outlined,                     'Polling',          '/admin/polling'),
+    (Icons.contact_phone_outlined,            'Info Kontak',      '/admin/layanan/kontak'),
+    (Icons.account_balance_outlined,          'Rekening',         '/admin/pengaturan-rek'),
+    (Icons.tune_outlined,                     'Profil RW',        '/admin/pengaturan'),
   ];
 
   @override
@@ -749,7 +750,7 @@ class _ActionBtnState extends State<_ActionBtn>
             Text(
               widget.label,
               textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
+              style: RukuninFonts.pjs(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 color: isDark
@@ -821,7 +822,7 @@ class _ServiceCard extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             label,
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: isDark

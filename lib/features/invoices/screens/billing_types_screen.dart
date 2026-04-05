@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import '../../../app/theme.dart';
+import '../../../app/components.dart';
 import '../../../app/tokens.dart';
 import '../models/billing_type_model.dart';
 import '../providers/billing_type_provider.dart';
@@ -24,7 +24,7 @@ class BillingTypesScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'Konfigurasi Iuran',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             fontWeight: FontWeight.w700,
             fontSize: 16,
           ),
@@ -45,7 +45,15 @@ class BillingTypesScreen extends ConsumerWidget {
       ),
       body: billingTypesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, _) => Center(
+          child: EmptyState(
+            icon: Icons.error_outline_rounded,
+            title: 'Gagal memuat jenis iuran',
+            description: 'Periksa koneksi internet, lalu coba lagi.',
+            ctaLabel: 'Coba lagi',
+            onCta: () => ref.invalidate(billingTypesProvider),
+          ),
+        ),
         data: (types) {
           if (types.isEmpty) {
             return Center(
@@ -56,7 +64,7 @@ class BillingTypesScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   Text(
                     'Belum ada jenis iuran',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
                       fontWeight: FontWeight.w600,
                     ),
@@ -119,7 +127,7 @@ class BillingTypesScreen extends ConsumerWidget {
                           children: [
                             Text(
                               type.name,
-                              style: GoogleFonts.poppins(
+                              style: RukuninFonts.pjs(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 15,
                                 color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
@@ -134,7 +142,7 @@ class BillingTypesScreen extends ConsumerWidget {
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text('Nonaktif',
-                                    style: GoogleFonts.poppins(
+                                    style: RukuninFonts.pjs(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w600,
                                         color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary)),
@@ -144,7 +152,7 @@ class BillingTypesScreen extends ConsumerWidget {
                         const SizedBox(height: 4),
                         Text(
                           format.format(type.amount),
-                          style: GoogleFonts.poppins(
+                          style: RukuninFonts.pjs(
                             fontWeight: FontWeight.w800,
                             fontSize: 18,
                             color: RukuninColors.brandGreen,
@@ -155,7 +163,7 @@ class BillingTypesScreen extends ConsumerWidget {
                             padding: const EdgeInsets.only(top: 2),
                             child: Text(
                               '+${format.format(type.costPerMotorcycle)}/motor · +${format.format(type.costPerCar)}/mobil',
-                              style: GoogleFonts.poppins(
+                              style: RukuninFonts.pjs(
                                 fontSize: 11,
                                 color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                               ),
@@ -195,21 +203,21 @@ class BillingTypesScreen extends ConsumerWidget {
                           context: context,
                           builder: (ctx) => AlertDialog(
                             title: Text('Hapus Jenis Iuran',
-                                style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
+                                style: RukuninFonts.pjs(fontWeight: FontWeight.w700)),
                             content: Text(
                               'Yakin ingin menghapus "${type.name}"?\nData historis tagihan tetap tersimpan.',
-                              style: GoogleFonts.poppins(),
+                              style: RukuninFonts.pjs(),
                             ),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(ctx, false),
-                                child: Text('Batal', style: GoogleFonts.poppins()),
+                                child: Text('Batal', style: RukuninFonts.pjs()),
                               ),
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(backgroundColor: RukuninColors.error),
                                 onPressed: () => Navigator.pop(ctx, true),
                                 child: Text('Hapus',
-                                    style: GoogleFonts.poppins(color: Colors.white)),
+                                    style: RukuninFonts.pjs(color: Colors.white)),
                               ),
                             ],
                           ),
@@ -242,7 +250,7 @@ class BillingTypesScreen extends ConsumerWidget {
                           children: [
                             Icon(Icons.edit_outlined, size: 18, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
                             const SizedBox(width: 8),
-                            Text('Edit Iuran', style: GoogleFonts.poppins()),
+                            Text('Edit Iuran', style: RukuninFonts.pjs()),
                           ],
                         ),
                       ),
@@ -252,7 +260,7 @@ class BillingTypesScreen extends ConsumerWidget {
                           children: [
                             Icon(Icons.delete_outline, size: 18, color: RukuninColors.error),
                             const SizedBox(width: 8),
-                            Text('Hapus', style: GoogleFonts.poppins(color: RukuninColors.error)),
+                            Text('Hapus', style: RukuninFonts.pjs(color: RukuninColors.error)),
                           ],
                         ),
                       ),
@@ -270,7 +278,7 @@ class BillingTypesScreen extends ConsumerWidget {
                   const SizedBox(width: 8),
                   Text(
                     'Jatuh tempo tiap tanggal ${type.billingDay} setiap bulan',
-                    style: GoogleFonts.poppins(
+                    style: RukuninFonts.pjs(
                       fontSize: 12,
                       color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
                     ),

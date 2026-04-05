@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../../app/theme.dart';
 import '../../../app/tokens.dart';
 import '../providers/payment_settings_provider.dart';
 
@@ -97,7 +96,7 @@ class _PaymentSettingsScreenState extends ConsumerState<PaymentSettingsScreen> {
       backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
         title: Text('Rekening & Kas RW',
-            style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold)),
+            style: RukuninFonts.pjs(fontSize: 18, fontWeight: FontWeight.bold)),
         backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         foregroundColor: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
         elevation: 0,
@@ -136,12 +135,12 @@ class _PaymentSettingsScreenState extends ConsumerState<PaymentSettingsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Upload Kode QRIS',
-                              style: GoogleFonts.poppins(fontSize: 14,
+                              style: RukuninFonts.pjs(fontSize: 14,
                                   color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                                   fontWeight: FontWeight.w600)),
                           const SizedBox(height: 4),
                           Text('Gambar QRIS akan otomatis ditampilkan saat warga mau bayar secara mandiri dari aplikasi.',
-                              style: GoogleFonts.poppins(fontSize: 12,
+                              style: RukuninFonts.pjs(fontSize: 12,
                                   color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary)),
                           const SizedBox(height: 16),
                           Center(
@@ -202,7 +201,7 @@ class _PaymentSettingsScreenState extends ConsumerState<PaymentSettingsScreen> {
                         ? const SizedBox(width: 24, height: 24,
                             child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
                         : Text('Simpan Pengaturan',
-                            style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w700)),
+                            style: RukuninFonts.pjs(fontSize: 15, fontWeight: FontWeight.w700)),
                   ),
                   const SizedBox(height: 40),
                 ],
@@ -224,7 +223,7 @@ class _PaymentSettingsScreenState extends ConsumerState<PaymentSettingsScreen> {
         const SizedBox(height: 8),
         Text(
           error ? 'Gagal memuat gambar' : 'Upload Gambar',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
               fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
         ),
       ],
@@ -233,7 +232,7 @@ class _PaymentSettingsScreenState extends ConsumerState<PaymentSettingsScreen> {
 
   Widget _sectionLabel(BuildContext context, String label) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Text(label, style: GoogleFonts.poppins(
+    return Text(label, style: RukuninFonts.pjs(
         fontSize: 13, fontWeight: FontWeight.w700,
         color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
         letterSpacing: 0.5));
@@ -261,11 +260,11 @@ class _PaymentSettingsScreenState extends ConsumerState<PaymentSettingsScreen> {
       controller: ctrl,
       keyboardType: keyboardType,
       validator: validator,
-      style: GoogleFonts.poppins(fontSize: 14,
+      style: RukuninFonts.pjs(fontSize: 14,
           color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: GoogleFonts.poppins(fontSize: 13,
+        labelStyle: RukuninFonts.pjs(fontSize: 13,
             color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary),
         prefixIcon: Icon(icon, size: 18,
             color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),

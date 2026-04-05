@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../app/tokens.dart';
 import '../providers/auth_provider.dart';
 
 const _kYellow = Color(0xFFFFC107);
@@ -155,7 +156,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen>
         children: [
           Text(
             'Masukkan emailmu, kami kirimkan link reset password.',
-            style: GoogleFonts.poppins(
+            style: RukuninFonts.pjs(
               color: _kWhite.withValues(alpha: 0.5),
               fontSize: 13,
               fontWeight: FontWeight.w500,
@@ -201,7 +202,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen>
                       )
                     : Text(
                         'Kirim Link Reset →',
-                        style: GoogleFonts.poppins(
+                        style: RukuninFonts.pjs(
                           color: _kBlack,
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
@@ -235,7 +236,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen>
 
         Text(
           'Link reset password sudah dikirim ke',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             color: _kWhite.withValues(alpha: 0.5),
             fontSize: 13,
             fontWeight: FontWeight.w500,
@@ -246,7 +247,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen>
 
         Text(
           _emailController.text.trim(),
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             color: _kYellow,
             fontSize: 15,
             fontWeight: FontWeight.w700,
@@ -257,7 +258,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen>
 
         Text(
           'Klik link di email tersebut untuk membuat password baru. Pastikan cek folder Spam jika tidak muncul.',
-          style: GoogleFonts.poppins(
+          style: RukuninFonts.pjs(
             color: _kWhite.withValues(alpha: 0.4),
             fontSize: 13,
             height: 1.6,
@@ -278,7 +279,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen>
             child: Center(
               child: Text(
                 'Kembali ke Login',
-                style: GoogleFonts.poppins(
+                style: RukuninFonts.pjs(
                   color: _kBlack,
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
@@ -296,7 +297,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen>
           child: Center(
             child: Text(
               'Tidak menerima email? Coba lagi',
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.plusJakartaSans(
                 color: _kWhite.withValues(alpha: 0.4),
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
@@ -338,14 +339,14 @@ class _DarkTextField extends StatelessWidget {
       textInputAction: textInputAction,
       validator: validator,
       onFieldSubmitted: onFieldSubmitted,
-      style: GoogleFonts.poppins(
+      style: RukuninFonts.pjs(
         color: _kWhite,
         fontSize: 15,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.poppins(
+        hintStyle: RukuninFonts.pjs(
           color: _kWhite.withValues(alpha: 0.3),
           fontSize: 14,
         ),
