@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  RUKUNIN — Design Tokens
@@ -133,4 +134,34 @@ abstract class RukuninShadow {
       offset: const Offset(0, 8),
     ),
   ];
+
+  static List<BoxShadow> get neonGlow => [
+    BoxShadow(
+      color: const Color(0xFF00C853).withValues(alpha: 0.35),
+      blurRadius: 18,
+      spreadRadius: 0,
+    ),
+    BoxShadow(
+      color: const Color(0xFF00C853).withValues(alpha: 0.15),
+      blurRadius: 40,
+      spreadRadius: 4,
+    ),
+  ];
+}
+
+abstract class RukuninFonts {
+  static TextStyle pjs({
+    double fontSize = 14,
+    FontWeight fontWeight = FontWeight.w400,
+    Color? color,
+    double? letterSpacing,
+    double? height,
+  }) =>
+      GoogleFonts.plusJakartaSans(
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        color: color,
+        letterSpacing: letterSpacing,
+        height: height,
+      );
 }
