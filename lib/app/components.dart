@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'dart:ui';
+import 'package:lottie/lottie.dart';
 
 import 'tokens.dart';
 
@@ -844,6 +845,119 @@ class MenuTile extends StatelessWidget {
         if (showDivider)
           Divider(height: 0.5, thickness: 0.5, indent: 52, color: borderColor),
       ],
+    );
+  }
+}
+
+// ── GLASS CARD ────────────────────────────────────────────────────────────────
+
+class GlassCard extends StatelessWidget {
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+  final VoidCallback? onTap;
+  final double borderRadius;
+
+  const GlassCard({
+    super.key,
+    required this.child,
+    this.padding,
+    this.onTap,
+    this.borderRadius = 20,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    if (isDark) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: GestureDetector(
+            onTap: onTap,
+            child: Container(
+              padding: padding,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(borderRadius),
+                border: Border.all(
+                  color: const Color(0xFF00C853).withValues(alpha: 0.22),
+                  width: 1.0,
+                ),
+                boxShadow: RukuninShadow.neonGlow,
+              ),
+              child: child,
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Light mode: plain surface without blur
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: padding,
+        decoration: BoxDecoration(
+          color: RukuninColors.lightSurface,
+          borderRadius: BorderRadius.circular(borderRadius),
+          border: Border.all(
+            color: RukuninColors.brandGreen.withValues(alpha: 0.12),
+            width: 1.0,
+          ),
+          boxShadow: RukuninShadow.sm,
+        ),
+        child: child,
+      ),
+    );
+  }
+}
+
+// ── LOTTIE SUCCESS DIALOG ─────────────────────────────────────────────────────
+
+class LottieSuccessDialog extends StatefulWidget {
+  final String message;
+  const LottieSuccessDialog({super.key, required this.message});
+
+  @override
+  State<LottieSuccessDialog> createState() => _LottieSuccessDialogState();
+}
+
+class _LottieSuccessDialogState extends State<LottieSuccessDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Lottie.asset(
+            'assets/lottie/payment_success.json',
+            width: 180,
+            repeat: false,
+            onLoaded: (comp) {
+              Future.delayed(
+                comp.duration + const Duration(milliseconds: 400),
+                () {
+                  if (context.mounted) Navigator.of(context).pop();
+                },
+              );
+            },
+          ),
+          const SizedBox(height: 8),
+          Text(
+            widget.message,
+            textAlign: TextAlign.center,
+            style: RukuninFonts.pjs(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
