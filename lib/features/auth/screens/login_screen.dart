@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 
 import '../../../app/tokens.dart';
 import '../../../app/components.dart';
@@ -314,12 +314,6 @@ class _RegisterOption extends StatelessWidget {
               ? RukuninColors.darkSurface
               : RukuninColors.lightSurface,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: isDark
-                ? RukuninColors.darkBorder
-                : RukuninColors.lightBorder,
-            width: 0.5,
-          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

@@ -168,19 +168,19 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                           fillColor: _kYellow.withValues(alpha: 0.08),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide(color: _kYellow.withValues(alpha: 0.3)),
+                            borderSide: BorderSide.none,
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide(color: _kYellow.withValues(alpha: 0.3)),
+                            borderSide: BorderSide.none,
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14),
-                            borderSide: const BorderSide(color: _kYellow, width: 2),
+                            borderSide: BorderSide.none,
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14),
-                            borderSide: const BorderSide(color: Color(0xFFFF6B6B)),
+                            borderSide: BorderSide.none,
                           ),
                           errorStyle: const TextStyle(color: Color(0xFFFF6B6B), fontSize: 11),
                           contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
@@ -333,19 +333,19 @@ class _DarkTextField extends StatelessWidget {
         fillColor: _kWhite.withValues(alpha: 0.06),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: _kWhite.withValues(alpha: 0.1)),
+          borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: _kWhite.withValues(alpha: 0.1)),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: _kYellow, width: 1.5),
+          borderSide: BorderSide.none,
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Color(0xFFFF6B6B)),
+          borderSide: BorderSide.none,
         ),
         errorStyle: const TextStyle(color: Color(0xFFFF6B6B), fontSize: 11),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
