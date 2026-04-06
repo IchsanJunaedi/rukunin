@@ -139,11 +139,6 @@ class _NotifCard extends StatelessWidget {
               ? (isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface)
               : RukuninColors.brandGreen.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: notif.isRead
-                ? (isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2)
-                : RukuninColors.brandGreen.withValues(alpha: 0.3),
-          ),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,

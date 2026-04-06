@@ -118,22 +118,23 @@ class _AdminProfileScreenState extends ConsumerState<AdminProfileScreen> {
                   email,
                   style: RukuninFonts.pjs(
                     fontSize: 14,
-                    color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: RukuninColors.brandGreen.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(100),
                   ),
                   child: Text(
                     'Admin RT / RW',
                     style: RukuninFonts.pjs(
                       fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                       color: RukuninColors.brandGreen,
                     ),
                   ),
@@ -149,7 +150,7 @@ class _AdminProfileScreenState extends ConsumerState<AdminProfileScreen> {
             'Pengaturan',
             style: RukuninFonts.pjs(
               fontSize: 16,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w800,
               color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
             ),
           ),
@@ -160,95 +161,48 @@ class _AdminProfileScreenState extends ConsumerState<AdminProfileScreen> {
               _buildMenuItem(
                 context,
                 isDark: isDark,
-                icon: Icons.people_rounded,
-                iconColor: const Color(0xFF6366F1),
+                icon: Icons.people_outline_rounded,
                 title: 'Pengaturan RT/RW',
                 subtitle: 'Info komunitas & kontak',
                 onTap: () => context.go('/admin/pengaturan'),
               ),
-              Divider(height: 1, color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2, indent: 56),
+              _buildDivider(isDark),
               _buildMenuItem(
                 context,
                 isDark: isDark,
-                icon: Icons.account_balance_rounded,
-                iconColor: const Color(0xFF10B981),
+                icon: Icons.account_balance_outlined,
                 title: 'Pengaturan Rekening',
                 subtitle: 'Rekening bank & QRIS',
                 onTap: () => context.push('/admin/pengaturan-rek'),
               ),
-              Divider(height: 1, color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2, indent: 56),
+              _buildDivider(isDark),
               _buildMenuItem(
                 context,
                 isDark: isDark,
-                icon: Icons.category_rounded,
-                iconColor: const Color(0xFFF59E0B),
+                icon: Icons.category_outlined,
                 title: 'Jenis Iuran',
                 subtitle: 'Kelola kategori iuran warga',
                 onTap: () => context.go('/admin/pengaturan-iuran'),
               ),
-              Divider(height: 1, color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2, indent: 56),
+              _buildDivider(isDark),
               _buildMenuItem(
                 context,
                 isDark: isDark,
-                icon: Icons.money_off_rounded,
-                iconColor: const Color(0xFFEF4444),
+                icon: Icons.money_off_outlined,
                 title: 'Pengeluaran',
                 subtitle: 'Catat & lihat pengeluaran kas',
                 onTap: () => context.go('/admin/pengeluaran'),
               ),
-            ],
-          ),
-
-          const SizedBox(height: 24),
-
-          // Pusat Bantuan
-          Container(
-            decoration: BoxDecoration(
-              color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.02),
-                  blurRadius: 8,
-                )
-              ],
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(16),
+              _buildDivider(isDark),
+              _buildMenuItem(
+                context,
+                isDark: isDark,
+                icon: Icons.help_outline_rounded,
+                title: 'Pusat Bantuan',
+                subtitle: 'Layanan dukungan & FAQ',
                 onTap: () => context.push('/bantuan'),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: RukuninColors.brandGreen.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(Icons.help_outline_rounded,
-                            color: RukuninColors.brandGreen, size: 20),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          'Pusat Bantuan',
-                          style: RukuninFonts.pjs(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
-                          ),
-                        ),
-                      ),
-                      Icon(Icons.chevron_right_rounded,
-                          color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
-                    ],
-                  ),
-                ),
               ),
-            ),
+            ],
           ),
 
           const SizedBox(height: 48),
@@ -256,19 +210,18 @@ class _AdminProfileScreenState extends ConsumerState<AdminProfileScreen> {
           // Tombol Logout
           SizedBox(
             width: double.infinity,
-            child: OutlinedButton.icon(
-              style: OutlinedButton.styleFrom(
+            child: TextButton.icon(
+              style: TextButton.styleFrom(
                 foregroundColor: RukuninColors.error,
-                side: BorderSide(color: RukuninColors.error),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                backgroundColor: RukuninColors.error.withValues(alpha: 0.05),
+                padding: const EdgeInsets.symmetric(vertical: 18),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
               onPressed: () => _logout(context),
               icon: const Icon(Icons.logout_rounded),
               label: Text(
                 'Keluar dari Akun Admin',
-                style: RukuninFonts.pjs(fontWeight: FontWeight.bold),
+                style: RukuninFonts.pjs(fontWeight: FontWeight.w700, fontSize: 15),
               ),
             ),
           ),
@@ -280,18 +233,23 @@ class _AdminProfileScreenState extends ConsumerState<AdminProfileScreen> {
 
   Widget _buildMenuCard({required bool isDark, required List<Widget> children}) {
     return Container(
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          )
-        ],
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: isDark ? null : RukuninShadow.card,
       ),
       child: Column(children: children),
+    );
+  }
+
+  Widget _buildDivider(bool isDark) {
+    return Divider(
+      height: 1,
+      thickness: 1,
+      color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
+      indent: 64,
+      endIndent: 20,
     );
   }
 
@@ -299,25 +257,25 @@ class _AdminProfileScreenState extends ConsumerState<AdminProfileScreen> {
     BuildContext context, {
     required bool isDark,
     required IconData icon,
-    required Color iconColor,
     required String title,
     required String subtitle,
     required VoidCallback onTap,
   }) {
+    final textColor = isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary;
+
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
+                color: RukuninColors.brandGreen.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: iconColor, size: 20),
+              child: Icon(icon, color: RukuninColors.brandGreen, size: 20),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -327,23 +285,24 @@ class _AdminProfileScreenState extends ConsumerState<AdminProfileScreen> {
                   Text(
                     title,
                     style: RukuninFonts.pjs(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: textColor,
                     ),
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     subtitle,
                     style: RukuninFonts.pjs(
-                      fontSize: 12,
-                      color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: textColor,
                     ),
                   ),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right_rounded,
-                color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary, size: 20),
+            Icon(Icons.arrow_forward_ios_rounded, color: textColor, size: 16),
           ],
         ),
       ),

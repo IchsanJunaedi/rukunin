@@ -150,9 +150,9 @@ class _PaymentSettingsScreenState extends ConsumerState<PaymentSettingsScreen> {
                                 width: 200,
                                 height: 200,
                                 decoration: BoxDecoration(
-                                  color: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
+                                  color: isDark ? RukuninColors.darkBg : RukuninColors.lightCardSurface,
                                   borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
+                                  boxShadow: isDark ? null : RukuninShadow.card,
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(15),

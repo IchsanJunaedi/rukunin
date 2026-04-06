@@ -266,7 +266,6 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                 decoration: BoxDecoration(
                   color: RukuninColors.brandGreen.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.3)),
                 ),
                 child: Text(q, style: RukuninFonts.pjs(fontSize: 12, color: RukuninColors.brandGreen)),
               ),
@@ -304,7 +303,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                   filled: true,
                   fillColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
+                  border: InputBorder.none,
                 ),
               ),
             ),

@@ -214,9 +214,9 @@ class _InvoiceListBuilderState extends ConsumerState<_InvoiceListBuilder> {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+                color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
+                boxShadow: isDark ? null : RukuninShadow.card,
               ),
               child: Row(
                 children: [
@@ -433,9 +433,9 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
+          boxShadow: isDark ? null : RukuninShadow.card,
         ),
         child: Row(
           children: [
@@ -481,7 +481,6 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
       decoration: BoxDecoration(
         color: RukuninColors.warning.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: RukuninColors.warning.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -517,7 +516,6 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
             decoration: BoxDecoration(
               color: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
             ),
             child: Column(
               children: [
@@ -633,9 +631,9 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
           Center(
             child: Container(
               decoration: BoxDecoration(
-                color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+                color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2, width: 1.5),
+                boxShadow: isDark ? null : RukuninShadow.card,
               ),
               padding: const EdgeInsets.all(16),
               child: CachedNetworkImage(
@@ -698,7 +696,6 @@ class _PaymentBottomSheetState extends State<_PaymentBottomSheet> {
       decoration: BoxDecoration(
         color: RukuninColors.brandGreen.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

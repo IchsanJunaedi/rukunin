@@ -453,14 +453,8 @@ class _CommunitySettingsScreenState
         fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
         border: InputBorder.none,
         enabledBorder: InputBorder.none,
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: RukuninColors.brandGreen, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: RukuninColors.error),
-        ),
+        focusedBorder: InputBorder.none,
+        errorBorder: InputBorder.none,
       ),
     );
   }

@@ -208,9 +208,9 @@ class _ExpenseCard extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
-          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
+          boxShadow: isDark ? null : RukuninShadow.card,
         ),
         child: ListTile(
           contentPadding:

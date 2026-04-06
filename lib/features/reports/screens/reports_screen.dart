@@ -237,7 +237,6 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -272,7 +271,6 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,14 +310,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+            color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: RukuninColors.brandGreen.withValues(alpha: isDark ? 0.22 : 0.14),
-              width: 1.0,
-            ),
             boxShadow: isDark
-                ? []
+                ? null
                 : [BoxShadow(color: RukuninColors.brandGreen.withValues(alpha: 0.07), blurRadius: 14, offset: const Offset(0, 4))],
           ),
           child: Row(
@@ -390,7 +384,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         decoration: BoxDecoration(
           color: isSelected ? RukuninColors.brandGreen : (isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isSelected ? RukuninColors.brandGreen : (isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder)),
+          boxShadow: isSelected ? RukuninShadow.interactiveGlow : (isDark ? null : RukuninShadow.card),
         ),
         child: Text(
           label,
@@ -428,13 +422,9 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
-          width: 0.5,
-        ),
-        boxShadow: RukuninShadow.sm,
+        boxShadow: isDark ? null : RukuninShadow.card,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

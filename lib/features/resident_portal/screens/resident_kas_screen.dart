@@ -216,9 +216,9 @@ class _ResidentKasScreenState extends ConsumerState<ResidentKasScreen> {
                       margin: const EdgeInsets.only(bottom: 10),
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+                        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
+                        boxShadow: isDark ? null : RukuninShadow.card,
                       ),
                       child: Row(
                         children: [
@@ -294,9 +294,9 @@ class _SummaryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
+        boxShadow: isDark ? null : RukuninShadow.card,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

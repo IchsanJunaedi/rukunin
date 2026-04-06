@@ -79,7 +79,6 @@ class PendingApprovalScreen extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(100),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                   ),
                   child: Center(
                     child: Text(
