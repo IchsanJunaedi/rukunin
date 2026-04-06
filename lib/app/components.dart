@@ -89,7 +89,6 @@ class SurfaceCard extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final VoidCallback? onTap;
   final Color? accentColor;
-  final bool hasBorder;
 
   const SurfaceCard({
     super.key,
@@ -97,21 +96,18 @@ class SurfaceCard extends StatelessWidget {
     this.padding,
     this.onTap,
     this.accentColor,
-    this.hasBorder = true,
   });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final borderColor = isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder;
-    final bgColor = isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface;
+    final bgColor = isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface;
 
     Widget card = Container(
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(16),
-        border: hasBorder ? Border.all(color: borderColor, width: 0.5) : null,
-        boxShadow: RukuninShadow.sm,
+        boxShadow: isDark ? null : RukuninShadow.card,
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
@@ -881,11 +877,7 @@ class GlassCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(borderRadius),
-                border: Border.all(
-                  color: const Color(0xFF00C853).withValues(alpha: 0.22),
-                  width: 1.0,
-                ),
-                boxShadow: RukuninShadow.neonGlow,
+                boxShadow: RukuninShadow.interactiveGlow,
               ),
               child: child,
             ),
@@ -900,13 +892,9 @@ class GlassCard extends StatelessWidget {
       child: Container(
         padding: padding,
         decoration: BoxDecoration(
-          color: RukuninColors.lightSurface,
+          color: RukuninColors.lightCardSurface,
           borderRadius: BorderRadius.circular(borderRadius),
-          border: Border.all(
-            color: RukuninColors.brandGreen.withValues(alpha: 0.12),
-            width: 1.0,
-          ),
-          boxShadow: RukuninShadow.sm,
+          boxShadow: RukuninShadow.card,
         ),
         child: child,
       ),
