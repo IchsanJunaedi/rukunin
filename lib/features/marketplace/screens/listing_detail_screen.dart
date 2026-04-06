@@ -144,10 +144,7 @@ class ListingDetailScreen extends ConsumerWidget {
                   hintStyle: RukuninFonts.pjs(fontSize: 13),
                   filled: true,
                   fillColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
+                  border: InputBorder.none,
                 ),
               ),
             ],
@@ -548,9 +545,9 @@ class _MetaChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
+        boxShadow: isDark ? null : RukuninShadow.card,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -586,7 +583,6 @@ class _StatusChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: textColor.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -799,16 +795,15 @@ class _ActionButtons extends StatelessWidget {
           ),
         ),
         if (listing.isAvailable) const SizedBox(height: 10),
-        OutlinedButton.icon(
+        TextButton.icon(
           onPressed: onRate,
           icon: const Icon(Icons.star_outline_rounded, size: 18),
           label: Text(
             'Beri Ulasan Penjual',
             style: RukuninFonts.pjs(fontWeight: FontWeight.w600, fontSize: 13),
           ),
-          style: OutlinedButton.styleFrom(
+          style: TextButton.styleFrom(
             foregroundColor: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
-            side: BorderSide(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
             minimumSize: const Size(double.infinity, 44),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),

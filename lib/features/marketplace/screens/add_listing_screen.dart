@@ -354,11 +354,9 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
                         width: 100,
                         height: 100,
                         decoration: BoxDecoration(
-                          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+                          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                              color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
-                              style: BorderStyle.solid),
+                          boxShadow: isDark ? null : RukuninShadow.card,
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -406,13 +404,8 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 14, vertical: 8),
                     decoration: BoxDecoration(
-                      color: isSelected ? RukuninColors.brandGreen : (isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface),
+                      color: isSelected ? RukuninColors.brandGreen : (isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: isSelected
-                            ? RukuninColors.brandGreen
-                            : (isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
-                      ),
                     ),
                     child: Text(
                       label,
@@ -470,10 +463,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
                     color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary, fontSize: 14),
                 filled: true,
                 fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
+                border: InputBorder.none,
                 contentPadding: const EdgeInsets.all(16),
               ),
               style: RukuninFonts.pjs(
@@ -529,10 +519,7 @@ class _AddListingScreenState extends ConsumerState<AddListingScreen> {
             color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary, fontSize: 14),
         filled: true,
         fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
+        border: InputBorder.none,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),

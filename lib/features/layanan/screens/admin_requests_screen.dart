@@ -55,12 +55,8 @@ class _AdminRequestsScreenState extends ConsumerState<AdminRequestsScreen> {
               margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: RukuninColors.brandGreen.withValues(alpha: 0.1),
+                color: RukuninColors.brandGreen.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: RukuninColors.brandGreen.withValues(alpha: 0.3),
-                  width: 1,
-                ),
               ),
               child: Row(
                 children: [

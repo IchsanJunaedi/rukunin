@@ -298,7 +298,7 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
           labelText: label,
           hintText: hint,
           counterText: maxLength != null ? null : '',
-          border: const OutlineInputBorder(),
+          border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         ),
         inputFormatters: inputType == TextInputType.number ? [FilteringTextInputFormatter.digitsOnly] : null,
@@ -312,7 +312,7 @@ class _RequestLetterScreenState extends ConsumerState<RequestLetterScreen> {
       child: DropdownButtonFormField<String>(
         initialValue: value,
         isExpanded: true,
-        decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
+        decoration: InputDecoration(labelText: label, border: InputBorder.none),
         items: options.map((o) => DropdownMenuItem(value: o, child: Text(o, style: RukuninFonts.pjs(fontSize: 14)))).toList(),
         onChanged: onChanged,
       ),
@@ -346,7 +346,7 @@ class _TypeTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
         leading: Icon(_icon, color: RukuninColors.brandGreen),
         title: Text(label, style: RukuninFonts.pjs(fontSize: 14, fontWeight: FontWeight.w600)),

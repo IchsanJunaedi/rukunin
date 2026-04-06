@@ -145,15 +145,14 @@ class _VerifyRequestScreenState extends ConsumerState<VerifyRequestScreen> {
               maxLines: 3,
               decoration: const InputDecoration(
                 labelText: 'Alasan Penolakan *',
-                border: OutlineInputBorder(),
+                border: InputBorder.none,
               ),
             ),
             const SizedBox(height: 12),
-            OutlinedButton(
+            TextButton(
               onPressed: _loadingAcc || _loadingTolak ? null : _tolak,
-              style: OutlinedButton.styleFrom(
+              style: TextButton.styleFrom(
                 foregroundColor: RukuninColors.error,
-                side: const BorderSide(color: RukuninColors.error),
                 minimumSize: const Size.fromHeight(48),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),

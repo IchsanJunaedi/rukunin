@@ -417,11 +417,10 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
                     ),
                     const SizedBox(height: 14),
                     Row(children: [
-                      Expanded(child: OutlinedButton.icon(
+                      Expanded(child: TextButton.icon(
                         onPressed: () => _exportPdf(isShare: true),
-                        style: OutlinedButton.styleFrom(
+                        style: TextButton.styleFrom(
                           foregroundColor: RukuninColors.brandGreen,
-                          side: const BorderSide(color: RukuninColors.brandGreen),
                           padding: const EdgeInsets.symmetric(vertical: 13),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
@@ -466,9 +465,8 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
                     Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: RukuninColors.brandGreen.withValues(alpha: 0.07),
+                        color: RukuninColors.brandGreen.withValues(alpha: 0.09),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.25)),
                       ),
                       child: Row(children: [
                         const Icon(Icons.info_outline, color: RukuninColors.brandGreen, size: 18),
@@ -558,7 +556,7 @@ class _CreateLetterScreenState extends ConsumerState<CreateLetterScreen> {
       hintStyle: RukuninFonts.pjs(fontSize: 12, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
       filled: true,
       fillColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+      border: InputBorder.none,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
     );
   }

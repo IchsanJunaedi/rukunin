@@ -319,12 +319,11 @@ class _ComplaintCard extends StatelessWidget {
           // Update Status button
           SizedBox(
             width: double.infinity,
-            child: OutlinedButton(
-              style: OutlinedButton.styleFrom(
+            child: TextButton(
+              style: TextButton.styleFrom(
                 minimumSize: const Size(0, 40),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
-                side: BorderSide(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
                 textStyle: RukuninFonts.pjs(
                     fontSize: 13, fontWeight: FontWeight.w600),
               ),
