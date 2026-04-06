@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../app/components.dart';
@@ -120,8 +119,12 @@ class _InvoiceListBuilderState extends ConsumerState<_InvoiceListBuilder> {
         final bytes = await pickedFile.readAsBytes();
         await ref.read(uploadPaymentProofProvider).uploadProof(invoiceId, bytes, pickedFile.name);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Bukti pembayaran berhasil diunggah! Menunggu verifikasi RT.')),
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => const LottieSuccessDialog(
+              message: 'Bukti pembayaran terkirim!\nMenunggu verifikasi admin.',
+            ),
           );
         }
       }

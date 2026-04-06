@@ -1,0 +1,4 @@
+storePassword=ISI_PASSWORD_KEYSTORE_KAMU
+keyPassword=ISI_PASSWORD_KEY_KAMU
+keyAlias=rukunin
+storeFile=../rukunin-release.jks

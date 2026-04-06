@@ -933,18 +933,22 @@ class _LottieSuccessDialogState extends State<LottieSuccessDialog> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Lottie.asset(
-            'assets/lottie/payment_success.json',
+          SizedBox(
             width: 180,
-            repeat: false,
-            onLoaded: (comp) {
-              Future.delayed(
-                comp.duration + const Duration(milliseconds: 400),
-                () {
-                  if (context.mounted) Navigator.of(context).pop();
-                },
-              );
-            },
+            height: 180,
+            child: Lottie.asset(
+              'assets/lottie/payment_success.json',
+              fit: BoxFit.contain,
+              repeat: false,
+              onLoaded: (comp) {
+                Future.delayed(
+                  comp.duration + const Duration(milliseconds: 400),
+                  () {
+                    if (context.mounted) Navigator.of(context).pop();
+                  },
+                );
+              },
+            ),
           ),
           const SizedBox(height: 8),
           Text(

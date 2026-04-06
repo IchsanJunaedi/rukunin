@@ -367,7 +367,15 @@ class InvoicesScreen extends ConsumerWidget {
                  try {
                    await ref.read(invoiceListProvider.notifier).markInvoiceAsPaid(invoice['id'].toString());
                    ref.invalidate(invoiceWithResidentProvider);
-                   if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tagihan berhasil ditandai lunas!'), backgroundColor: RukuninColors.success));
+                   if (context.mounted) {
+                     showDialog(
+                       context: context,
+                       barrierDismissible: false,
+                       builder: (_) => const LottieSuccessDialog(
+                         message: 'Pembayaran terverifikasi!',
+                       ),
+                     );
+                   }
                  } catch (e) {
                    if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal: $e')));
                  }

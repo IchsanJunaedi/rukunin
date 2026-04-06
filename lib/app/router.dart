@@ -57,6 +57,30 @@ import '../features/payments/screens/payments_screen.dart';
 import '../shell/admin_shell.dart';
 import '../shell/resident_shell.dart';
 
+CustomTransitionPage<void> _buildPage({
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 280),
+    reverseTransitionDuration: const Duration(milliseconds: 220),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 0.04),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+          child: child,
+        ),
+      );
+    },
+  );
+}
+
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _adminShellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'adminShell');
 final _residentShellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'residentShell');
@@ -158,89 +182,96 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/login',
-        builder: (context, state) => const LoginScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const LoginScreen()),
       ),
       GoRoute(
         path: '/register/admin',
-        builder: (context, state) => const RegisterAdminScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const RegisterAdminScreen()),
       ),
       GoRoute(
         path: '/register/resident',
-        builder: (context, state) => const RegisterResidentScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const RegisterResidentScreen()),
       ),
       GoRoute(
         path: '/pending-approval',
-        builder: (context, state) => const PendingApprovalScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const PendingApprovalScreen()),
       ),
       GoRoute(
         path: '/forgot-password',
-        builder: (context, state) => const ForgotPasswordScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const ForgotPasswordScreen()),
       ),
       GoRoute(
         path: '/reset-password',
-        builder: (context, state) => const ResetPasswordScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const ResetPasswordScreen()),
       ),
       GoRoute(
         path: '/register/resident/step2',
-        builder: (context, state) => RegisterResidentStep2Screen(
-          step1Data: state.extra as RegisterStep1Data,
+        pageBuilder: (context, state) => _buildPage(
+          state: state,
+          child: RegisterResidentStep2Screen(step1Data: state.extra as RegisterStep1Data),
         ),
       ),
       GoRoute(
         path: '/bantuan',
-        builder: (context, state) => const HelpCenterScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const HelpCenterScreen()),
       ),
       GoRoute(
         path: '/admin/profil',
-        builder: (context, state) => const AdminProfileScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const AdminProfileScreen()),
       ),
       GoRoute(
         path: '/admin/riwayat-pembayaran',
-        builder: (context, state) => const PaymentsScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const PaymentsScreen()),
       ),
       GoRoute(
         path: '/admin/pengaturan-rek',
-        builder: (context, state) => const PaymentSettingsScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const PaymentSettingsScreen()),
       ),
       // Resident management routes — full-screen, no bottom nav
       GoRoute(
         path: '/admin/warga/detail',
-        builder: (context, state) =>
-            ResidentDetailScreen(resident: state.extra as ResidentModel),
+        pageBuilder: (context, state) => _buildPage(
+          state: state,
+          child: ResidentDetailScreen(resident: state.extra as ResidentModel),
+        ),
       ),
       GoRoute(
         path: '/admin/warga/tambah',
-        builder: (context, state) => const AddEditResidentScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const AddEditResidentScreen()),
       ),
       GoRoute(
         path: '/admin/warga/edit',
-        builder: (context, state) =>
-            AddEditResidentScreen(resident: state.extra as ResidentModel),
+        pageBuilder: (context, state) => _buildPage(
+          state: state,
+          child: AddEditResidentScreen(resident: state.extra as ResidentModel),
+        ),
       ),
 
       // Notification routes — full-screen, no bottom nav
       GoRoute(
         path: '/resident/notifikasi',
-        builder: (context, state) => const NotificationsScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const NotificationsScreen()),
       ),
       GoRoute(
         path: '/admin/notifikasi',
-        builder: (context, state) => const NotificationsScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const NotificationsScreen()),
       ),
 
       // Routes yang di-push di luar ShellRoute agar tidak bentrok bottom nav
       GoRoute(
         path: '/resident/kas',
-        builder: (context, state) => const ResidentKasScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const ResidentKasScreen()),
       ),
       GoRoute(
         path: '/resident/marketplace/tambah',
-        builder: (context, state) => const AddListingScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const AddListingScreen()),
       ),
       GoRoute(
         path: '/resident/marketplace/detail',
-        builder: (context, state) =>
-            ListingDetailScreen(listing: state.extra as MarketplaceListingModel),
+        pageBuilder: (context, state) => _buildPage(
+          state: state,
+          child: ListingDetailScreen(listing: state.extra as MarketplaceListingModel),
+        ),
       ),
 
       // Admin routes
@@ -347,59 +378,63 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Admin layanan full-screen routes (no bottom nav)
       GoRoute(
         path: '/admin/layanan-requests',
-        builder: (context, state) => const AdminRequestsScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const AdminRequestsScreen()),
       ),
       GoRoute(
         path: '/admin/layanan-verifikasi/:id',
-        builder: (context, state) {
-          final request = state.extra as LetterRequestModel;
-          return VerifyRequestScreen(request: request);
-        },
+        pageBuilder: (context, state) => _buildPage(
+          state: state,
+          child: VerifyRequestScreen(request: state.extra as LetterRequestModel),
+        ),
       ),
       GoRoute(
         path: '/admin/pengaduan',
-        builder: (context, state) => const AdminComplaintsScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const AdminComplaintsScreen()),
       ),
       GoRoute(
         path: '/admin/layanan/kontak',
-        builder: (context, state) => const AdminContactsScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const AdminContactsScreen()),
       ),
 
       // Layanan full-screen routes (no bottom nav)
       GoRoute(
         path: '/resident/dokumen-saya',
-        builder: (context, state) => const ResidentLettersScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const ResidentLettersScreen()),
       ),
       GoRoute(
         path: '/resident/layanan/permohonan',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final type = state.uri.queryParameters['type'];
-          return RequestLetterScreen(initialType: type);
+          return _buildPage(state: state, child: RequestLetterScreen(initialType: type));
         },
       ),
       GoRoute(
         path: '/resident/layanan/pengaduan-baru',
-        builder: (context, state) => const ComplaintFormScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const ComplaintFormScreen()),
       ),
 
       // Polling full-screen routes (no bottom nav)
       GoRoute(
         path: '/admin/polling',
-        builder: (context, state) => const PollsAdminScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const PollsAdminScreen()),
       ),
       GoRoute(
         path: '/admin/polling/buat',
-        builder: (context, state) => const CreatePollScreen(),
+        pageBuilder: (context, state) => _buildPage(state: state, child: const CreatePollScreen()),
       ),
       GoRoute(
         path: '/admin/polling/:id',
-        builder: (context, state) =>
-            PollDetailAdminScreen(pollId: state.pathParameters['id']!),
+        pageBuilder: (context, state) => _buildPage(
+          state: state,
+          child: PollDetailAdminScreen(pollId: state.pathParameters['id']!),
+        ),
       ),
       GoRoute(
         path: '/resident/polling/:id',
-        builder: (context, state) =>
-            PollVoteScreen(pollId: state.pathParameters['id']!),
+        pageBuilder: (context, state) => _buildPage(
+          state: state,
+          child: PollVoteScreen(pollId: state.pathParameters['id']!),
+        ),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

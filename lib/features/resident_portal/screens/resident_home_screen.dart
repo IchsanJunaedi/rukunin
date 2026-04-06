@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/tokens.dart';
@@ -20,80 +19,120 @@ class ResidentHomeScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
-      body: RefreshIndicator(
-        color: RukuninColors.brandGreen,
-        onRefresh: () async {
-          ref.invalidate(currentResidentProfileProvider);
-          ref.invalidate(residentInvoicesProvider);
-        },
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: _ResidentHeader(profileAsync: profileAsync),
+      body: Stack(
+        children: [
+          if (isDark) ...[
+            Positioned(
+              top: -80,
+              left: -60,
+              child: Container(
+                width: 260,
+                height: 260,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      RukuninColors.brandGreen.withValues(alpha: 0.08),
+                      RukuninColors.brandGreen.withValues(alpha: 0.0),
+                    ],
+                  ),
+                ),
+              ),
             ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  _TagihanHeroCard(totalPending: totalPending),
-                  const SizedBox(height: 14),
-                  _KasBanner(onTap: () => context.push('/resident/kas')),
-                  const SizedBox(height: 24),
-                  SectionHeader(
-                    title: 'Tagihan Terkini',
-                    actionLabel: 'Lihat semua',
-                    onAction: () => context.push('/resident/tagihan'),
+            Positioned(
+              top: 300,
+              right: -100,
+              child: Container(
+                width: 320,
+                height: 320,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      RukuninColors.brandTeal.withValues(alpha: 0.06),
+                      RukuninColors.brandTeal.withValues(alpha: 0.0),
+                    ],
                   ),
-                  const SizedBox(height: 12),
-                  invoicesAsync.when(
-                    loading: () => Column(
-                      children: List.generate(
-                          2, (_) => Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: InvoiceCardSkeleton(),
-                          )),
-                    ),
-                    error: (e, _) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.error_outline,
-                              size: 16, color: RukuninColors.error),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Gagal memuat tagihan',
-                            style: RukuninFonts.pjs(
-                                fontSize: 13, color: RukuninColors.error),
-                          ),
-                        ],
-                      ),
-                    ),
-                    data: (invoices) {
-                      if (invoices.isEmpty) {
-                        return const EmptyState(
-                          icon: Icons.receipt_long_outlined,
-                          title: 'Belum ada tagihan',
-                          description:
-                              'Tagihan dari pengurus akan muncul di sini.',
-                        );
-                      }
-                      return Column(
-                        children: invoices.take(3).map((inv) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: _InvoiceItem(inv: inv),
-                          );
-                        }).toList(),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 100),
-                ]),
+                ),
               ),
             ),
           ],
-        ),
+          RefreshIndicator(
+            color: RukuninColors.brandGreen,
+            onRefresh: () async {
+              ref.invalidate(currentResidentProfileProvider);
+              ref.invalidate(residentInvoicesProvider);
+            },
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: _ResidentHeader(profileAsync: profileAsync),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      _TagihanHeroCard(totalPending: totalPending),
+                      const SizedBox(height: 14),
+                      _KasBanner(onTap: () => context.push('/resident/kas')),
+                      const SizedBox(height: 24),
+                      SectionHeader(
+                        title: 'Tagihan Terkini',
+                        actionLabel: 'Lihat semua',
+                        onAction: () => context.push('/resident/tagihan'),
+                      ),
+                      const SizedBox(height: 12),
+                      invoicesAsync.when(
+                        loading: () => Column(
+                          children: List.generate(
+                              2, (_) => Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: InvoiceCardSkeleton(),
+                              )),
+                        ),
+                        error: (e, _) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.error_outline,
+                                  size: 16, color: RukuninColors.error),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Gagal memuat tagihan',
+                                style: RukuninFonts.pjs(
+                                    fontSize: 13, color: RukuninColors.error),
+                              ),
+                            ],
+                          ),
+                        ),
+                        data: (invoices) {
+                          if (invoices.isEmpty) {
+                            return const EmptyState(
+                              icon: Icons.receipt_long_outlined,
+                              title: 'Belum ada tagihan',
+                              description:
+                                  'Tagihan dari pengurus akan muncul di sini.',
+                            );
+                          }
+                          return Column(
+                            children: invoices.take(3).map((inv) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: _InvoiceItem(inv: inv),
+                              );
+                            }).toList(),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 100),
+                    ]),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -175,19 +214,8 @@ class _TagihanHeroCard extends StatelessWidget {
     final fmt = NumberFormat.currency(
         locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
 
-    return Container(
+    return GlassCard(
       padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: lunas
-              ? RukuninColors.success.withValues(alpha: 0.3)
-              : RukuninColors.warning.withValues(alpha: 0.3),
-          width: 0.5,
-        ),
-        boxShadow: RukuninShadow.sm,
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -277,61 +305,74 @@ class _KasBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final bannerContent = Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                RukuninColors.brandGreen.withValues(alpha: 0.15),
+                RukuninColors.brandTeal.withValues(alpha: 0.10),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Icon(Icons.account_balance_outlined,
+              color: RukuninColors.brandGreen, size: 20),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Transparansi Kas Lingkungan',
+                style: RukuninFonts.pjs(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? RukuninColors.darkTextPrimary
+                      : RukuninColors.lightTextPrimary,
+                ),
+              ),
+              Text(
+                'Lihat pemasukan & pengeluaran RW',
+                style: RukuninFonts.pjs(
+                  fontSize: 12,
+                  color: isDark
+                      ? RukuninColors.darkTextSecondary
+                      : RukuninColors.lightTextSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Icon(
+          Icons.arrow_forward_ios_rounded,
+          size: 14,
+          color: isDark
+              ? RukuninColors.darkTextTertiary
+              : RukuninColors.lightTextTertiary,
+        ),
+      ],
+    );
+
+    if (isDark) {
+      return GlassCard(
+        onTap: onTap,
+        borderRadius: 16,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: bannerContent,
+      );
+    }
+
     return SurfaceCard(
       onTap: onTap,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  RukuninColors.brandGreen.withValues(alpha: 0.15),
-                  RukuninColors.brandTeal.withValues(alpha: 0.10),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(Icons.account_balance_outlined,
-                color: RukuninColors.brandGreen, size: 20),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Transparansi Kas Lingkungan',
-                  style: RukuninFonts.pjs(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? RukuninColors.darkTextPrimary
-                        : RukuninColors.lightTextPrimary,
-                  ),
-                ),
-                Text(
-                  'Lihat pemasukan & pengeluaran RW',
-                  style: RukuninFonts.pjs(
-                    fontSize: 12,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? RukuninColors.darkTextSecondary
-                        : RukuninColors.lightTextSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Icon(
-            Icons.arrow_forward_ios_rounded,
-            size: 14,
-            color: Theme.of(context).brightness == Brightness.dark
-                ? RukuninColors.darkTextTertiary
-                : RukuninColors.lightTextTertiary,
-          ),
-        ],
-      ),
+      child: bannerContent,
     );
   }
 }

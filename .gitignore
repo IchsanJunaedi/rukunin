@@ -73,5 +73,12 @@ create_dummy.dart
 fix_script.dart
 lib/test_share.dart
 
+# Android keystore — JANGAN PERNAH COMMIT
+android/key.properties
+android/*.jks
+android/*.keystore
+android/app/*.jks
+android/app/*.keystore
+
 # Android build artifacts
 android/build/

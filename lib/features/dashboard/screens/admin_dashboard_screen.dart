@@ -1,8 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/tokens.dart';
@@ -75,18 +76,77 @@ class AdminDashboardScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
-      body: data.when(
-        loading: () => _buildSkeleton(context),
-        error: (e, _) => Center(
-          child: EmptyState(
-            icon: Icons.error_outline_rounded,
-            title: 'Gagal memuat data',
-            description: e.toString(),
-            ctaLabel: 'Coba lagi',
-            onCta: () => ref.invalidate(dashboardProvider),
+      body: Stack(
+        children: [
+          // ── Gradient mesh background (dark mode only) ──
+          if (isDark) ...[
+            Positioned(
+              top: -80,
+              left: -60,
+              child: Container(
+                width: 260,
+                height: 260,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      RukuninColors.brandGreen.withValues(alpha: 0.08),
+                      RukuninColors.brandGreen.withValues(alpha: 0.0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 300,
+              right: -100,
+              child: Container(
+                width: 320,
+                height: 320,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      RukuninColors.brandTeal.withValues(alpha: 0.06),
+                      RukuninColors.brandTeal.withValues(alpha: 0.0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: -40,
+              left: -40,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      RukuninColors.brandGreen.withValues(alpha: 0.05),
+                      RukuninColors.brandGreen.withValues(alpha: 0.0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+          // ── Main content ──
+          data.when(
+            loading: () => _buildSkeleton(context),
+            error: (e, _) => Center(
+              child: EmptyState(
+                icon: Icons.error_outline_rounded,
+                title: 'Gagal memuat data',
+                description: e.toString(),
+                ctaLabel: 'Coba lagi',
+                onCta: () => ref.invalidate(dashboardProvider),
+              ),
+            ),
+            data: (d) => _buildContent(context, ref, d),
           ),
-        ),
-        data: (d) => _buildContent(context, ref, d),
+        ],
       ),
     );
   }
@@ -317,107 +377,100 @@ class _KasHeroCard extends StatelessWidget {
     final pct = tagihan > 0 ? (terkumpul / tagihan).clamp(0.0, 1.0) : 0.0;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
-          width: 0.5,
-        ),
-        boxShadow: RukuninShadow.sm,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'TOTAL TERKUMPUL',
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'TOTAL TERKUMPUL',
+              style: RukuninFonts.pjs(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: isDark
+                    ? RukuninColors.darkTextTertiary
+                    : RukuninColors.lightTextTertiary,
+                letterSpacing: 0.8,
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                gradient: RukuninColors.brandGradient,
+                borderRadius: BorderRadius.circular(100),
+              ),
+              child: Text(
+                '${(pct * 100).toInt()}%',
                 style: RukuninFonts.pjs(
                   fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
-                      ? RukuninColors.darkTextTertiary
-                      : RukuninColors.lightTextTertiary,
-                  letterSpacing: 0.8,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  gradient: RukuninColors.brandGradient,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Text(
-                  '${(pct * 100).toInt()}%',
-                  style: RukuninFonts.pjs(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ShaderMask(
+          shaderCallback: (bounds) =>
+              RukuninColors.brandGradient.createShader(bounds),
+          blendMode: BlendMode.srcIn,
+          child: Text(
+            _fmt(terkumpul),
+            style: RukuninFonts.pjs(
+              fontSize: 32,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -1.0,
+              height: 1.0,
+              color: Colors.white,
+            ),
           ),
-          const SizedBox(height: 8),
-          ShaderMask(
-            shaderCallback: (bounds) =>
-                RukuninColors.brandGradient.createShader(bounds),
-            blendMode: BlendMode.srcIn,
-            child: Text(
-              _fmt(terkumpul),
+        ),
+        const SizedBox(height: 16),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(100),
+          child: LinearProgressIndicator(
+            value: pct,
+            minHeight: 6,
+            backgroundColor: isDark
+                ? RukuninColors.darkSurface2
+                : RukuninColors.lightSurface2,
+            valueColor: const AlwaysStoppedAnimation<Color>(
+                RukuninColors.brandGreen),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Target bulan ini',
               style: RukuninFonts.pjs(
-                fontSize: 32,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -1.0,
-                height: 1.0,
-                color: Colors.white,
+                fontSize: 12,
+                color: isDark
+                    ? RukuninColors.darkTextTertiary
+                    : RukuninColors.lightTextTertiary,
               ),
             ),
-          ),
-          const SizedBox(height: 16),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(100),
-            child: LinearProgressIndicator(
-              value: pct,
-              minHeight: 6,
-              backgroundColor: isDark
-                  ? RukuninColors.darkSurface2
-                  : RukuninColors.lightSurface2,
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                  RukuninColors.brandGreen),
+            Text(
+              _fmt(tagihan),
+              style: RukuninFonts.pjs(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: isDark
+                    ? RukuninColors.darkTextSecondary
+                    : RukuninColors.lightTextSecondary,
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Target bulan ini',
-                style: RukuninFonts.pjs(
-                  fontSize: 12,
-                  color: isDark
-                      ? RukuninColors.darkTextTertiary
-                      : RukuninColors.lightTextTertiary,
-                ),
-              ),
-              Text(
-                _fmt(tagihan),
-                style: RukuninFonts.pjs(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
-                      ? RukuninColors.darkTextSecondary
-                      : RukuninColors.lightTextSecondary,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+          ],
+        ),
+      ],
+    );
+
+    return GlassCard(
+      padding: const EdgeInsets.all(22),
+      child: content,
     );
   }
 }
@@ -432,82 +485,92 @@ class _CommunityCodeTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return SurfaceCard(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(9),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  RukuninColors.brandGreen.withValues(alpha: 0.15),
-                  RukuninColors.brandTeal.withValues(alpha: 0.10),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(Icons.key_rounded,
-                color: RukuninColors.brandGreen, size: 18),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'KODE KOMUNITAS',
-                  style: RukuninFonts.pjs(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: isDark
-                        ? RukuninColors.darkTextTertiary
-                        : RukuninColors.lightTextTertiary,
-                    letterSpacing: 0.8,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                ShaderMask(
-                  shaderCallback: (bounds) =>
-                      RukuninColors.brandGradient.createShader(bounds),
-                  blendMode: BlendMode.srcIn,
-                  child: Text(
-                    code,
-                    style: RukuninFonts.pjs(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 3,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+    final tileContent = Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(9),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                RukuninColors.brandGreen.withValues(alpha: 0.15),
+                RukuninColors.brandTeal.withValues(alpha: 0.10),
               ],
             ),
+            borderRadius: BorderRadius.circular(10),
           ),
-          GestureDetector(
-            onTap: () {
-              Clipboard.setData(ClipboardData(text: code));
-              HapticFeedback.lightImpact();
-              showToast(context, 'Kode $code disalin!');
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
-                gradient: RukuninColors.brandGradient,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                'Salin',
+          child: const Icon(Icons.key_rounded,
+              color: RukuninColors.brandGreen, size: 18),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'KODE KOMUNITAS',
                 style: RukuninFonts.pjs(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? RukuninColors.darkTextTertiary
+                      : RukuninColors.lightTextTertiary,
+                  letterSpacing: 0.8,
                 ),
+              ),
+              const SizedBox(height: 2),
+              ShaderMask(
+                shaderCallback: (bounds) =>
+                    RukuninColors.brandGradient.createShader(bounds),
+                blendMode: BlendMode.srcIn,
+                child: Text(
+                  code,
+                  style: RukuninFonts.pjs(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 3,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            Clipboard.setData(ClipboardData(text: code));
+            HapticFeedback.lightImpact();
+            showToast(context, 'Kode $code disalin!');
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              gradient: RukuninColors.brandGradient,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              'Salin',
+              style: RukuninFonts.pjs(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
+    );
+
+    if (isDark) {
+      return GlassCard(
+        borderRadius: 16,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: tileContent,
+      );
+    }
+
+    return SurfaceCard(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: tileContent,
     );
   }
 }
@@ -557,83 +620,105 @@ class _DashStatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: RukuninColors.brandGreen.withValues(alpha: isDark ? 0.22 : 0.14),
-          width: 1.0,
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                RukuninColors.brandGreen.withValues(alpha: isDark ? 0.20 : 0.13),
+                RukuninColors.brandTeal.withValues(alpha: isDark ? 0.12 : 0.08),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, size: 18, color: RukuninColors.brandGreen),
         ),
-        boxShadow: isDark
-            ? [
-                BoxShadow(
-                  color: RukuninColors.brandGreen.withValues(alpha: 0.05),
-                  blurRadius: 14,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : [
+        const Spacer(),
+        ShaderMask(
+          shaderCallback: (bounds) =>
+              RukuninColors.brandGradient.createShader(bounds),
+          blendMode: BlendMode.srcIn,
+          child: Text(
+            value,
+            style: RukuninFonts.pjs(
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -0.5,
+              height: 1.0,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: RukuninFonts.pjs(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: isDark
+                ? RukuninColors.darkTextPrimary
+                : RukuninColors.lightTextPrimary,
+          ),
+        ),
+      ],
+    );
+
+    if (isDark) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: RukuninColors.brandGreen.withValues(alpha: 0.22),
+                width: 1.0,
+              ),
+              boxShadow: [
                 BoxShadow(
                   color: RukuninColors.brandGreen.withValues(alpha: 0.08),
                   blurRadius: 14,
                   offset: const Offset(0, 4),
                 ),
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 4,
-                  offset: const Offset(0, 1),
-                ),
               ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  RukuninColors.brandGreen.withValues(alpha: isDark ? 0.20 : 0.13),
-                  RukuninColors.brandTeal.withValues(alpha: isDark ? 0.12 : 0.08),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, size: 18, color: RukuninColors.brandGreen),
+            child: content,
           ),
-          const Spacer(),
-          ShaderMask(
-            shaderCallback: (bounds) =>
-                RukuninColors.brandGradient.createShader(bounds),
-            blendMode: BlendMode.srcIn,
-            child: Text(
-              value,
-              style: RukuninFonts.pjs(
-                fontSize: 26,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.5,
-                height: 1.0,
-                color: Colors.white,
-              ),
-            ),
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: RukuninColors.lightSurface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: RukuninColors.brandGreen.withValues(alpha: 0.14),
+          width: 1.0,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: RukuninColors.brandGreen.withValues(alpha: 0.08),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
           ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: RukuninFonts.pjs(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: isDark
-                  ? RukuninColors.darkTextPrimary
-                  : RukuninColors.lightTextPrimary,
-            ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
+      child: content,
     );
   }
 }
@@ -714,36 +799,55 @@ class _ActionBtnState extends State<_ActionBtn>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 56, height: 56,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    RukuninColors.brandGreen.withValues(alpha: isDark ? 0.18 : 0.12),
-                    RukuninColors.brandTeal.withValues(alpha: isDark ? 0.10 : 0.07),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: BackdropFilter(
+                filter: isDark
+                    ? ImageFilter.blur(sigmaX: 8, sigmaY: 8)
+                    : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+                child: Container(
+                  width: 56, height: 56,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: isDark
+                          ? [
+                              Colors.white.withValues(alpha: 0.06),
+                              Colors.white.withValues(alpha: 0.02),
+                            ]
+                          : [
+                              RukuninColors.brandGreen.withValues(alpha: 0.12),
+                              RukuninColors.brandTeal.withValues(alpha: 0.07),
+                            ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: RukuninColors.brandGreen.withValues(alpha: isDark ? 0.22 : 0.18),
+                      width: 1.0,
+                    ),
+                    boxShadow: isDark
+                        ? [
+                            BoxShadow(
+                              color: RukuninColors.brandGreen.withValues(alpha: 0.06),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ]
+                        : [
+                            BoxShadow(
+                              color: RukuninColors.brandGreen.withValues(alpha: 0.08),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            )
+                          ],
+                  ),
+                  child: Icon(
+                    widget.icon,
+                    color: RukuninColors.brandGreen,
+                    size: 24,
+                  ),
                 ),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: RukuninColors.brandGreen.withValues(alpha: isDark ? 0.22 : 0.18),
-                  width: 1.0,
-                ),
-                boxShadow: isDark
-                    ? []
-                    : [
-                        BoxShadow(
-                          color: RukuninColors.brandGreen.withValues(alpha: 0.08),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        )
-                      ],
-              ),
-              child: Icon(
-                widget.icon,
-                color: RukuninColors.brandGreen,
-                size: 24,
               ),
             ),
             const SizedBox(height: 7),
@@ -781,58 +885,69 @@ class _ServiceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final cardContent = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                RukuninColors.brandGreen.withValues(alpha: isDark ? 0.18 : 0.12),
+                RukuninColors.brandTeal.withValues(alpha: isDark ? 0.10 : 0.07),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: RukuninColors.brandGreen.withValues(alpha: isDark ? 0.22 : 0.18),
+              width: 1.0,
+            ),
+            boxShadow: isDark
+                ? []
+                : [
+                    BoxShadow(
+                      color: RukuninColors.brandGreen.withValues(alpha: 0.08),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    )
+                  ],
+          ),
+          child: Icon(
+            icon,
+            color: RukuninColors.brandGreen,
+            size: 22,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          label,
+          style: RukuninFonts.pjs(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: isDark
+                ? RukuninColors.darkTextPrimary
+                : RukuninColors.lightTextPrimary,
+            height: 1.4,
+          ),
+        ),
+      ],
+    );
+
+    if (isDark) {
+      return GlassCard(
+        onTap: onTap,
+        borderRadius: 16,
+        padding: const EdgeInsets.all(16),
+        child: cardContent,
+      );
+    }
+
     return SurfaceCard(
       onTap: onTap,
       padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  RukuninColors.brandGreen.withValues(alpha: isDark ? 0.18 : 0.12),
-                  RukuninColors.brandTeal.withValues(alpha: isDark ? 0.10 : 0.07),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: RukuninColors.brandGreen.withValues(alpha: isDark ? 0.22 : 0.18),
-                width: 1.0,
-              ),
-              boxShadow: isDark
-                  ? []
-                  : [
-                      BoxShadow(
-                        color: RukuninColors.brandGreen.withValues(alpha: 0.08),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      )
-                    ],
-            ),
-            child: Icon(
-              icon,
-              color: RukuninColors.brandGreen,
-              size: 22,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            label,
-            style: RukuninFonts.pjs(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: isDark
-                  ? RukuninColors.darkTextPrimary
-                  : RukuninColors.lightTextPrimary,
-              height: 1.4,
-            ),
-          ),
-        ],
-      ),
+      child: cardContent,
     );
   }
 }
