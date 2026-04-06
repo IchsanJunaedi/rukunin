@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/components.dart';
@@ -200,9 +199,9 @@ class InvoicesScreen extends ConsumerWidget {
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
-            color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+            color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
+            boxShadow: isDark ? null : RukuninShadow.card,
           ),
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -230,7 +229,7 @@ class InvoicesScreen extends ConsumerWidget {
                 const SizedBox(height: 4),
                 Text(
                   currencyFormat.format(amount),
-                  style: GoogleFonts.playfairDisplay(
+                  style: RukuninFonts.pjs(
                     fontWeight: FontWeight.w800,
                     fontSize: 16,
                     color: RukuninColors.brandGreen,

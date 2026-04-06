@@ -191,9 +191,8 @@ class _AddEditBillingTypeScreenState
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: RukuninColors.brandGreen.withValues(alpha: 0.07),
+                        color: RukuninColors.brandGreen.withValues(alpha: 0.10),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.3)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,9 +238,9 @@ class _AddEditBillingTypeScreenState
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+                        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
+                        boxShadow: isDark ? null : RukuninShadow.card,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -104,11 +104,9 @@ class BillingTypesScreen extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: type.isActive ? (isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2) : (isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
-        ),
+        boxShadow: isDark ? null : RukuninShadow.card,
       ),
       child: Opacity(
         opacity: type.isActive ? 1.0 : 0.5,

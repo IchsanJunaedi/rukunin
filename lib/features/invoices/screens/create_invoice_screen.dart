@@ -202,9 +202,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: RukuninColors.brandGreen.withValues(alpha: 0.1),
+                      color: RukuninColors.brandGreen.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
@@ -252,12 +251,9 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                             child: Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: isSelected ? RukuninColors.brandGreen.withValues(alpha: 0.05) : (isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface),
+                                color: isSelected ? RukuninColors.brandGreen.withValues(alpha: 0.05) : (isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface),
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: isSelected ? RukuninColors.brandGreen : (isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
-                                  width: isSelected ? 2 : 1,
-                                ),
+                                boxShadow: isDark ? null : RukuninShadow.card,
                               ),
                               child: Row(
                                 children: [
@@ -363,12 +359,9 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       decoration: BoxDecoration(
-                        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+                        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: _selectedDueDate != null ? RukuninColors.brandGreen : (isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
-                          width: _selectedDueDate != null ? 1.5 : 1,
-                        ),
+                        boxShadow: isDark ? null : RukuninShadow.card,
                       ),
                       child: Row(
                         children: [
@@ -430,9 +423,9 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+                        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
+                        boxShadow: isDark ? null : RukuninShadow.card,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
