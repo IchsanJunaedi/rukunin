@@ -29,6 +29,10 @@ abstract class RukuninColors {
   static const Color lightBorder   = Color(0xFFE2E8F0);
   static const Color lightBorderSub= Color(0xFFF0F2F7);
 
+  // ── Borderless elevation colors ───────────────────────────────────────────
+  static const Color lightCardSurface = Color(0xFFFFFFFF); // card on lightBg (#F4F6FA)
+  static const Color lightInputFill   = Color(0xFFF0F2F5); // input fill, slightly darker
+
   // ── Dark mode backgrounds ─────────────────────────────────────────────────
   static const Color darkBg       = Color(0xFF0D1117);
   static const Color darkSurface  = Color(0xFF141B24);
@@ -146,6 +150,23 @@ abstract class RukuninShadow {
       blurRadius: 40,
       spreadRadius: 4,
     ),
+  ];
+
+  // ── Borderless shadow tokens ──────────────────────────────────────────────
+
+  /// Card in light mode — barely-there depth (3.1% opacity)
+  static const List<BoxShadow> card = [
+    BoxShadow(color: Color(0x08000000), blurRadius: 12, offset: Offset(0, 2)),
+  ];
+
+  /// Input field & interactive elements — ultra-soft (3.9% opacity)
+  static const List<BoxShadow> inputField = [
+    BoxShadow(color: Color(0x0A000000), blurRadius: 8, offset: Offset(0, 2)),
+  ];
+
+  /// Interactive card dark mode — subtle brand glow (3.1% opacity green)
+  static const List<BoxShadow> interactiveGlow = [
+    BoxShadow(color: Color(0x0800C853), blurRadius: 16, offset: Offset(0, 4)),
   ];
 }
 
