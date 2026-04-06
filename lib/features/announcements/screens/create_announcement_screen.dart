@@ -180,7 +180,9 @@ class _CreateAnnouncementScreenState
                 hintText: 'Contoh: Jadwal Kerja Bakti Minggu Ini',
                 filled: true,
                 fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               ),
               style: RukuninFonts.pjs(fontSize: 15,
@@ -200,7 +202,9 @@ class _CreateAnnouncementScreenState
                 hintText: 'Tulis isi pengumuman secara lengkap di sini...',
                 filled: true,
                 fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
                 contentPadding: const EdgeInsets.all(16),
                 alignLabelWithHint: true,
               ),
@@ -213,9 +217,9 @@ class _CreateAnnouncementScreenState
             // Toggle WA Blast
             Container(
               decoration: BoxDecoration(
-                  color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+                  color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder)),
+                  boxShadow: isDark ? null : RukuninShadow.card),
               child: SwitchListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 title: Text(
@@ -278,12 +282,9 @@ class _TypeChip extends StatelessWidget {
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? color.withValues(alpha: 0.15) : (isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface),
+          color: selected ? color.withValues(alpha: 0.15) : (isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: selected ? color : (isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
-            width: selected ? 2 : 1,
-          ),
+          boxShadow: isDark ? null : RukuninShadow.card,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

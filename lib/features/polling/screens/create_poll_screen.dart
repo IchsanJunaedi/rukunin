@@ -126,20 +126,9 @@ class _CreatePollScreenState extends ConsumerState<CreatePollScreen> {
                     color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                 filled: true,
                 fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                      color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                      color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: RukuninColors.brandGreen, width: 2),
-                ),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
               ),
               validator: (v) => (v == null || v.trim().isEmpty) ? 'Pertanyaan wajib diisi' : null,
               maxLines: 2,
@@ -161,20 +150,9 @@ class _CreatePollScreenState extends ConsumerState<CreatePollScreen> {
                     color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
                 filled: true,
                 fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                      color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                      color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: RukuninColors.brandGreen, width: 2),
-                ),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
               ),
               maxLines: 3,
             ),
@@ -188,10 +166,9 @@ class _CreatePollScreenState extends ConsumerState<CreatePollScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+                color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                    color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
+                boxShadow: isDark ? null : RukuninShadow.card,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,9 +188,8 @@ class _CreatePollScreenState extends ConsumerState<CreatePollScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           decoration: BoxDecoration(
-                            color: RukuninColors.brandGreen.withValues(alpha: 0.1),
+                            color: RukuninColors.brandGreen.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.3)),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -234,9 +210,8 @@ class _CreatePollScreenState extends ConsumerState<CreatePollScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           decoration: BoxDecoration(
-                            color: RukuninColors.error.withValues(alpha: 0.1),
+                            color: RukuninColors.error.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: RukuninColors.error.withValues(alpha: 0.3)),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -286,9 +261,8 @@ class _CreatePollScreenState extends ConsumerState<CreatePollScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: RukuninColors.error.withValues(alpha: 0.08),
+                  color: RukuninColors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: RukuninColors.error.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -352,10 +326,9 @@ class _DateTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-              color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
+          boxShadow: isDark ? null : RukuninShadow.card,
         ),
         child: Row(
           children: [

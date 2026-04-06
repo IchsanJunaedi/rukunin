@@ -244,9 +244,8 @@ class _PollVoteBodyState extends ConsumerState<_PollVoteBody> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: RukuninColors.brandGreen.withValues(alpha: 0.08),
+                color: RukuninColors.brandGreen.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
@@ -352,13 +351,10 @@ class _ResidentVoteBar extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: isMyVote
-            ? color.withValues(alpha: 0.08)
-            : (isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface),
+            ? color.withValues(alpha: 0.1)
+            : (isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: isMyVote ? color.withValues(alpha: 0.4) : (isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
-          width: isMyVote ? 1.5 : 0.5,
-        ),
+        boxShadow: isDark ? null : RukuninShadow.card,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

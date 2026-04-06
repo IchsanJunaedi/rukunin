@@ -145,12 +145,9 @@ class _PollCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder,
-            width: 0.5,
-          ),
+          boxShadow: isDark ? null : RukuninShadow.card,
         ),
         child: Row(
           children: [

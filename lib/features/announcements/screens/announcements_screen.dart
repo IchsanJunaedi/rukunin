@@ -227,7 +227,6 @@ class _ActivePollCard extends StatelessWidget {
             ],
           ),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.25)),
         ),
         child: Row(
           children: [
@@ -310,81 +309,91 @@ class _AnnouncementCard extends StatelessWidget {
     return InkWell(
       onTap: () => _showDetail(context),
       borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border(left: BorderSide(color: typeColor, width: 4)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: typeColor.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          decoration: BoxDecoration(
+            color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
+            boxShadow: isDark ? null : RukuninShadow.card,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                width: 4,
+                decoration: BoxDecoration(
+                  color: typeColor,
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(typeIcon, size: 12, color: typeColor),
-                      const SizedBox(width: 4),
+                      Row(
+                        children: [
+                          Container(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: typeColor.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(typeIcon, size: 12, color: typeColor),
+                                const SizedBox(width: 4),
+                                Text(
+                                  typeLabel,
+                                  style: RukuninFonts.pjs(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    color: typeColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            DateFormat('dd MMM yyyy', 'id').format(item.createdAt),
+                            style: RukuninFonts.pjs(
+                                fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+                          ),
+                          if (isAdmin && onDelete != null) ...[
+                            const SizedBox(width: 4),
+                            GestureDetector(
+                              onTap: onDelete,
+                              child: Icon(Icons.delete_outline_rounded,
+                                  size: 18, color: RukuninColors.error),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 10),
                       Text(
-                        typeLabel,
+                        item.title,
                         style: RukuninFonts.pjs(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: typeColor,
-                        ),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        item.body,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: RukuninFonts.pjs(
+                            fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, height: 1.5),
                       ),
                     ],
                   ),
                 ),
-                const Spacer(),
-                Text(
-                  DateFormat('dd MMM yyyy', 'id').format(item.createdAt),
-                  style: RukuninFonts.pjs(
-                      fontSize: 11, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
-                ),
-                if (isAdmin && onDelete != null) ...[
-                  const SizedBox(width: 4),
-                  GestureDetector(
-                    onTap: onDelete,
-                    child: Icon(Icons.delete_outline_rounded,
-                        size: 18, color: RukuninColors.error),
-                  ),
-                ],
-              ],
-            ),
-            const SizedBox(height: 10),
-            Text(
-              item.title,
-              style: RukuninFonts.pjs(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              item.body,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: RukuninFonts.pjs(
-                  fontSize: 13, color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary, height: 1.5),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

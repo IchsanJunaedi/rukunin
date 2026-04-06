@@ -228,10 +228,11 @@ class _PollDetailBody extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             height: 50,
-            child: OutlinedButton(
+            child: TextButton(
               onPressed: onClose,
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: RukuninColors.error),
+              style: TextButton.styleFrom(
+                foregroundColor: RukuninColors.error,
+                backgroundColor: RukuninColors.error.withValues(alpha: 0.08),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
               ),
               child: Text(
@@ -306,10 +307,9 @@ class _VoterTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-            color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder, width: 0.5),
+        boxShadow: isDark ? null : RukuninShadow.card,
       ),
       child: Row(
         children: [
