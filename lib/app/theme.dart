@@ -115,9 +115,7 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
       systemOverlayStyle: isDark
           ? SystemUiOverlayStyle.light
           : SystemUiOverlayStyle.dark,
-      shape: Border(
-        bottom: BorderSide(color: border, width: 0.5),
-      ),
+      shape: null,
     ),
 
     // ── BottomNavigation ─────────────────────────────────────────────────────
@@ -168,7 +166,6 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: border, width: 0.5),
       ),
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
@@ -177,32 +174,31 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
     // ── Input ─────────────────────────────────────────────────────────────────
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: surface2,
+      fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightInputFill,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: border, width: 0.5),
+        borderSide: BorderSide.none,
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: border, width: 0.5),
+        borderSide: BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: RukuninColors.brandGreen, width: 1.5),
+        borderSide: BorderSide.none,
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: RukuninColors.error, width: 1),
+        borderSide: BorderSide.none,
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: RukuninColors.error, width: 1.5),
+        borderSide: BorderSide.none,
       ),
       hintStyle: RukuninFonts.pjs(fontSize: 14, color: textTer),
       labelStyle: RukuninFonts.pjs(fontSize: 14, color: textSec),
-      errorStyle: RukuninFonts.pjs(
-          fontSize: 12, color: RukuninColors.error),
+      errorStyle: RukuninFonts.pjs(fontSize: 12, color: RukuninColors.error),
     ),
 
     // ── ElevatedButton ────────────────────────────────────────────────────────
@@ -230,13 +226,12 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: textPri,
-        side: BorderSide(color: border, width: 1),
+        side: BorderSide.none,
         minimumSize: const Size(double.infinity, 52),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
         ),
-        textStyle: RukuninFonts.pjs(
-            fontSize: 15, fontWeight: FontWeight.w600),
+        textStyle: RukuninFonts.pjs(fontSize: 15, fontWeight: FontWeight.w600),
       ),
     ),
 
@@ -268,7 +263,6 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
       selectedColor: RukuninColors.brandGreen.withValues(alpha: 0.15),
       labelStyle: RukuninFonts.pjs(
           fontSize: 13, fontWeight: FontWeight.w500, color: textSec),
-      side: BorderSide(color: border, width: 0.5),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
     ),
@@ -283,14 +277,14 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
           fontSize: 14, fontWeight: FontWeight.w700),
       unselectedLabelStyle: RukuninFonts.pjs(
           fontSize: 14, fontWeight: FontWeight.w500),
-      dividerColor: border,
+      dividerColor: Colors.transparent,
       overlayColor: WidgetStateProperty.all(Colors.transparent),
     ),
 
     // ── Divider ───────────────────────────────────────────────────────────────
-    dividerTheme: DividerThemeData(
-      color: border,
-      thickness: 0.5,
+    dividerTheme: const DividerThemeData(
+      color: Colors.transparent,
+      thickness: 0,
       space: 0,
     ),
 
@@ -313,7 +307,6 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: border, width: 0.5),
       ),
       titleTextStyle: RukuninFonts.pjs(
           fontSize: 17, fontWeight: FontWeight.w700, color: textPri),
@@ -358,7 +351,7 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
       }),
       checkColor: WidgetStateProperty.all(Colors.white),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-      side: BorderSide(color: border, width: 1.5),
+      side: BorderSide.none,
     ),
 
     // ── ProgressIndicator ─────────────────────────────────────────────────────
@@ -372,10 +365,10 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
     dropdownMenuTheme: DropdownMenuThemeData(
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: surface2,
+        fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightInputFill,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: border, width: 0.5),
+          borderSide: BorderSide.none,
         ),
       ),
     ),
@@ -400,7 +393,6 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: border, width: 0.5),
       ),
       textStyle: RukuninFonts.pjs(fontSize: 14, color: textPri),
     ),
