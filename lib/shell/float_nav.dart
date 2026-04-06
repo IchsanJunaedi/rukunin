@@ -79,8 +79,7 @@ class _FloatingNavBarState extends State<FloatingNavBar>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bottomPad = MediaQuery.of(context).padding.bottom;
 
-    final bg = isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface;
-    final borderColor = isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder;
+    final bg = isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(20, 0, 20, bottomPad + 14),
@@ -89,7 +88,6 @@ class _FloatingNavBarState extends State<FloatingNavBar>
         decoration: BoxDecoration(
           color: bg,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: borderColor, width: 0.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: isDark ? 0.30 : 0.08),

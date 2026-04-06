@@ -87,9 +87,8 @@ class ResidentDetailScreen extends ConsumerWidget {
                   return Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: RukuninColors.success.withValues(alpha: 0.1),
+                      color: RukuninColors.success.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: RukuninColors.success.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
@@ -107,9 +106,8 @@ class ResidentDetailScreen extends ConsumerWidget {
                 return Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: RukuninColors.error.withValues(alpha: 0.06),
+                    color: RukuninColors.error.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: RukuninColors.error.withValues(alpha: 0.3)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,9 +182,9 @@ class ResidentDetailScreen extends ConsumerWidget {
                     return Container(
                       margin: const EdgeInsets.only(bottom: 12),
                       decoration: BoxDecoration(
-                        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+                        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: isDark ? RukuninColors.darkBorder : RukuninColors.lightBorder),
+                        boxShadow: isDark ? null : RukuninShadow.card,
                       ),
                       child: ListTile(
                         title: Text('${inv.billingTypeName} - ${inv.month}/${inv.year}',

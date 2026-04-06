@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
@@ -37,76 +36,47 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
 
     return Scaffold(
       backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
+      appBar: AppBar(
+        title: const Text('Data Warga'),
+        actions: [
+          IconButton(
+            onPressed: () => _importCsv(context),
+            icon: const Icon(Icons.file_upload_outlined),
+            tooltip: 'Import CSV / Excel',
+          ),
+        ],
+      ),
       body: CustomScrollView(
         slivers: [
-          // Header
+          // Search bar
           SliverToBoxAdapter(
-            child: Container(
-              color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).padding.top + 16,
-                left: 24,
-                right: 24,
-                bottom: 24,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Data Warga',
-                        style: GoogleFonts.playfairDisplay(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => _importCsv(context),
-                        icon: const Icon(
-                          Icons.file_upload_outlined,
-                          color: Colors.white,
-                        ),
-                        tooltip: 'Import CSV / Excel',
-                      ),
-                    ],
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              child: TextField(
+                controller: _searchController,
+                onChanged: (v) => setState(() => _query = v.toLowerCase()),
+                style: RukuninFonts.pjs(fontSize: 14),
+                decoration: InputDecoration(
+                  hintText: 'Cari nama atau nomor unit...',
+                  hintStyle: RukuninFonts.pjs(
+                    color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
+                    fontSize: 14,
                   ),
-                  const SizedBox(height: 16),
-                  // Search bar
-                  TextField(
-                    controller: _searchController,
-                    onChanged: (v) => setState(() => _query = v.toLowerCase()),
-                    style: RukuninFonts.pjs(
-                      color: Colors.white,
-                      fontSize: 14,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: 'Cari nama atau nomor unit...',
-                      hintStyle: RukuninFonts.pjs(
-                        color: Colors.white38,
-                        fontSize: 14,
-                      ),
-                      prefixIcon: const Icon(
-                        Icons.search_rounded,
-                        color: Colors.white38,
-                        size: 20,
-                      ),
-                      filled: true,
-                      fillColor: Colors.white.withValues(alpha: 0.08),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
+                  prefixIcon: Icon(
+                    Icons.search_rounded,
+                    color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary,
+                    size: 20,
                   ),
-                ],
+                  filled: true,
+                  fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                ),
               ),
             ),
           ),
@@ -487,7 +457,6 @@ class _PendingBanner extends ConsumerWidget {
             decoration: BoxDecoration(
               color: RukuninColors.brandGreen.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.4)),
             ),
             child: Row(
               children: [
@@ -693,14 +662,13 @@ void _showPendingDetailSheet(
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
+                  child: TextButton(
                     onPressed: () {
                       Navigator.of(ctx).pop();
                       onReject();
                     },
-                    style: OutlinedButton.styleFrom(
+                    style: TextButton.styleFrom(
                       foregroundColor: RukuninColors.error,
-                      side: const BorderSide(color: RukuninColors.error),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
@@ -793,9 +761,9 @@ class _PendingCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
+        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
+        boxShadow: isDark ? null : RukuninShadow.card,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -846,11 +814,10 @@ class _PendingCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: OutlinedButton(
+                child: TextButton(
                   onPressed: onReject,
-                  style: OutlinedButton.styleFrom(
+                  style: TextButton.styleFrom(
                     foregroundColor: RukuninColors.error,
-                    side: const BorderSide(color: RukuninColors.error),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),

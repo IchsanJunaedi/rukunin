@@ -390,7 +390,7 @@ class _KasHeroCard extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 color: isDark
                     ? RukuninColors.darkTextTertiary
-                    : RukuninColors.lightTextTertiary,
+                    : RukuninColors.lightTextPrimary,
                 letterSpacing: 0.8,
               ),
             ),
@@ -450,7 +450,7 @@ class _KasHeroCard extends StatelessWidget {
                 fontSize: 12,
                 color: isDark
                     ? RukuninColors.darkTextTertiary
-                    : RukuninColors.lightTextTertiary,
+                    : RukuninColors.lightTextPrimary,
               ),
             ),
             Text(
@@ -460,7 +460,7 @@ class _KasHeroCard extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 color: isDark
                     ? RukuninColors.darkTextSecondary
-                    : RukuninColors.lightTextSecondary,
+                    : RukuninColors.lightTextPrimary,
               ),
             ),
           ],
@@ -513,7 +513,7 @@ class _CommunityCodeTile extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                   color: isDark
                       ? RukuninColors.darkTextTertiary
-                      : RukuninColors.lightTextTertiary,
+                      : RukuninColors.lightTextPrimary,
                   letterSpacing: 0.8,
                 ),
               ),
@@ -678,10 +678,6 @@ class _DashStatCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(
-                color: RukuninColors.brandGreen.withValues(alpha: 0.22),
-                width: 1.0,
-              ),
               boxShadow: [
                 BoxShadow(
                   color: RukuninColors.brandGreen.withValues(alpha: 0.08),
@@ -699,12 +695,8 @@ class _DashStatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: RukuninColors.lightSurface,
+        color: RukuninColors.lightCardSurface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: RukuninColors.brandGreen.withValues(alpha: 0.14),
-          width: 1.0,
-        ),
         boxShadow: [
           BoxShadow(
             color: RukuninColors.brandGreen.withValues(alpha: 0.08),
@@ -822,10 +814,6 @@ class _ActionBtnState extends State<_ActionBtn>
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: RukuninColors.brandGreen.withValues(alpha: isDark ? 0.22 : 0.18),
-                      width: 1.0,
-                    ),
                     boxShadow: isDark
                         ? [
                             BoxShadow(
@@ -900,10 +888,6 @@ class _ServiceCard extends StatelessWidget {
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: RukuninColors.brandGreen.withValues(alpha: isDark ? 0.22 : 0.18),
-              width: 1.0,
-            ),
             boxShadow: isDark
                 ? []
                 : [

@@ -479,9 +479,9 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
             _sectionLabel('🛺 Kalkulator Tagihan Ronda'),
             Container(
               decoration: BoxDecoration(
-                color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+                color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2),
+                boxShadow: isDark ? null : RukuninShadow.card,
               ),
               child: Column(
                 children: [
@@ -518,9 +518,8 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: RukuninColors.success.withValues(alpha: 0.08),
+                color: RukuninColors.success.withValues(alpha: 0.10),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: RukuninColors.success.withValues(alpha: 0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -719,17 +718,15 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                   TextFormField(
                     controller: fmName,
                     style: RukuninFonts.pjs(fontSize: 14),
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Nama Lengkap *',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
                     initialValue: fmRel,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Hubungan Keluarga *',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     items: ['Istri', 'Suami', 'Anak', 'Orang Tua', 'Lainnya']
                         .map((e) => DropdownMenuItem(value: e, child: Text(e, style: RukuninFonts.pjs(fontSize: 14))))
@@ -741,9 +738,8 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
                     controller: fmNik,
                     keyboardType: TextInputType.number,
                     style: RukuninFonts.pjs(fontSize: 14),
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'NIK (Opsional)',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -808,14 +804,9 @@ class _AddEditResidentScreenState extends ConsumerState<AddEditResidentScreen> {
             fillColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
             border: InputBorder.none,
             enabledBorder: InputBorder.none,
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: RukuninColors.brandGreen, width: 2),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: RukuninColors.error),
-            ),
+            focusedBorder: InputBorder.none,
+            errorBorder: InputBorder.none,
+            focusedErrorBorder: InputBorder.none,
           ),
         );
       },
