@@ -155,37 +155,18 @@ class StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final (bg, text) = switch (status) {
-      BadgeStatus.success => (
-          isDark ? RukuninColors.successBgDark : RukuninColors.successBg,
-          isDark ? RukuninColors.successTextDark : RukuninColors.successText,
-        ),
-      BadgeStatus.warning => (
-          isDark ? RukuninColors.warningBgDark : RukuninColors.warningBg,
-          isDark ? RukuninColors.warningTextDark : RukuninColors.warningText,
-        ),
-      BadgeStatus.error => (
-          isDark ? RukuninColors.errorBgDark : RukuninColors.errorBg,
-          isDark ? RukuninColors.errorTextDark : RukuninColors.errorText,
-        ),
-      BadgeStatus.info => (
-          isDark ? RukuninColors.infoBgDark : RukuninColors.infoBg,
-          isDark ? RukuninColors.infoTextDark : RukuninColors.infoText,
-        ),
-      BadgeStatus.neutral => (
-          isDark ? RukuninColors.darkSurface2 : RukuninColors.lightSurface2,
-          isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
-        ),
+    final text = switch (status) {
+      BadgeStatus.success => isDark ? RukuninColors.successTextDark : RukuninColors.successText,
+      BadgeStatus.warning => isDark ? RukuninColors.warningTextDark : RukuninColors.warningText,
+      BadgeStatus.error => isDark ? RukuninColors.errorTextDark : RukuninColors.errorText,
+      BadgeStatus.info => isDark ? RukuninColors.infoTextDark : RukuninColors.infoText,
+      BadgeStatus.neutral => isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
     };
 
     return Container(
       padding: EdgeInsets.symmetric(
           horizontal: small ? 8 : 10,
           vertical: small ? 2 : 4),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(100),
-      ),
       child: Text(
         label,
         style: RukuninFonts.pjs(

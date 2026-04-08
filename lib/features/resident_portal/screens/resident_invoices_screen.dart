@@ -220,12 +220,8 @@ class _InvoiceListBuilderState extends ConsumerState<_InvoiceListBuilder> {
               ),
               child: Row(
                 children: [
-                  Container(
+                  Padding(
                     padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: statusColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                     child: Icon(Icons.receipt_rounded, color: statusColor, size: 28),
                   ),
                   const SizedBox(width: 16),
@@ -250,12 +246,8 @@ class _InvoiceListBuilderState extends ConsumerState<_InvoiceListBuilder> {
                           ),
                         ),
                         const SizedBox(height: 6),
-                        Container(
+                        Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: statusColor.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
                           child: Text(
                             statusText,
                             style: RukuninFonts.pjs(

@@ -487,20 +487,8 @@ class _CommunityCodeTile extends StatelessWidget {
 
     final tileContent = Row(
       children: [
-        Container(
-          padding: const EdgeInsets.all(9),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                RukuninColors.brandGreen.withValues(alpha: 0.15),
-                RukuninColors.brandTeal.withValues(alpha: 0.10),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: const Icon(Icons.key_rounded,
-              color: RukuninColors.brandGreen, size: 18),
-        ),
+        const Icon(Icons.key_rounded,
+            color: RukuninColors.brandGreen, size: 24),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -623,21 +611,7 @@ class _DashStatCard extends StatelessWidget {
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                RukuninColors.brandGreen.withValues(alpha: isDark ? 0.20 : 0.13),
-                RukuninColors.brandTeal.withValues(alpha: isDark ? 0.12 : 0.08),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(icon, size: 18, color: RukuninColors.brandGreen),
-        ),
+        Icon(icon, size: 26, color: RukuninColors.brandGreen),
         const Spacer(),
         ShaderMask(
           shaderCallback: (bounds) =>
@@ -791,51 +765,13 @@ class _ActionBtnState extends State<_ActionBtn>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: BackdropFilter(
-                filter: isDark
-                    ? ImageFilter.blur(sigmaX: 8, sigmaY: 8)
-                    : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
-                child: Container(
-                  width: 56, height: 56,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: isDark
-                          ? [
-                              Colors.white.withValues(alpha: 0.06),
-                              Colors.white.withValues(alpha: 0.02),
-                            ]
-                          : [
-                              RukuninColors.brandGreen.withValues(alpha: 0.12),
-                              RukuninColors.brandTeal.withValues(alpha: 0.07),
-                            ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: isDark
-                        ? [
-                            BoxShadow(
-                              color: RukuninColors.brandGreen.withValues(alpha: 0.06),
-                              blurRadius: 10,
-                              offset: const Offset(0, 2),
-                            ),
-                          ]
-                        : [
-                            BoxShadow(
-                              color: RukuninColors.brandGreen.withValues(alpha: 0.08),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            )
-                          ],
-                  ),
-                  child: Icon(
-                    widget.icon,
-                    color: RukuninColors.brandGreen,
-                    size: 24,
-                  ),
-                ),
+            Container(
+              width: 56, height: 56,
+              alignment: Alignment.center,
+              child: Icon(
+                widget.icon,
+                color: RukuninColors.brandGreen,
+                size: 32,
               ),
             ),
             const SizedBox(height: 7),
@@ -876,33 +812,10 @@ class _ServiceCard extends StatelessWidget {
     final cardContent = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                RukuninColors.brandGreen.withValues(alpha: isDark ? 0.18 : 0.12),
-                RukuninColors.brandTeal.withValues(alpha: isDark ? 0.10 : 0.07),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: isDark
-                ? []
-                : [
-                    BoxShadow(
-                      color: RukuninColors.brandGreen.withValues(alpha: 0.08),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    )
-                  ],
-          ),
-          child: Icon(
-            icon,
-            color: RukuninColors.brandGreen,
-            size: 22,
-          ),
+        Icon(
+          icon,
+          color: RukuninColors.brandGreen,
+          size: 28,
         ),
         const SizedBox(height: 12),
         Text(

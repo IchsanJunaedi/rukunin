@@ -142,14 +142,10 @@ class _LetterCard extends StatelessWidget {
           padding: const EdgeInsets.all(14),
           child: Row(
             children: [
-              Container(
+              const SizedBox(
                 width: 46,
                 height: 46,
-                decoration: BoxDecoration(
-                  color: RukuninColors.brandGreen.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(Icons.description, color: RukuninColors.brandGreen, size: 22),
+                child: Icon(Icons.description, color: RukuninColors.brandGreen, size: 28),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -176,12 +172,8 @@ class _LetterCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Container(
+                  Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: statusColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
                     child: Text(statusLabel, style: RukuninFonts.pjs(fontSize: 10, color: statusColor, fontWeight: FontWeight.w700)),
                   ),
                   const SizedBox(height: 4),

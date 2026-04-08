@@ -25,7 +25,7 @@ class ExpensesScreen extends ConsumerWidget {
       backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
         backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-        foregroundColor: Colors.white,
+        foregroundColor: isDark ? Colors.white : RukuninColors.lightTextPrimary,
         title: Text(
           'Pengeluaran Kas',
           style: RukuninFonts.pjs(
@@ -59,7 +59,8 @@ class ExpensesScreen extends ConsumerWidget {
                 Text(
                   'Total Pengeluaran $monthLabel',
                   style: RukuninFonts.pjs(
-                      fontSize: 13, color: Colors.white70),
+                      fontSize: 13,
+                      color: isDark ? Colors.white70 : RukuninColors.lightTextPrimary),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -67,7 +68,7 @@ class ExpensesScreen extends ConsumerWidget {
                   style: RukuninFonts.pjs(
                       fontSize: 32,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white),
+                      color: isDark ? Colors.white : RukuninColors.lightTextPrimary),
                 ),
               ],
             ),

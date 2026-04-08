@@ -248,34 +248,25 @@ class InvoicesScreen extends ConsumerWidget {
   }
 
   Widget _buildStatusBadge(String status, bool isLate) {
-    Color bgColor;
     Color textColor;
     String label;
 
     if (status == 'paid') {
-      bgColor = RukuninColors.success.withValues(alpha: 0.1);
       textColor = RukuninColors.success;
       label = 'Lunas';
     } else if (status == 'awaiting_verification') {
-      bgColor = Colors.blue.withValues(alpha: 0.1);
       textColor = Colors.blue;
       label = 'Menunggu Verif';
     } else if (isLate) {
-      bgColor = RukuninColors.error.withValues(alpha: 0.1);
       textColor = RukuninColors.error;
       label = 'Terlambat';
     } else {
-      bgColor = RukuninColors.warning.withValues(alpha: 0.1);
       textColor = RukuninColors.warning;
       label = 'Belum Lunas';
     }
 
-    return Container(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(8),
-      ),
       child: Text(
         label,
         style: RukuninFonts.pjs(

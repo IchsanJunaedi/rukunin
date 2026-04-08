@@ -309,20 +309,8 @@ class _KasBanner extends StatelessWidget {
 
     final bannerContent = Row(
       children: [
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                RukuninColors.brandGreen.withValues(alpha: 0.15),
-                RukuninColors.brandTeal.withValues(alpha: 0.10),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(Icons.account_balance_outlined,
-              color: RukuninColors.brandGreen, size: 20),
-        ),
+        const Icon(Icons.account_balance_outlined,
+            color: RukuninColors.brandGreen, size: 28),
         const SizedBox(width: 14),
         Expanded(
           child: Column(

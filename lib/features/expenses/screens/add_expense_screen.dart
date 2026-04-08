@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -85,7 +86,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
       backgroundColor: isDark ? RukuninColors.darkBg : RukuninColors.lightBg,
       appBar: AppBar(
         backgroundColor: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-        foregroundColor: Colors.white,
+        foregroundColor: isDark ? Colors.white : RukuninColors.lightTextPrimary,
         title: Text(
           'Catat Pengeluaran',
           style: RukuninFonts.pjs(
@@ -105,11 +106,12 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                     _label(context, 'Nominal (Rp)'),
                     _card(context, TextFormField(
                       controller: _amountCtrl,
-                      keyboardType: TextInputType.number,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: false),
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       style: RukuninFonts.pjs(
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
-                          color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface),
+                          color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                       decoration: InputDecoration(
                         hintText: '0',
                         hintStyle: RukuninFonts.pjs(
@@ -120,7 +122,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                         prefixStyle: RukuninFonts.pjs(
                             fontSize: 22,
                             fontWeight: FontWeight.w800,
-                            color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+                            color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 20),
@@ -244,7 +246,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
         style: RukuninFonts.pjs(
           fontSize: 12,
           fontWeight: FontWeight.w700,
-          color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
+          color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextPrimary,
           letterSpacing: 0.5,
         ),
       ),

@@ -103,57 +103,19 @@ class _FloatingNavBarState extends State<FloatingNavBar>
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final totalW = constraints.maxWidth;
-              final itemW = totalW / widget.tabs.length;
-              // Indicator: 8px inset on each side of the item slot
-              const inset = 7.0;
-              final indicatorW = itemW - (inset * 2);
-
-              return AnimatedBuilder(
-                animation: _slideAnim,
-                builder: (context, _) {
-                  final left = _slideAnim.value * itemW + inset;
-
-                  return Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // ── Sliding tinted capsule ───────────────
-                      Positioned(
-                        left: left,
-                        top: 8,
-                        width: indicatorW,
-                        height: 46,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: RukuninColors.brandGreen
-                                .withValues(alpha: isDark ? 0.15 : 0.09),
-                            borderRadius: BorderRadius.circular(13),
-                          ),
-                        ),
-                      ),
-
-                      // ── Icons row ────────────────────────────
-                      Row(
-                        children: List.generate(widget.tabs.length, (i) {
-                          return Expanded(
-                            child: _NavIcon(
-                              tab: widget.tabs[i],
-                              isActive: widget.current == i,
-                              onTap: () {
-                                HapticFeedback.selectionClick();
-                                widget.onTap(i);
-                              },
-                            ),
-                          );
-                        }),
-                      ),
-                    ],
-                  );
-                },
+          child: Row(
+            children: List.generate(widget.tabs.length, (i) {
+              return Expanded(
+                child: _NavIcon(
+                  tab: widget.tabs[i],
+                  isActive: widget.current == i,
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    widget.onTap(i);
+                  },
+                ),
               );
-            },
+            }),
           ),
         ),
       ),
