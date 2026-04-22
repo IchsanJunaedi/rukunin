@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../app/tokens.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/auth_text_field.dart';
+import '../widgets/auth_button.dart';
 
 const _kYellow = Color(0xFFFFC107);
 const _kBlack = Color(0xFF0D0D0D);
@@ -86,67 +88,61 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen>
       backgroundColor: _kYellow,
       body: FadeTransition(
         opacity: _fadeAnim,
-        child: Column(
-          children: [
+        child: CustomScrollView(
+          slivers: [
             // === TOP SECTION ===
-            Expanded(
-              flex: 4,
-              child: SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(28, 32, 28, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Logo pill
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: _kBlack,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.home_work_rounded,
-                                color: _kYellow, size: 16),
-                            const SizedBox(width: 6),
-                            Text(
-                              'Rukunin',
-                              style: RukuninFonts.pjs(
-                                color: _kYellow,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                              ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(28, 32, 28, 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Logo pill
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: _kBlack,
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.home_work_rounded,
+                              color: _kYellow, size: 16),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Rukunin',
+                            style: RukuninFonts.pjs(
+                              color: _kYellow,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
+                    ),
 
-                      const Spacer(),
+                    const SizedBox(height: 32),
 
-                      Text(
-                        _success ? 'Password\nBerhasil\nDiubah!' : 'Buat\nPassword\nBaru.',
-                        style: GoogleFonts.playfairDisplay(
-                          fontSize: size.width * 0.135,
-                          fontWeight: FontWeight.w900,
-                          color: _kBlack,
-                          height: 1.0,
-                          letterSpacing: -2,
-                        ),
+                    Text(
+                      _success ? 'Password\nBerhasil\nDiubah!' : 'Buat\nPassword\nBaru.',
+                      style: GoogleFonts.playfairDisplay(
+                        fontSize: (size.width * 0.135).clamp(32.0, 48.0),
+                        fontWeight: FontWeight.w900,
+                        color: _kBlack,
+                        height: 1.0,
+                        letterSpacing: -2,
                       ),
-
-                      const SizedBox(height: 20),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
 
             // === BOTTOM SECTION ===
-            Expanded(
-              flex: 6,
+            SliverFillRemaining(
+              hasScrollBody: false,
               child: Container(
                 width: double.infinity,
                 decoration: const BoxDecoration(
@@ -181,7 +177,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen>
           const SizedBox(height: 24),
 
           // Password baru
-          _DarkTextField(
+          AuthTextField(
             controller: _passwordController,
             hint: 'Password baru',
             icon: Icons.lock_outline_rounded,
@@ -208,13 +204,13 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen>
           const SizedBox(height: 12),
 
           // Konfirmasi password
-          _DarkTextField(
+          AuthTextField(
             controller: _confirmController,
             hint: 'Konfirmasi password',
             icon: Icons.lock_outline_rounded,
             obscureText: _obscureConfirm,
             textInputAction: TextInputAction.done,
-            onFieldSubmitted: (_) => _handleSubmit(),
+            onSubmitted: (_) => _handleSubmit(),
             suffixIcon: IconButton(
               icon: Icon(
                 _obscureConfirm
@@ -234,37 +230,12 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen>
           ),
 
           const Spacer(),
+          const SizedBox(height: 32),
 
-          GestureDetector(
-            onTap: isLoading ? null : _handleSubmit,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 150),
-              height: 56,
-              decoration: BoxDecoration(
-                color:
-                    isLoading ? _kYellow.withValues(alpha: 0.6) : _kYellow,
-                borderRadius: BorderRadius.circular(100),
-              ),
-              child: Center(
-                child: isLoading
-                    ? const SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          color: _kBlack,
-                        ),
-                      )
-                    : Text(
-                        'Simpan Password →',
-                        style: RukuninFonts.pjs(
-                          color: _kBlack,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-              ),
-            ),
+          AuthButton(
+            label: 'Simpan Password →',
+            isLoading: isLoading,
+            onTap: _handleSubmit,
           ),
         ],
       ),
@@ -299,96 +270,14 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen>
 
         const Spacer(),
 
-        GestureDetector(
+        AuthButton(
+          label: 'Masuk Sekarang →',
+          isLoading: false,
           onTap: () => context.go('/login'),
-          child: Container(
-            height: 56,
-            decoration: BoxDecoration(
-              color: _kYellow,
-              borderRadius: BorderRadius.circular(100),
-            ),
-            child: Center(
-              child: Text(
-                'Masuk Sekarang →',
-                style: RukuninFonts.pjs(
-                  color: _kBlack,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ),
-          ),
         ),
       ],
     );
   }
 }
 
-class _DarkTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String hint;
-  final IconData icon;
-  final bool obscureText;
-  final TextInputAction? textInputAction;
-  final String? Function(String?)? validator;
-  final Widget? suffixIcon;
-  final void Function(String)? onFieldSubmitted;
 
-  const _DarkTextField({
-    required this.controller,
-    required this.hint,
-    required this.icon,
-    this.obscureText = false,
-    this.textInputAction,
-    this.validator,
-    this.suffixIcon,
-    this.onFieldSubmitted,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      obscureText: obscureText,
-      textInputAction: textInputAction,
-      validator: validator,
-      onFieldSubmitted: onFieldSubmitted,
-      style: RukuninFonts.pjs(
-        color: _kWhite,
-        fontSize: 15,
-        fontWeight: FontWeight.w500,
-      ),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: RukuninFonts.pjs(
-          color: _kWhite.withValues(alpha: 0.3),
-          fontSize: 14,
-        ),
-        prefixIcon:
-            Icon(icon, color: _kWhite.withValues(alpha: 0.35), size: 18),
-        suffixIcon: suffixIcon,
-        filled: true,
-        fillColor: _kWhite.withValues(alpha: 0.06),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        errorStyle: const TextStyle(color: Color(0xFFFF6B6B)),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      ),
-    );
-  }
-}

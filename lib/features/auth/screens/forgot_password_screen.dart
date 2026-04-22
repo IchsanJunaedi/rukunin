@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../app/tokens.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/auth_text_field.dart';
+import '../widgets/auth_button.dart';
 
 const _kYellow = Color(0xFFFFC107);
 const _kBlack = Color(0xFF0D0D0D);
@@ -80,58 +82,52 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen>
       backgroundColor: _kYellow,
       body: FadeTransition(
         opacity: _fadeAnim,
-        child: Column(
-          children: [
+        child: CustomScrollView(
+          slivers: [
             // === TOP SECTION ===
-            Expanded(
-              flex: 4,
-              child: SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(28, 32, 28, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Back button
-                      GestureDetector(
-                        onTap: () => context.pop(),
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: _kBlack.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(
-                            Icons.arrow_back_rounded,
-                            color: _kBlack,
-                            size: 20,
-                          ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(28, 32, 28, 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Back button
+                    GestureDetector(
+                      onTap: () => context.pop(),
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: _kBlack.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ),
-
-                      const Spacer(),
-
-                      Text(
-                        _emailSent ? 'Cek\nEmailmu.' : 'Lupa\nPassword?',
-                        style: GoogleFonts.playfairDisplay(
-                          fontSize: size.width * 0.14,
-                          fontWeight: FontWeight.w900,
+                        child: const Icon(
+                          Icons.arrow_back_rounded,
                           color: _kBlack,
-                          height: 1.0,
-                          letterSpacing: -2,
+                          size: 20,
                         ),
                       ),
+                    ),
 
-                      const SizedBox(height: 20),
-                    ],
-                  ),
+                    const SizedBox(height: 32),
+
+                    Text(
+                      _emailSent ? 'Cek\nEmailmu.' : 'Lupa\nPassword?',
+                      style: GoogleFonts.playfairDisplay(
+                        fontSize: (size.width * 0.14).clamp(32.0, 48.0),
+                        fontWeight: FontWeight.w900,
+                        color: _kBlack,
+                        height: 1.0,
+                        letterSpacing: -2,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
 
             // === BOTTOM SECTION — Form / Confirmation ===
-            Expanded(
-              flex: 6,
+            SliverFillRemaining(
+              hasScrollBody: false,
               child: Container(
                 width: double.infinity,
                 decoration: const BoxDecoration(
@@ -165,13 +161,13 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen>
 
           const SizedBox(height: 24),
 
-          _DarkTextField(
+          AuthTextField(
             controller: _emailController,
             hint: 'Email',
             icon: Icons.alternate_email_rounded,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.done,
-            onFieldSubmitted: (_) => _handleSubmit(),
+            onSubmitted: (_) => _handleSubmit(),
             validator: (v) {
               if (v == null || v.isEmpty) return 'Email wajib diisi';
               if (!v.contains('@')) return 'Format email tidak valid';
@@ -180,36 +176,12 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen>
           ),
 
           const Spacer(),
+          const SizedBox(height: 32),
 
-          GestureDetector(
-            onTap: isLoading ? null : _handleSubmit,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 150),
-              height: 56,
-              decoration: BoxDecoration(
-                color: isLoading ? _kYellow.withValues(alpha: 0.6) : _kYellow,
-                borderRadius: BorderRadius.circular(100),
-              ),
-              child: Center(
-                child: isLoading
-                    ? const SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          color: _kBlack,
-                        ),
-                      )
-                    : Text(
-                        'Kirim Link Reset →',
-                        style: RukuninFonts.pjs(
-                          color: _kBlack,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-              ),
-            ),
+          AuthButton(
+            label: 'Kirim Link Reset →',
+            isLoading: isLoading,
+            onTap: _handleSubmit,
           ),
         ],
       ),
@@ -268,25 +240,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen>
         const Spacer(),
 
         // Kembali ke login
-        GestureDetector(
+        AuthButton(
+          label: 'Kembali ke Login',
+          isLoading: false,
           onTap: () => context.go('/login'),
-          child: Container(
-            height: 56,
-            decoration: BoxDecoration(
-              color: _kYellow,
-              borderRadius: BorderRadius.circular(100),
-            ),
-            child: Center(
-              child: Text(
-                'Kembali ke Login',
-                style: RukuninFonts.pjs(
-                  color: _kBlack,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ),
-          ),
         ),
 
         const SizedBox(height: 16),
@@ -312,68 +269,4 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen>
   }
 }
 
-class _DarkTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String hint;
-  final IconData icon;
-  final TextInputType? keyboardType;
-  final TextInputAction? textInputAction;
-  final String? Function(String?)? validator;
-  final void Function(String)? onFieldSubmitted;
 
-  const _DarkTextField({
-    required this.controller,
-    required this.hint,
-    required this.icon,
-    this.keyboardType,
-    this.textInputAction,
-    this.validator,
-    this.onFieldSubmitted,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      textInputAction: textInputAction,
-      validator: validator,
-      onFieldSubmitted: onFieldSubmitted,
-      style: RukuninFonts.pjs(
-        color: _kWhite,
-        fontSize: 15,
-        fontWeight: FontWeight.w500,
-      ),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: RukuninFonts.pjs(
-          color: _kWhite.withValues(alpha: 0.3),
-          fontSize: 14,
-        ),
-        prefixIcon:
-            Icon(icon, color: _kWhite.withValues(alpha: 0.35), size: 18),
-        filled: true,
-        fillColor: _kWhite.withValues(alpha: 0.06),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        errorStyle: const TextStyle(color: Color(0xFFFF6B6B)),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      ),
-    );
-  }
-}

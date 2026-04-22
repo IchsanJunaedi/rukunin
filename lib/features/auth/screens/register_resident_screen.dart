@@ -6,10 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../app/tokens.dart';
 import '../models/register_step1_data.dart';
 import '../providers/register_provider.dart';
+import '../widgets/auth_text_field.dart';
+import '../widgets/auth_button.dart';
 
-const _kYellow = Color(0xFFFFC107);
-const _kBlack = Color(0xFF0D0D0D);
-const _kWhite = Color(0xFFFFFFFF);
+
 
 class RegisterResidentScreen extends ConsumerStatefulWidget {
   const RegisterResidentScreen({super.key});
@@ -70,20 +70,18 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: _kYellow,
+      backgroundColor: isDark ? const Color(0xFF0A1F13) : const Color(0xFFE8F5E9),
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         top: false,
-        child: Column(
-        children: [
-          // Top section
-          Expanded(
-            flex: 3,
-            child: SafeArea(
-              bottom: false,
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(28, 20, 28, 0),
+                padding: const EdgeInsets.fromLTRB(28, 64, 28, 32),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -92,21 +90,21 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                       child: Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: _kBlack.withValues(alpha: 0.1),
+                          color: RukuninColors.brandGreen,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Icon(Icons.arrow_back_rounded, color: _kBlack, size: 20),
+                        child: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 20),
                       ),
                     ),
-                    const Spacer(),
+                    const SizedBox(height: 32),
                     Text(
-                      'Gabung\nKomunitas.',
+                      'Gabung\nWarga.',
                       style: GoogleFonts.playfairDisplay(
-                        fontSize: MediaQuery.of(context).size.width * 0.145,
+                        fontSize: (MediaQuery.of(context).size.width * 0.135).clamp(32.0, 48.0),
                         fontWeight: FontWeight.w900,
-                        color: _kBlack,
-                        height: 1.05,
-                        letterSpacing: -1.5,
+                        color: isDark ? Colors.white : Colors.black87,
+                        height: 1.0,
+                        letterSpacing: -2,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -114,86 +112,48 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                       'Minta kode komunitas dari admin RT/RW-mu, lalu daftar di sini.',
                       style: RukuninFonts.pjs(
                         fontSize: 13,
-                        color: _kBlack.withValues(alpha: 0.6),
+                        color: isDark ? Colors.white70 : Colors.black54,
                       ),
                     ),
-                    const SizedBox(height: 16),
                   ],
                 ),
               ),
             ),
-          ),
-
-          // Form section
-          Expanded(
-            flex: 7,
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: _kBlack,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-              ),
-              child: SingleChildScrollView(
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 20,
+                      offset: const Offset(0, -5),
+                    ),
+                  ],
+                ),
                 padding: const EdgeInsets.fromLTRB(28, 32, 28, 40),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Kode komunitas — paling atas, prominent
-                      TextFormField(
+                      AuthTextField(
                         controller: _codeCtrl,
+                        hint: 'Kode Komunitas (6 huruf)',
+                        icon: Icons.tag_rounded,
                         textCapitalization: TextCapitalization.characters,
                         inputFormatters: [LengthLimitingTextInputFormatter(6)],
-                        style: RukuninFonts.pjs(
-                          color: _kYellow,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 6,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'KODE',
-                          hintStyle: RukuninFonts.pjs(
-                            color: _kYellow.withValues(alpha: 0.3),
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 6,
-                          ),
-                          labelText: 'Kode Komunitas (6 huruf)',
-                          labelStyle: RukuninFonts.pjs(
-                            color: _kWhite.withValues(alpha: 0.5),
-                            fontSize: 12,
-                          ),
-                          filled: true,
-                          fillColor: _kYellow.withValues(alpha: 0.08),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide.none,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide.none,
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide.none,
-                          ),
-                          errorStyle: const TextStyle(color: Color(0xFFFF6B6B), fontSize: 11),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                        ),
                         validator: (v) {
                           if (v == null || v.trim().isEmpty) return 'Kode komunitas wajib diisi';
                           if (v.trim().length != 6) return 'Kode harus 6 karakter';
                           return null;
                         },
                       ),
-                      const SizedBox(height: 20),
-
-                      _DarkTextField(
+                      const SizedBox(height: 16),
+                      AuthTextField(
                         controller: _nameCtrl,
                         hint: 'Nama Lengkap',
                         icon: Icons.person_rounded,
@@ -206,8 +166,8 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                           return null;
                         },
                       ),
-                      const SizedBox(height: 10),
-                      _DarkTextField(
+                      const SizedBox(height: 16),
+                      AuthTextField(
                         controller: _phoneCtrl,
                         hint: 'Nomor HP (WhatsApp)',
                         icon: Icons.phone_rounded,
@@ -215,8 +175,8 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                         inputFormatters: [LengthLimitingTextInputFormatter(14)],
                         validator: (v) => v == null || v.trim().isEmpty ? 'No HP wajib diisi' : null,
                       ),
-                      const SizedBox(height: 10),
-                      _DarkTextField(
+                      const SizedBox(height: 16),
+                      AuthTextField(
                         controller: _emailCtrl,
                         hint: 'Email',
                         icon: Icons.alternate_email_rounded,
@@ -228,8 +188,8 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                           return null;
                         },
                       ),
-                      const SizedBox(height: 10),
-                      _DarkTextField(
+                      const SizedBox(height: 16),
+                      AuthTextField(
                         controller: _passCtrl,
                         hint: 'Password (min. 6 karakter)',
                         icon: Icons.lock_outline_rounded,
@@ -239,7 +199,7 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                           icon: Icon(
                             _obscurePass ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                             size: 18,
-                            color: _kWhite.withValues(alpha: 0.4),
+                            color: isDark ? Colors.white38 : Colors.black38,
                           ),
                           onPressed: () => setState(() => _obscurePass = !_obscurePass),
                         ),
@@ -249,107 +209,24 @@ class _RegisterResidentScreenState extends ConsumerState<RegisterResidentScreen>
                           return null;
                         },
                       ),
-                      const SizedBox(height: 28),
-
-                      GestureDetector(
-                        onTap: _loading ? null : _submit,
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 150),
-                          height: 56,
-                          decoration: BoxDecoration(
-                            color: _loading ? _kYellow.withValues(alpha: 0.6) : _kYellow,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: Center(
-                            child: _loading
-                                ? const SizedBox(
-                                    width: 22,
-                                    height: 22,
-                                    child: CircularProgressIndicator(strokeWidth: 2.5, color: _kBlack),
-                                  )
-                                : Text(
-                                    'Lanjut →',
-                                    style: RukuninFonts.pjs(
-                                      color: _kBlack,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                          ),
-                        ),
+                      const Spacer(),
+                      const SizedBox(height: 32),
+                      AuthButton(
+                        label: 'Lanjut',
+                        isLoading: _loading,
+                        onTap: () {
+                           if (!_loading) _submit();
+                        },
                       ),
                     ],
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
         ),
       ),
     );
   }
 }
 
-class _DarkTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String hint;
-  final IconData icon;
-  final bool obscureText;
-  final TextInputType? keyboardType;
-  final String? Function(String?)? validator;
-  final Widget? suffixIcon;
-  final List<TextInputFormatter>? inputFormatters;
-
-  const _DarkTextField({
-    required this.controller,
-    required this.hint,
-    required this.icon,
-    this.obscureText = false,
-    this.keyboardType,
-    this.validator,
-    this.suffixIcon,
-    this.inputFormatters,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      obscureText: obscureText,
-      keyboardType: keyboardType,
-      validator: validator,
-      inputFormatters: inputFormatters,
-      style: RukuninFonts.pjs(color: _kWhite, fontSize: 14),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: RukuninFonts.pjs(
-          color: _kWhite.withValues(alpha: 0.3),
-          fontSize: 13,
-        ),
-        prefixIcon: Icon(icon, color: _kWhite.withValues(alpha: 0.35), size: 18),
-        suffixIcon: suffixIcon,
-        filled: true,
-        fillColor: _kWhite.withValues(alpha: 0.06),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        errorStyle: const TextStyle(color: Color(0xFFFF6B6B), fontSize: 11),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      ),
-    );
-  }
-}

@@ -6,9 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../app/tokens.dart';
 import '../providers/register_provider.dart';
 
-const _kYellow = Color(0xFFFFC107);
-const _kBlack = Color(0xFF0D0D0D);
-const _kWhite = Color(0xFFFFFFFF);
+
 
 class RegisterAdminScreen extends ConsumerStatefulWidget {
   const RegisterAdminScreen({super.key});
@@ -78,12 +76,12 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        backgroundColor: _kBlack,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1A1A1A) : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           'Komunitas Berhasil Dibuat! 🎉',
           style: RukuninFonts.pjs(
-            color: _kWhite,
+            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
             fontWeight: FontWeight.w800,
           ),
         ),
@@ -94,64 +92,44 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
             Text(
               'Bagikan kode ini ke grup WA wargamu agar mereka bisa bergabung:',
               style: RukuninFonts.pjs(
-                color: _kWhite.withValues(alpha: 0.7),
+                color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black54,
                 fontSize: 13,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 20),
               decoration: BoxDecoration(
-                color: _kYellow,
-                borderRadius: BorderRadius.circular(14),
+                color: RukuninColors.brandGreen.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: RukuninColors.brandGreen.withValues(alpha: 0.3)),
               ),
-              child: Column(
-                children: [
-                  Text(
-                    'KODE KOMUNITAS',
-                    style: RukuninFonts.pjs(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: _kBlack.withValues(alpha: 0.6),
-                      letterSpacing: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    code,
-                    style: RukuninFonts.pjs(
-                      fontSize: 36,
-                      fontWeight: FontWeight.w900,
-                      color: _kBlack,
-                      letterSpacing: 8,
-                    ),
-                  ),
-                ],
+              child: SelectableText(
+                code,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.ptMono(
+                  color: RukuninColors.brandGreen,
+                  fontSize: 32,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 4,
+                ),
               ),
             ),
             const SizedBox(height: 12),
-            GestureDetector(
-              onTap: () {
-                Clipboard.setData(ClipboardData(text: code));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Kode disalin!')),
-                );
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.copy_rounded, size: 14, color: _kYellow),
-                  const SizedBox(width: 6),
-                  Text(
-                    'Salin kode',
-                    style: RukuninFonts.pjs(
-                      color: _kYellow,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+            Center(
+              child: TextButton.icon(
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: code));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Kode disalin ke clipboard!')),
+                  );
+                },
+                icon: const Icon(Icons.copy_rounded, size: 16, color: RukuninColors.brandGreen),
+                label: Text(
+                  'Salin Kode',
+                  style: RukuninFonts.pjs(color: RukuninColors.brandGreen, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ],
@@ -160,10 +138,10 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
-              'Masuk ke Dashboard →',
+              'Tutup & Lanjut',
               style: RukuninFonts.pjs(
-                color: _kYellow,
-                fontWeight: FontWeight.w700,
+                color: RukuninColors.brandGreen,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -174,17 +152,18 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: _kYellow,
-      body: Column(
-        children: [
-          // Top section
-          Expanded(
-            flex: 4,
-            child: SafeArea(
-              bottom: false,
+      backgroundColor: isDark ? const Color(0xFF0A1F13) : const Color(0xFFE8F5E9),
+      resizeToAvoidBottomInset: false,
+      body: SafeArea(
+        top: false,
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(28, 20, 28, 0),
+                padding: const EdgeInsets.fromLTRB(28, 64, 28, 32),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -193,48 +172,50 @@ class _RegisterAdminScreenState extends ConsumerState<RegisterAdminScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: _kBlack.withValues(alpha: 0.1),
+                          color: RukuninColors.brandGreen,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Icon(Icons.arrow_back_rounded, color: _kBlack, size: 20),
+                        child: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 20),
                       ),
                     ),
-                    const Spacer(),
+                    const SizedBox(height: 32),
                     Text(
-                      'Daftar\nSebagai\nAdmin.',
+                      'Buat\nKomunitas.',
                       style: GoogleFonts.playfairDisplay(
-                        fontSize: MediaQuery.of(context).size.width * 0.13,
+                        fontSize: (MediaQuery.of(context).size.width * 0.135).clamp(32.0, 48.0),
                         fontWeight: FontWeight.w900,
-                        color: _kBlack,
-                        height: 1.05,
-                        letterSpacing: -1.5,
+                        color: isDark ? Colors.white : Colors.black87,
+                        height: 1.0,
+                        letterSpacing: -2,
                       ),
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Buat akun RT/RW dan mulai kelola komunitasmu.',
+                      'Daftarkan lingkungan RT/RW-mu dan kelola dengan mudah dalam satu aplikasi.',
                       style: RukuninFonts.pjs(
                         fontSize: 13,
-                        color: _kBlack.withValues(alpha: 0.6),
+                        color: isDark ? Colors.white70 : Colors.black54,
                       ),
                     ),
-                    const SizedBox(height: 16),
                   ],
                 ),
               ),
             ),
-          ),
-
-          // Form section
-          Expanded(
-            flex: 6,
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: _kBlack,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-              ),
-              child: SingleChildScrollView(
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 20,
+                      offset: const Offset(0, -5),
+                    ),
+                  ],
+                ),
                 padding: const EdgeInsets.fromLTRB(28, 32, 28, 40),
                 child: Form(
                   key: _formKey,

@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import '../../../app/tokens.dart';
 import '../../../app/components.dart';
 import '../../../core/supabase/supabase_client.dart';
+import '../../../core/widgets/interactive_card.dart';
 
 // ─── Provider ────────────────────────────────────────────────────────────────
 final dashboardProvider =
@@ -315,8 +316,12 @@ class _DashboardHeader extends StatelessWidget {
                   ),
                 ],
               ),
-              GestureDetector(
+              InteractiveCard(
                 onTap: () => context.push('/admin/profil'),
+                backgroundColor: Colors.transparent,
+                showShadow: false,
+                padding: EdgeInsets.zero,
+                borderRadius: 18,
                 child: Container(
                   padding: const EdgeInsets.all(3),
                   decoration: BoxDecoration(
@@ -523,7 +528,11 @@ class _CommunityCodeTile extends StatelessWidget {
             ],
           ),
         ),
-        GestureDetector(
+        InteractiveCard(
+          scaleDownFactor: 0.95,
+          showShadow: false,
+          padding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
           onTap: () {
             Clipboard.setData(ClipboardData(text: code));
             HapticFeedback.lightImpact();
@@ -720,7 +729,7 @@ class _QuickActions extends StatelessWidget {
   }
 }
 
-class _ActionBtn extends StatefulWidget {
+class _ActionBtn extends StatelessWidget {
   final IconData icon;
   final String label;
   final String route;
@@ -730,64 +739,47 @@ class _ActionBtn extends StatefulWidget {
   });
 
   @override
-  State<_ActionBtn> createState() => _ActionBtnState();
-}
-
-class _ActionBtnState extends State<_ActionBtn>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _ctrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 120),
-      lowerBound: 0.92,
-      upperBound: 1.0,
-      value: 1.0,
-    );
-  }
-
-  @override
-  void dispose() { _ctrl.dispose(); super.dispose(); }
-
-  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return GestureDetector(
-      onTapDown: (_) { _ctrl.reverse(); HapticFeedback.selectionClick(); },
-      onTapUp: (_) { _ctrl.forward(); context.push(widget.route); },
-      onTapCancel: () => _ctrl.forward(),
-      child: ScaleTransition(
-        scale: _ctrl,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 56, height: 56,
-              alignment: Alignment.center,
-              child: Icon(
-                widget.icon,
-                color: RukuninColors.brandGreen,
-                size: 32,
-              ),
+    return InteractiveCard(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        context.push(route);
+      },
+      showShadow: false,
+      backgroundColor: Colors.transparent,
+      padding: EdgeInsets.zero,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 56, height: 56,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+               color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
+               borderRadius: BorderRadius.circular(16),
+               boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
             ),
-            const SizedBox(height: 7),
-            Text(
-              widget.label,
-              textAlign: TextAlign.center,
-              style: RukuninFonts.pjs(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: isDark
-                    ? RukuninColors.darkTextPrimary
-                    : RukuninColors.lightTextPrimary,
-              ),
+            child: Icon(
+              icon,
+              color: RukuninColors.brandGreen,
+              size: 32,
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 7),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: RukuninFonts.pjs(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: isDark
+                  ? RukuninColors.darkTextPrimary
+                  : RukuninColors.lightTextPrimary,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -832,16 +824,7 @@ class _ServiceCard extends StatelessWidget {
       ],
     );
 
-    if (isDark) {
-      return GlassCard(
-        onTap: onTap,
-        borderRadius: 16,
-        padding: const EdgeInsets.all(16),
-        child: cardContent,
-      );
-    }
-
-    return SurfaceCard(
+    return InteractiveCard(
       onTap: onTap,
       padding: const EdgeInsets.all(16),
       child: cardContent,

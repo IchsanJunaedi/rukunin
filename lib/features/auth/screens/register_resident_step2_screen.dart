@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../app/tokens.dart';
 import '../models/register_step1_data.dart';
 import '../providers/register_provider.dart';
+import '../widgets/auth_text_field.dart';
+import '../widgets/auth_button.dart';
 
 const _kYellow = Color(0xFFFFC107);
 const _kBlack = Color(0xFF0D0D0D);
@@ -87,59 +89,51 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
       backgroundColor: _kYellow,
       body: FadeTransition(
         opacity: _fadeAnim,
-        child: Column(
-          children: [
-            // TOP
-            Expanded(
-              flex: 3,
-              child: SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(28, 32, 28, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onTap: () => context.pop(),
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: _kBlack.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(Icons.arrow_back_rounded,
-                              color: _kBlack, size: 20),
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(28, 32, 28, 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: () => context.pop(),
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: _kBlack.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
                         ),
+                        child: const Icon(Icons.arrow_back_rounded, color: _kBlack, size: 20),
                       ),
-                      const Spacer(),
-                      Text(
-                        'Info\nTambahan',
-                        style: GoogleFonts.playfairDisplay(
-                          fontSize: size.width * 0.115,
-                          fontWeight: FontWeight.w900,
-                          color: _kBlack,
-                          height: 1.0,
-                          letterSpacing: -2,
-                        ),
+                    ),
+                    const SizedBox(height: 32),
+                    Text(
+                      'Info\nTambahan',
+                      style: GoogleFonts.playfairDisplay(
+                        fontSize: (size.width * 0.115).clamp(28.0, 42.0),
+                        fontWeight: FontWeight.w900,
+                        color: _kBlack,
+                        height: 1.0,
+                        letterSpacing: -2,
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Blok dan No. RT wajib diisi.',
-                        style: RukuninFonts.pjs(
-                          fontSize: 13,
-                          color: _kBlack.withValues(alpha: 0.5),
-                          fontWeight: FontWeight.w500,
-                        ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Blok dan No. RT wajib diisi.',
+                      style: RukuninFonts.pjs(
+                        fontSize: 13,
+                        color: _kBlack.withValues(alpha: 0.5),
+                        fontWeight: FontWeight.w500,
                       ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
-            // BOTTOM
-            Expanded(
-              flex: 7,
+            SliverFillRemaining(
+              hasScrollBody: false,
               child: Container(
                 width: double.infinity,
                 decoration: const BoxDecoration(
@@ -161,7 +155,7 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                         ),
                       ),
                       const SizedBox(height: 20),
-                      _DarkTextField(
+                      AuthTextField(
                         controller: _nikCtrl,
                         hint: 'NIK (16 digit)',
                         icon: Icons.badge_rounded,
@@ -173,7 +167,7 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                         ],
                       ),
                       const SizedBox(height: 12),
-                      _DarkTextField(
+                      AuthTextField(
                         controller: _blockCtrl,
                         hint: 'Blok (contoh: A)',
                         icon: Icons.home_work_rounded,
@@ -183,7 +177,7 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                             (v == null || v.trim().isEmpty) ? 'Blok wajib diisi' : null,
                       ),
                       const SizedBox(height: 12),
-                      _DarkTextField(
+                      AuthTextField(
                         controller: _unitCtrl,
                         hint: 'No. Rumah / Unit',
                         icon: Icons.numbers_rounded,
@@ -209,7 +203,7 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                           prefixIcon: Icon(Icons.location_on_rounded,
                               color: _kWhite.withValues(alpha: 0.35), size: 18),
                           filled: true,
-                          fillColor: _kWhite.withValues(alpha: 0.06),
+                          fillColor: const Color(0xFF141414),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14),
                             borderSide: BorderSide.none,
@@ -243,36 +237,13 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
                         validator: (v) => v == null ? 'No. RT wajib dipilih' : null,
                       ),
                       const Spacer(),
-                      // Tombol Daftar
-                      GestureDetector(
-                        onTap: _loading ? null : _submit,
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 150),
-                          height: 56,
-                          decoration: BoxDecoration(
-                            color: _loading
-                                ? _kYellow.withValues(alpha: 0.6)
-                                : _kYellow,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: Center(
-                            child: _loading
-                                ? const SizedBox(
-                                    width: 22,
-                                    height: 22,
-                                    child: CircularProgressIndicator(
-                                        strokeWidth: 2.5, color: _kBlack),
-                                  )
-                                : Text(
-                                    'Daftar →',
-                                    style: RukuninFonts.pjs(
-                                      color: _kBlack,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                          ),
-                        ),
+                      const SizedBox(height: 32),
+                      AuthButton(
+                        label: 'Daftar →',
+                        isLoading: _loading,
+                        onTap: () {
+                           if (!_loading) _submit();
+                        },
                       ),
                     ],
                   ),
@@ -281,69 +252,6 @@ class _Step2State extends ConsumerState<RegisterResidentStep2Screen>
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _DarkTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String hint;
-  final IconData icon;
-  final TextInputType? keyboardType;
-  final TextInputAction? textInputAction;
-  final List<TextInputFormatter>? inputFormatters;
-  final String? Function(String?)? validator;
-
-  const _DarkTextField({
-    required this.controller,
-    required this.hint,
-    required this.icon,
-    this.keyboardType,
-    this.textInputAction,
-    this.inputFormatters,
-    this.validator,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      textInputAction: textInputAction,
-      inputFormatters: inputFormatters,
-      validator: validator,
-      style: RukuninFonts.pjs(
-          color: _kWhite, fontSize: 15, fontWeight: FontWeight.w500),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: RukuninFonts.pjs(
-          color: _kWhite.withValues(alpha: 0.3),
-          fontSize: 14,
-        ),
-        prefixIcon:
-            Icon(icon, color: _kWhite.withValues(alpha: 0.35), size: 18),
-        filled: true,
-        fillColor: _kWhite.withValues(alpha: 0.06),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        errorStyle: const TextStyle(color: Color(0xFFFF6B6B)),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
     );
   }
