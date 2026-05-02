@@ -6,6 +6,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:go_router/go_router.dart';
+import '../../../../app/theme.dart';
+import '../../../../app/tokens.dart';
+import '../../../../core/widgets/interactive_card.dart';
+import '../../../../core/widgets/skeleton_loader.dart';
+import '../../../../core/utils/responsive_layout.dart';
+
 import '../../../app/components.dart';
 import '../../../app/tokens.dart';
 import '../models/resident_model.dart';
@@ -126,9 +132,10 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
 
           // List
           residentsAsync.when(
-            loading: () => SliverFillRemaining(
-              child: Center(
-                child: CircularProgressIndicator(color: RukuninColors.brandGreen),
+            loading: () => const SliverPadding(
+              padding: EdgeInsets.fromLTRB(20, 0, 20, 100),
+              sliver: SliverToBoxAdapter(
+                child: SkeletonList(itemCount: 8, itemHeight: 80),
               ),
             ),
             error: (e, _) => SliverFillRemaining(
@@ -183,19 +190,17 @@ class _ResidentsScreenState extends ConsumerState<ResidentsScreen> {
 
               return SliverPadding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, i) => _ResidentCard(
-                      resident: filtered[i],
-                      onEdit: () => context
-                          .push('/admin/warga/edit', extra: filtered[i])
-                          .then((_) => ref.invalidate(residentsProvider)),
-                      onTapCard: () => context
-                          .push('/admin/warga/detail', extra: filtered[i])
-                          .then((_) => ref.invalidate(residentsProvider)),
-                      onDelete: () => _confirmDelete(context, filtered[i]),
-                    ),
-                    childCount: filtered.length,
+                sliver: SliverResponsiveGridList(
+                  itemCount: filtered.length,
+                  itemBuilder: (context, i) => _ResidentCard(
+                    resident: filtered[i],
+                    onEdit: () => context
+                        .push('/admin/warga/edit', extra: filtered[i])
+                        .then((_) => ref.invalidate(residentsProvider)),
+                    onTapCard: () => context
+                        .push('/admin/warga/detail', extra: filtered[i])
+                        .then((_) => ref.invalidate(residentsProvider)),
+                    onDelete: () => _confirmDelete(context, filtered[i]),
                   ),
                 ),
               );
@@ -449,32 +454,29 @@ class _PendingBanner extends ConsumerWidget {
       error: (_, _) => const SizedBox(),
       data: (pending) {
         if (pending.isEmpty) return const SizedBox();
-        return GestureDetector(
+        return InteractiveCard(
+          scaleDownFactor: 0.98,
           onTap: () => _showPendingSheet(context, ref, pending),
-          child: Container(
-            margin: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: RukuninColors.brandGreen.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.pending_actions_rounded, color: RukuninColors.brandGreen, size: 20),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    '${pending.length} warga baru menunggu persetujuan',
-                    style: RukuninFonts.pjs(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: RukuninColors.brandGreen,
-                    ),
+          margin: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          backgroundColor: RukuninColors.brandGreen.withValues(alpha: 0.12),
+          showShadow: false,
+          child: Row(
+            children: [
+              Icon(Icons.pending_actions_rounded, color: RukuninColors.brandGreen, size: 20),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  '${pending.length} warga baru menunggu persetujuan',
+                  style: RukuninFonts.pjs(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: RukuninColors.brandGreen,
                   ),
                 ),
-                Icon(Icons.chevron_right_rounded, color: RukuninColors.brandGreen, size: 18),
-              ],
-            ),
+              ),
+              Icon(Icons.chevron_right_rounded, color: RukuninColors.brandGreen, size: 18),
+            ],
           ),
         );
       },
@@ -755,16 +757,10 @@ class _PendingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final joinedAt = DateFormat('d MMM yyyy', 'id_ID').format(resident.createdAt);
-    return GestureDetector(
+    return InteractiveCard(
       onTap: () => _showPendingDetailSheet(context, resident, onApprove, onReject),
-      child: Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightCardSurface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: isDark ? null : RukuninShadow.card,
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -858,7 +854,6 @@ class _PendingCard extends StatelessWidget {
           ),
         ],
       ),
-      ),
     );
   }
 }
@@ -918,82 +913,97 @@ class _ResidentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: isDark ? RukuninColors.darkSurface : RukuninColors.lightSurface,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: ListTile(
-        onTap: onTapCard,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: ClipRRect(
-          borderRadius: BorderRadius.circular(14),
-          child: resident.photoUrl != null && resident.photoUrl!.isNotEmpty
-              ? Image.network(
-                  resident.photoUrl!,
-                  width: 46,
-                  height: 46,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => _initialsBox(resident, 46, 14),
-                )
-              : _initialsBox(resident, 46, 14),
-        ),
-        title: Text(
-          resident.fullName,
-          style: RukuninFonts.pjs(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
+    return InteractiveCard(
+      margin: const EdgeInsets.only(bottom: 0),
+      onTap: onTapCard,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(14),
+            child: resident.photoUrl != null && resident.photoUrl!.isNotEmpty
+                ? Image.network(
+                    resident.photoUrl!,
+                    width: 46,
+                    height: 46,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => _initialsBox(resident, 46, 14),
+                  )
+                : _initialsBox(resident, 46, 14),
           ),
-        ),
-        subtitle: Text(
-          [
-            if (resident.block != null && resident.block!.isNotEmpty) 'Blok ${resident.block}',
-            if (resident.unitNumber != null) 'No. ${resident.unitNumber}',
-            if (resident.phone != null) resident.phone!,
-          ].join(' · '),
-          style: RukuninFonts.pjs(
-            fontSize: 12,
-            color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
-          ),
-        ),
-        trailing: PopupMenuButton<String>(
-          onSelected: (v) {
-            if (v == 'edit') onEdit();
-            if (v == 'delete') onDelete();
-          },
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          itemBuilder: (_) => [
-            const PopupMenuItem(
-              value: 'edit',
-              child: Row(
-                children: [
-                  Icon(Icons.edit_outlined, size: 18),
-                  SizedBox(width: 10),
-                  Text('Edit'),
-                ],
-              ),
-            ),
-            const PopupMenuItem(
-              value: 'delete',
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.delete_outline,
-                    size: 18,
-                    color: Color(0xFFEF4444),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  resident.fullName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: RukuninFonts.pjs(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? RukuninColors.darkTextPrimary : RukuninColors.lightTextPrimary,
                   ),
-                  SizedBox(width: 10),
-                  Text('Hapus', style: TextStyle(color: Color(0xFFEF4444))),
-                ],
-              ),
+                ),
+                Text(
+                  [
+                    if (resident.block != null && resident.block!.isNotEmpty) 'Blok ${resident.block}',
+                    if (resident.unitNumber != null) 'No. ${resident.unitNumber}',
+                    if (resident.phone != null) resident.phone!,
+                  ].join(' · '),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: RukuninFonts.pjs(
+                    fontSize: 12,
+                    color: isDark ? RukuninColors.darkTextSecondary : RukuninColors.lightTextSecondary,
+                  ),
+                ),
+              ],
             ),
-          ],
-          child: Icon(Icons.more_vert_rounded, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
-        ),
+          ),
+          PopupMenuButton<String>(
+            onSelected: (v) {
+              if (v == 'edit') onEdit();
+              if (v == 'delete') onDelete();
+            },
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            itemBuilder: (_) => [
+              const PopupMenuItem(
+                value: 'edit',
+                child: Row(
+                  children: [
+                    Icon(Icons.edit_outlined, size: 18),
+                    SizedBox(width: 10),
+                    Text('Edit'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'delete',
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.delete_outline,
+                      size: 18,
+                      color: Color(0xFFEF4444),
+                    ),
+                    SizedBox(width: 10),
+                    Text('Hapus', style: TextStyle(color: Color(0xFFEF4444))),
+                  ],
+                ),
+              ),
+            ],
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8.0, right: 0.0),
+              child: Icon(Icons.more_vert_rounded, color: isDark ? RukuninColors.darkTextTertiary : RukuninColors.lightTextTertiary),
+            ),
+          ),
+        ],
       ),
     );
   }
